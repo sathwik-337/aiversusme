@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaRobot, FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Navbar() {
@@ -17,10 +17,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-
-      // Show navbar after scrolling
       setVisible(currentScroll > 50);
-
       setScrolled(currentScroll > 20);
       setLastScrollY(currentScroll);
     };
@@ -31,8 +28,9 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About", href: "#about" }, // 👈 scroll link
+    { name: "About", href: "#about" },
     { name: "Rankings", href: "/rankings" },
+    { name: "Contact", href: "/contact" }, // ← added
   ];
 
   return (
@@ -52,10 +50,8 @@ export default function Navbar() {
         >
           {/* LOGO */}
           <div className="flex items-center gap-2">
-            
-              <img src="/aiversusumebg.png" alt="logo" height={100} width={100}/>
-            </div>
-          
+            <img src="/aiversusumebg.png" alt="logo" height={100} width={100} />
+          </div>
 
           {/* DESKTOP LINKS */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -83,11 +79,7 @@ export default function Navbar() {
 
               return (
                 <Link key={link.name} href={link.href} className="relative group">
-                  <span
-                    className={`transition ${
-                      isActive ? "text-white" : "text-gray-300"
-                    }`}
-                  >
+                  <span className={`transition ${isActive ? "text-white" : "text-gray-300"}`}>
                     {link.name}
                   </span>
                   <span
@@ -134,9 +126,7 @@ export default function Navbar() {
                   key={link.name}
                   onClick={() => {
                     const el = document.querySelector(link.href);
-                    if (el) {
-                      el.scrollIntoView({ behavior: "smooth" });
-                    }
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
                     setMenuOpen(false);
                   }}
                   className="text-lg text-gray-300 hover:text-white"

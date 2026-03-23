@@ -8,6 +8,7 @@ import AboutSection from "@/app/components/about";
 import TrendingJobs from "@/app/components/trending-jobs";
 import { FaRobot } from "react-icons/fa";
 
+
 export default async function Home() {
   const featuredJobs = await db.select().from(jobs).orderBy(desc(jobs.created_at)).limit(6);
   const trendingJobs = [
