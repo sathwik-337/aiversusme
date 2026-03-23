@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 import SearchAutocomplete from "@/components/search-autocomplete";
 import AboutSection from "@/app/components/about";
 import TrendingJobs from "@/app/components/trending-jobs";
+import BlogSection from "@/app/components/blog";
+import TestimonialsSection from "@/app/components/testimonials";
 import { FaRobot } from "react-icons/fa";
+
 
 export default async function Home() {
   const featuredJobs = await db.select().from(jobs).orderBy(desc(jobs.created_at)).limit(6);
@@ -114,6 +117,12 @@ export default async function Home() {
 
       {/* About section for hash link */}
       <AboutSection />
+
+      {/* Blog section */}
+      <BlogSection />
+
+      {/* Testimonials section */}
+      <TestimonialsSection />
     </div>
   );
 }
