@@ -9,7 +9,7 @@ import Footer from "@/app/components/footer";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Will AI Take My Job?",
+  title: "AI vs ME",
   description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills.",
 };
 
@@ -31,6 +31,10 @@ export default function RootLayout({
           GeistMono.variable
         )}
       >
+        <head>
+  <link rel="icon" type="image/png" href="/bgremovedlogo.png" />
+  <link rel="apple-touch-icon" href="/bgremovedlogo.png" />
+</head>
         <body className="min-h-full flex flex-col">
           <Header userId={userId} />
           <main className="flex-grow">{children}</main>
