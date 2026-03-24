@@ -182,7 +182,7 @@
           <div className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">
             Automation Outlook • Static Snapshot
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-500 text-transparent bg-clip-text leading-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r text-white text-transparent bg-clip-text leading-tight">
             Job Intelligence Dashboard
           </h1>
           <p className="text-sm text-gray-400 mt-1">

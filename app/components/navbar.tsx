@@ -1,37 +1,61 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [visible, setVisible] = useState(true);
   const { isSignedIn } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-      setVisible(currentScroll > 50);
+      // Remove setVisible(currentScroll > 50) so it's always on screen
       setScrolled(currentScroll > 20);
-      setLastScrollY(currentScroll);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-  { name: "About", href: "#about" },        // scroll
-  { name: "Blog", href: "#blog-section" }, // scroll
-  { name: "Rankings", href: "/rankings" }, // page
-  { name: "Contact", href: "/contact" },   // page
-];
+    { name: "Home", href: "#home" },
+    { name: "Feature", href: "#feature" },
+    { name: "About", href: "#about" },
+    { name: "Blog", href: "#blog-section" },
+    { name: "Rankings", href: "/rankings" },
+    { name: "Contact", href: "#contact" },
+  ];
+
+  const handleHashClick = (hash: string) => {
+  if (hash === "#home") {
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+      // after navigation, scroll to top
+      setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 300);
+    }
+    return;
+  }
+
+  if (pathname === "/") {
+    const el = document.querySelector(hash);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  } else {
+    router.push(`/${hash}`);
+    setTimeout(() => {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }, 300);
+  }
+};
 
   return (
     <>
@@ -43,9 +67,7 @@ export default function Navbar() {
       >
         <nav
           className={`flex items-center justify-between px-6 py-3 rounded-full transition-all duration-300 ${
-            scrolled
-              ? "bg-black/80 backdrop-blur-md shadow-lg"
-              : "bg-black shadow-md"
+            scrolled ? "bg-black/80 backdrop-blur-md shadow-lg" : "bg-black shadow-md"
           } text-white`}
         >
           {/* LOGO */}
@@ -63,12 +85,7 @@ export default function Navbar() {
                 return (
                   <button
                     key={link.name}
-                    onClick={() => {
-                      const el = document.querySelector(link.href);
-                      if (el) {
-                        el.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
+                    onClick={() => handleHashClick(link.href)}
                     className="relative group text-gray-300 hover:text-white transition"
                   >
                     {link.name}
@@ -82,11 +99,7 @@ export default function Navbar() {
                   <span className={`transition ${isActive ? "text-white" : "text-gray-300"}`}>
                     {link.name}
                   </span>
-                  <span
-                    className={`absolute left-0 -bottom-1 h-[2px] bg-white transition-all duration-300 ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
+                  <span className={`absolute left-0 -bottom-1 h-[2px] bg-white transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"}`} />
                 </Link>
               );
             })}
@@ -125,8 +138,7 @@ export default function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => {
-                    const el = document.querySelector(link.href);
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                    handleHashClick(link.href);
                     setMenuOpen(false);
                   }}
                   className="text-lg text-gray-300 hover:text-white"
