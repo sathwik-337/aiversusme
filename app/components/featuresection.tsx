@@ -43,7 +43,8 @@ function FeaturesTop() {
   ];
 
   return (
-    <section className="bg-white text-slate-900 py-16 md:py-24 px-6 lg:px-12 xl:px-24">
+    // ✅ id="feature" added here — matches navbar href="#feature"
+    <section id="feature" className="bg-white text-slate-900 py-16 md:py-24 px-6 lg:px-12 xl:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
 
         {/* LEFT SIDE */}
@@ -78,7 +79,6 @@ function FeaturesTop() {
 
           {/* Main Image */}
           <div className="relative z-10 w-full max-w-md aspect-[4/5] rounded-3xl overflow-hidden shadow-xl border-4 border-white">
-            {/* Fallback image if actual asset is missing. Using Unsplash placeholder for "man sitting with laptop" */}
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"
               alt="Man working on laptop"
