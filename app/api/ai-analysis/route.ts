@@ -1,11 +1,78 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import * as dotenv from "dotenv";
 import { getAuth } from "@clerk/nextjs/server";
 
 dotenv.config({ path: ".env" });
 export const runtime = "nodejs";
 
+// Unified interface for AI provider configurations
+interface AiProvider {
+  name: string;
+  enabled: boolean;
+  url: string;
+  model: string;
+  apiKey: string;
+  getPayload: (prompt: string) => object;
+  extractContent: (data: any) => string;
+}
+
+// --- Provider Configurations ---
+const providers: AiProvider[] = [
+  {
+    name: "groq",
+    enabled: !!process.env.GROQ_API_KEY,
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    model: process.env.GROQ_MODEL || "llama-3.1-8b-instant",
+    apiKey: process.env.GROQ_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "llama-3.1-8b-instant",
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+  {
+    name: "deepseek",
+    enabled: !!process.env.DEEPSEEK_API_KEY,
+    url: "https://api.deepseek.com/v1/chat/completions",
+    model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
+    apiKey: process.env.DEEPSEEK_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "deepseek-chat",
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+  {
+    name: "openai",
+    enabled: !!process.env.OPENAI_API_KEY,
+    url: "https://api.openai.com/v1/chat/completions",
+    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    apiKey: process.env.OPENAI_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+];
+
+// --- Main API Route Handler ---
 export async function POST(req: NextRequest) {
   try {
     const { userId } = getAuth(req);
@@ -24,91 +91,29 @@ CRITICAL: You must return a valid JSON object with the following structure. Do n
 Required JSON structure:
 { ... }`;
 
-    const providers: Array<{
-      name: string;
-      enabled: boolean;
-      call: () => Promise<string>;
-    }> = [
-      {
-        name: "groq",
-        enabled: !!process.env.GROQ_API_KEY,
-        call: async () => {
-          const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
-          const res = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-              model,
-              response_format: { type: "json_object" },
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-      {
-        name: "deepseek",
-        enabled: !!process.env.DEEPSEEK_API_KEY,
-        call: async () => {
-          const res = await axios.post(
-            "https://api.deepseek.com/v1/chat/completions",
-            {
-              model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              response_format: { type: "json_object" },
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-      {
-        name: "openai",
-        enabled: !!process.env.OPENAI_API_KEY,
-        call: async () => {
-          const res = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
-            {
-              model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              response_format: { type: "json_object" },
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-    ];
-
     let aiContent = "";
     const providerErrors: Array<{ provider: string; status?: number; message: string }> = [];
-    for (const p of providers) {
-      if (!p.enabled) continue;
+
+    for (const provider of providers) {
+      if (!provider.enabled) continue;
       try {
-        aiContent = await p.call();
-        if (aiContent) break;
-      } catch (e) {
-        const err = e as { response?: { status?: number; data?: { error?: { message?: string } } }; message?: string };
+        const response = await axios.post(
+          provider.url,
+          provider.getPayload(prompt),
+          { headers: { Authorization: `Bearer ${provider.apiKey}`, "Content-Type": "application/json" } }
+        );
+        aiContent = provider.extractContent(response.data);
+        if (aiContent) break; // Success, exit loop
+      } catch (e: unknown) {
+        const err = e as AxiosError<{ error?: { message?: string } }>;
         providerErrors.push({
-          provider: p.name,
+          provider: provider.name,
           status: err.response?.status,
           message: err.response?.data?.error?.message || err.message || "Unknown error",
         });
-        continue;
       }
     }
+
     if (!aiContent) {
       console.error("AI Analysis Fallback Errors:", providerErrors);
       return NextResponse.json(
@@ -221,9 +226,8 @@ Required JSON structure:
       message?: string;
     };
     const e = error as AxiosErrorLike;
-    const errorData = e.response?.data?.error || e.response?.data || e.message;
-    console.error("AI Analysis Error:", errorData);
     let errorMessage = "Failed to generate AI analysis";
+
     if (e.response?.status === 401) {
       errorMessage = "Invalid or expired API key for provider. Please check credentials.";
     } else if (e.response?.status === 429) {
@@ -231,9 +235,27 @@ Required JSON structure:
     } else if (e.response?.status === 503) {
       errorMessage = "All AI providers failed or are unavailable.";
     }
-    if (e.response?.data?.error?.message) {
+
+    // Check if the error object has the expected shape
+    if (
+      e.response &&
+      e.response.data &&
+      typeof e.response.data === 'object' &&
+      'error' in e.response.data &&
+      e.response.data.error &&
+      typeof e.response.data.error === 'object' &&
+      'message' in e.response.data.error &&
+      typeof e.response.data.error.message === 'string'
+    ) {
       errorMessage = e.response.data.error.message;
     }
+
+    console.error("AI Analysis Error:", { 
+      message: errorMessage,
+      status: e.response?.status,
+      data: e.response?.data,
+    });
+
     return NextResponse.json(
       { error: errorMessage },
       { status: e.response?.status || 500 }
