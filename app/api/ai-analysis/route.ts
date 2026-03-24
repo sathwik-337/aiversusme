@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as dotenv from "dotenv";
 import { getAuth } from "@clerk/nextjs/server";
@@ -6,7 +6,7 @@ import { getAuth } from "@clerk/nextjs/server";
 dotenv.config({ path: ".env" });
 export const runtime = "nodejs";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
