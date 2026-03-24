@@ -11,6 +11,7 @@ interface JobSuggestion {
   slug: string;
 }
 
+
 export default function SearchAutocomplete({ className = "" }: { className?: string }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<JobSuggestion[]>([]);
