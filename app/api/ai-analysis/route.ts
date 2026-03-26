@@ -77,10 +77,6 @@ const providers: AiProvider[] = [
 // --- Main API Route Handler ---
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     const { job_title } = await req.json();
 
     if (!job_title) {
@@ -109,6 +105,11 @@ Required JSON structure:
   "strategic_advice": {
     "individuals": "Actionable career advice.",
     "businesses": "Advice for business owners/consultants."
+  },
+  "robot_takeover_analysis": {
+    "can_be_taken_by_robots": "A clear 'Yes', 'No', or 'Partial' answer.",
+    "reasoning": "A brief explanation of why physical robots (not just software AI) can or cannot take over this job.",
+    "estimated_timeline": "When physical robot replacement might happen (e.g., 'Within 10 years', 'Unlikely in the next 20 years')."
   },
   "task_analysis": {
     "replaceable": ["Task 1 with reasoning", "Task 2 with reasoning"],
@@ -199,13 +200,24 @@ Required JSON structure:
 
     let parsedData;
     try {
+      console.log("AI Content received:", aiContent);
       parsedData = JSON.parse(aiContent);
     } catch {
+      console.log("Initial JSON parse failed, attempting regex match");
       // Attempt to extract the first JSON object substring
       const match = typeof aiContent === "string" ? aiContent.match(/\{[\s\S]*\}/) : null;
       if (match) {
-        parsedData = JSON.parse(match[0]);
+        try {
+          parsedData = JSON.parse(match[0]);
+        } catch (e) {
+          console.error("Regex JSON parse failed:", e);
+          return NextResponse.json(
+            { error: "AI returned invalid JSON after regex extraction." },
+            { status: 422 }
+          );
+        }
       } else {
+        console.error("No JSON-like structure found in AI response");
         return NextResponse.json(
           { error: "AI returned invalid JSON. Please try again." },
           { status: 422 }
@@ -221,6 +233,7 @@ Required JSON structure:
     const getStr = (o: Record<string, unknown>, key: string, d: string) => s(o[key], d);
 
     const input = obj(parsedData);
+    console.log("Parsed input drivers:", input.drivers);
     const scoresIn = obj(input.scores);
     const scores = {
       automation_risk: n(scoresIn.automation_risk, 50),
@@ -278,10 +291,18 @@ Required JSON structure:
       non_replaceable: arr<string>(task_analysis_in.non_replaceable, [])
     };
 
+    const robot_takeover_analysis_in = obj(input.robot_takeover_analysis);
+    const robot_takeover_analysis = {
+      can_be_taken_by_robots: s(robot_takeover_analysis_in.can_be_taken_by_robots, "No"),
+      reasoning: s(robot_takeover_analysis_in.reasoning, "Reasoning pending."),
+      estimated_timeline: s(robot_takeover_analysis_in.estimated_timeline, "Uncertain")
+    };
+
     const normalized = {
       executive_summary: s(input.executive_summary, "Executive summary pending."),
       risk_analysis: s(input.risk_analysis, "Risk analysis pending."),
       strategic_advice,
+      robot_takeover_analysis,
       task_analysis,
       explanation: s(input.explanation, "Analysis pending."),
       future: s(input.future, "Outlook pending."),

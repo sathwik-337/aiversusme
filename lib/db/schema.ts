@@ -28,3 +28,12 @@ export const jobPolls = pgTable("job_polls", {
   no_chance: integer("no_chance").default(0).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const comments = pgTable("comments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  job_slug: text("job_slug").notNull(),
+  name: text("name").notNull(),
+  email: text("email"),
+  content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});

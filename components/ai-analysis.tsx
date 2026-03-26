@@ -12,6 +12,19 @@ interface AIAnalysisProps {
 interface AnalysisData {
   executive_summary: string;
   risk_analysis: string;
+  strategic_advice?: {
+    individuals: string;
+    businesses: string;
+  };
+  robot_takeover_analysis?: {
+    can_be_taken_by_robots: string;
+    reasoning: string;
+    estimated_timeline: string;
+  };
+  task_analysis?: {
+    replaceable: string[];
+    non_replaceable: string[];
+  };
   explanation: string;
   future: string;
   skills: string[];

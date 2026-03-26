@@ -27,6 +27,11 @@ interface AnalysisData {
     individuals: string;
     businesses: string;
   };
+  robot_takeover_analysis?: {
+    can_be_taken_by_robots: string;
+    reasoning: string;
+    estimated_timeline: string;
+  };
   task_analysis: {
     replaceable: string[];
     non_replaceable: string[];
@@ -54,6 +59,7 @@ interface AnalysisData {
   wage_forecast?: { year: number; forecast: number }[];
   hiring_trend?: { month: string; postings: number }[];
   timeline?: { year: number; event: string; risk_change: number }[];
+  drivers?: { name: string; impact: number }[];
 }
 
 const StatusBox = ({ children, borderColor = "border-orange-500" }: { children: React.ReactNode, borderColor?: string }) => (
@@ -123,12 +129,8 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
       }
     };
 
-    if (isSignedIn) {
-      fetchAnalysis();
-    } else {
-      setLoading(false);
-    }
-  }, [job.title, isSignedIn]);
+    fetchAnalysis();
+  }, [job.title]);
 
   useEffect(() => {
     const loadPoll = async () => {
@@ -212,20 +214,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
         </button>
       </div>
 
-      {!isSignedIn ? (
-        <div className="w-full max-w-md bg-[#25282c] border border-white/5 rounded-3xl p-8 text-center mb-12">
-          <h3 className="text-xl font-bold mb-3">Sign in to analyze this job</h3>
-          <p className="text-[#94a3b8] text-sm mb-6">Login or sign up to generate AI-powered insights for <span className="font-bold">{job.title}</span>.</p>
-          <div className="flex items-center justify-center gap-3">
-            <SignInButton mode="modal">
-              <button className="px-6 py-2 rounded-full bg-white text-black font-semibold hover:bg-gray-200">Login</button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="px-6 py-2 rounded-full bg-[#0ea5e9] text-white font-semibold hover:bg-[#0284c7]">Sign up</button>
-            </SignUpButton>
-          </div>
-        </div>
-      ) : loading ? (
+      {loading ? (
         <div className="w-full flex flex-col items-center py-20 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
           <p className="text-muted-foreground animate-pulse">AI is generating detailed analysis for {job.title}...</p>
@@ -243,6 +232,41 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
               {data.executive_summary}
             </div>
           </section>
+
+          {/* 🤖 Robot Takeover Analysis */}
+          {data.robot_takeover_analysis && (
+            <section className="bg-[#25282c] border border-white/5 rounded-3xl p-8 shadow-xl overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <BrainCircuit className="h-24 w-24" />
+              </div>
+              <SectionHeader>🤖 Robot Takeover Potential</SectionHeader>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="md:col-span-1 bg-[#111315] p-6 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Can Robots Do This?</span>
+                  <span className={cn(
+                    "text-3xl font-black px-4 py-1 rounded-lg",
+                    data.robot_takeover_analysis.can_be_taken_by_robots.toLowerCase().includes('yes') ? "text-red-500 bg-red-500/10" :
+                    data.robot_takeover_analysis.can_be_taken_by_robots.toLowerCase().includes('no') ? "text-green-500 bg-green-500/10" :
+                    "text-yellow-500 bg-yellow-500/10"
+                  )}>
+                    {data.robot_takeover_analysis.can_be_taken_by_robots}
+                  </span>
+                </div>
+                <div className="md:col-span-2 bg-[#111315] p-6 rounded-2xl border border-white/5">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2 block">The Reasoning</span>
+                  <p className="text-sm text-[#cbd5e1] leading-relaxed">
+                    {data.robot_takeover_analysis.reasoning}
+                  </p>
+                </div>
+                <div className="md:col-span-1 bg-[#111315] p-6 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Timeline</span>
+                  <span className="text-lg font-bold text-blue-400">
+                    {data.robot_takeover_analysis.estimated_timeline}
+                  </span>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* 1. Calculated automation risk & Analysis */}
           <section>
