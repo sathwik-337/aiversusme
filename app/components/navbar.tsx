@@ -130,7 +130,7 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       {menuOpen && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-black text-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-6 z-40 md:hidden">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-black text-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-6 z-50 md:hidden overflow-y-auto max-h-[80vh]">
           {navLinks.map((link) => {
             const isHash = link.href.startsWith("#");
 
