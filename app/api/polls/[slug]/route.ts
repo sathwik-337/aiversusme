@@ -18,9 +18,9 @@ function randomDistribution(total: number) {
   };
 }
 
-export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = await paramsPromise;
+    const { slug } = await context.params;
     if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
     let row = await db.select().from(jobPolls).where(eq(jobPolls.slug, slug)).limit(1);
     if (row.length === 0) {
@@ -36,9 +36,9 @@ export async function GET(req: NextRequest, { params: paramsPromise }: { params:
   }
 }
 
-export async function POST(req: NextRequest, { params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = await paramsPromise;
+    const { slug } = await context.params;
     const raw = await req.text().catch(() => "");
     let parsed: Record<string, unknown> = {};
     try {

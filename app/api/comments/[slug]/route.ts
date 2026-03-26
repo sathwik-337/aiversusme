@@ -5,10 +5,10 @@ import { eq, desc } from "drizzle-orm";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = await context.params;
     const jobComments = await db
       .select()
       .from(comments)
@@ -24,10 +24,10 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  context: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = await context.params;
     const { name, email, content } = await req.json();
 
     if (!name || !content) {
