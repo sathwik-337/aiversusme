@@ -158,6 +158,27 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* 🆕 BRANCHSELECTOR SECTION */}
+      <div className="w-full border-b border-white/10 py-16 bg-white/5">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h4 className="text-2xl md:text-3xl font-black mb-10 text-transparent bg-clip-text text-white">
+            Want to build a successful career? Choose BranchSelector — your path to the right future.
+          </h4>
+          <div className="flex justify-center">
+            <a href="https://branchselector.com" target="_blank" rel="noopener noreferrer">
+              <Image
+              
+                src="/branchlogo.png"
+                alt="BranchSelector Logo"
+                width={170}
+                height={80}
+                className="object-contain opacity-90 hover:opacity-100 transition duration-300"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* INNER CONTAINER */}
       <div className="max-w-6xl mx-auto px-6 py-12">
 
