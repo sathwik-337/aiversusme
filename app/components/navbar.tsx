@@ -73,7 +73,7 @@ export default function Navbar() {
           {/* LOGO */}
           {/* LOGO */}
           <div className="flex items-center gap-2">
-           <img src="/bgremovedlogo.png" alt="logo" className="w-[120px] object-contain scale-150" />
+           <img src="/bgremovedlogo.png" alt="logo" className="w-[150px] object-contain scale-200" />
           </div>
 
           {/* DESKTOP LINKS */}
