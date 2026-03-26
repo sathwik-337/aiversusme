@@ -59,7 +59,6 @@ interface AnalysisData {
   wage_forecast?: { year: number; forecast: number }[];
   hiring_trend?: { month: string; postings: number }[];
   timeline?: { year: number; event: string; risk_change: number }[];
-  drivers?: { name: string; impact: number }[];
 }
 
 const StatusBox = ({ children, borderColor = "border-orange-500" }: { children: React.ReactNode, borderColor?: string }) => (

@@ -6,10 +6,10 @@ import JobDetailAnalysis from "@/components/job-detail-analysis";
 import CommentsSection from "@/components/comments-section";
 import * as dotenv from "dotenv";
 
-export default async function JobPage({ params: promise }: { params: { slug: string } }) {
-  const params = await promise;
+export default async function JobPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const job = await db.query.jobs.findFirst({
-    where: eq(jobs.slug, params.slug),
+    where: eq(jobs.slug, slug),
   });
 
   if (!job) {
