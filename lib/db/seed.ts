@@ -55,6 +55,17 @@ const baseJobs = [
   { title: "Field Sales Agent", category: "Sales", risk: 40, salary: "₹2,40,000 - ₹7,20,000", demand: "High", synonyms: "Sales Rep, Direct Sales, Outdoor Sales" },
   { title: "Relationship Manager", category: "Sales", risk: 25, salary: "₹5,00,000 - ₹18,00,000", demand: "High", synonyms: "RM, Client Manager, Account Manager" },
 
+  // --- Skilled Jobs ---
+  { title: "Software Developer", category: "Skilled", risk: 20, salary: "₹8,00,000 - ₹35,00,000", demand: "High", synonyms: "Programmer, Web Developer, Coder, Software Engineer" },
+  { title: "Web Developer", category: "Skilled", risk: 25, salary: "₹5,00,000 - ₹20,00,000", demand: "High", synonyms: "Frontend Developer, Backend Developer, Full Stack Developer" },
+  { title: "Data Scientist", category: "Skilled", risk: 15, salary: "₹10,00,000 - ₹45,00,000", demand: "Very High", synonyms: "AI Engineer, Machine Learning Engineer" },
+  { title: "Lawyer", category: "Skilled", risk: 10, salary: "₹6,00,000 - ₹50,00,000", demand: "Medium", synonyms: "Attorney, Legal Counsel, Solicitor" },
+  { title: "Accountant", category: "Skilled", risk: 60, salary: "₹3,00,000 - ₹15,00,000", demand: "High", synonyms: "Chartered Accountant, CA, Bookkeeper" },
+  { title: "Graphic Designer", category: "Skilled", risk: 30, salary: "₹3,00,000 - ₹12,00,000", demand: "Medium", synonyms: "UI/UX Designer, Visual Artist" },
+  { title: "Electrical Engineer", category: "Skilled", risk: 10, salary: "₹4,00,000 - ₹18,00,000", demand: "High", synonyms: "Power Engineer" },
+  { title: "Mechanical Engineer", category: "Skilled", risk: 15, salary: "₹4,00,000 - ₹20,00,000", demand: "Medium", synonyms: "Design Engineer" },
+  { title: "Actor", category: "Skilled", risk: 5, salary: "₹5,00,000 - ₹1,00,00,000", demand: "Competitive", synonyms: "Performer, Artist" },
+
   // --- Security ---
   { title: "Security Guard", category: "Security", risk: 80, salary: "₹1,80,000 - ₹3,60,000", demand: "High", synonyms: "Watchman, Security Officer, Guard" },
 ];
