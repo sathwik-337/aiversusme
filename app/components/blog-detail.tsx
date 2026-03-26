@@ -7,6 +7,14 @@ import { blogPosts } from "@/app/data/blog-posts";
 
 export default function BlogDetail({ slug }: { slug: string }) {
   const router = useRouter();
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 2) {
+      router.back();
+    } else {
+      router.push("/blog");
+    }
+  };
+
   const post = blogPosts.find((p) => p.slug === slug);
 
   if (!post) {
@@ -18,7 +26,7 @@ export default function BlogDetail({ slug }: { slug: string }) {
       <article className="max-w-4xl mx-auto">
         {/* Back Link */}
         <button
-          onClick={() => router.push("/?scrollTo=blog")}
+          onClick={handleBack}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-8 text-sm font-medium cursor-pointer"
         >
           <ArrowLeft size={16} />
