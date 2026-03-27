@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { jobPolls } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { jobPolls, pollVotes } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
 
 function randomDistribution(total: number) {
   const parts = Array.from({ length: 5 }, () => Math.random());
@@ -38,6 +39,11 @@ export async function GET(req: NextRequest, context: { params: Promise<{ slug: s
 
 export async function POST(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { slug } = await context.params;
     const raw = await req.text().catch(() => "");
     let parsed: Record<string, unknown> = {};
@@ -62,6 +68,20 @@ export async function POST(req: NextRequest, context: { params: Promise<{ slug: 
     if (!slug || !option || !(valid as readonly string[]).includes(option)) {
       return NextResponse.json({ error: "Invalid request: option must be one of highly_likely|moderate|uncertain|low|no_chance" }, { status: 400 });
     }
+
+    // Check if the user has already voted for this job
+    const alreadyVoted = await db.select().from(pollVotes).where(and(eq(pollVotes.job_slug, slug), eq(pollVotes.user_id, userId))).limit(1);
+    if (alreadyVoted.length > 0) {
+      return NextResponse.json({ error: "You have already voted for this job" }, { status: 400 });
+    }
+
+    // Record the individual vote
+    await db.insert(pollVotes).values({
+      job_slug: slug,
+      user_id: userId,
+      vote_type: option
+    });
+
     const existing = await db.select().from(jobPolls).where(eq(jobPolls.slug, slug)).limit(1);
     if (existing.length === 0) {
       const base = randomDistribution(100 + Math.floor(Math.random() * 400));

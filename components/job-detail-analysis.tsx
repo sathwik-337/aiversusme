@@ -366,29 +366,49 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
             </p>
             <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 max-w-xl w-full">
               <h4 className="text-2xl font-bold mb-4">What do you think the risk of automation is?</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                <button onClick={() => setChoice("highly_likely")} className={`px-4 py-2 rounded-md border ${choice==="highly_likely"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Highly likely</button>
-                <button onClick={() => setChoice("moderate")} className={`px-4 py-2 rounded-md border ${choice==="moderate"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Moderate</button>
-                <button onClick={() => setChoice("uncertain")} className={`px-4 py-2 rounded-md border ${choice==="uncertain"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Uncertain</button>
-                <button onClick={() => setChoice("low")} className={`px-4 py-2 rounded-md border ${choice==="low"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Low</button>
-                <button onClick={() => setChoice("no_chance")} className={`px-4 py-2 rounded-md border ${choice==="no_chance"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>No chance</button>
-              </div>
-              <div className="flex items-center gap-3 mb-6">
-                <button
-                  onClick={async () => {
-                    if (!choice) return;
-                    const res = await axios.post(`/api/polls/${job.slug}`, { option: choice }, { withCredentials: true });
-                    setPollData(res.data);
-                    setPollMessage("Poll submitted!");
-                    setTimeout(() => setPollMessage(null), 2500);
-                  }}
-                  disabled={!choice}
-                  className="bg-[#00e5ff] hover:bg-[#00b8cc] text-black font-black px-8 py-3 rounded-xl transition-colors text-sm disabled:opacity-50"
-                >
-                  Submit vote
-                </button>
-                {pollMessage && <span className="text-sm text-green-400">{pollMessage}</span>}
-              </div>
+              
+              {!isSignedIn ? (
+                <div className="bg-[#111315] border border-white/10 rounded-xl p-6 text-center space-y-4 mb-6">
+                  <p className="text-sm text-[#cbd5e1]">Please sign in to participate in the community poll.</p>
+                  <SignInButton mode="modal">
+                    <button className="bg-white text-black font-bold px-6 py-2 rounded-full hover:bg-gray-200 transition-colors text-xs">
+                      Sign In to Vote
+                    </button>
+                  </SignInButton>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    <button onClick={() => setChoice("highly_likely")} className={`px-4 py-2 rounded-md border ${choice==="highly_likely"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Highly likely</button>
+                    <button onClick={() => setChoice("moderate")} className={`px-4 py-2 rounded-md border ${choice==="moderate"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Moderate</button>
+                    <button onClick={() => setChoice("uncertain")} className={`px-4 py-2 rounded-md border ${choice==="uncertain"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Uncertain</button>
+                    <button onClick={() => setChoice("low")} className={`px-4 py-2 rounded-md border ${choice==="low"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Low</button>
+                    <button onClick={() => setChoice("no_chance")} className={`px-4 py-2 rounded-md border ${choice==="no_chance"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>No chance</button>
+                  </div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <button
+                      onClick={async () => {
+                        if (!choice) return;
+                        try {
+                          const res = await axios.post(`/api/polls/${job.slug}`, { option: choice }, { withCredentials: true });
+                          setPollData(res.data);
+                          setPollMessage("Poll submitted!");
+                          setTimeout(() => setPollMessage(null), 2500);
+                        } catch (err: any) {
+                          setPollMessage(err.response?.data?.error || "Submission failed");
+                          setTimeout(() => setPollMessage(null), 3500);
+                        }
+                      }}
+                      disabled={!choice}
+                      className="bg-[#00e5ff] hover:bg-[#00b8cc] text-black font-black px-8 py-3 rounded-xl transition-colors text-sm disabled:opacity-50"
+                    >
+                      Submit vote
+                    </button>
+                    {pollMessage && <span className={`text-sm ${pollMessage.includes("failed") || pollMessage.includes("already") ? "text-red-400" : "text-green-400"}`}>{pollMessage}</span>}
+                  </div>
+                </>
+              )}
+
               {pollData && (
                 <div className="space-y-2">
                   {([
@@ -433,19 +453,40 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
 
           <section>
             <SectionHeader>Risk drivers</SectionHeader>
-            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart layout="vertical" data={data?.drivers || []}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
-                  <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} hide />
-                  <YAxis type="category" dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} width={120} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                    itemStyle={{ color: '#fff' }}
-                  />
-                  <Bar dataKey="impact" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={20} />
-                </RechartsBarChart>
-              </ResponsiveContainer>
+            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px] flex items-center justify-center relative overflow-hidden">
+              {data?.drivers && data.drivers.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart layout="vertical" data={data.drivers}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                    <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} hide domain={[0, 100]} />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name" 
+                      stroke="#cbd5e1" 
+                      fontSize={11} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      width={140}
+                      tick={{ fill: '#94a3b8' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#111315', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    />
+                    <Bar dataKey="impact" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={24}>
+                      {data.drivers.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.impact > 70 ? '#ef4444' : entry.impact > 40 ? '#f59e0b' : '#22c55e'} />
+                      ))}
+                    </Bar>
+                  </RechartsBarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center space-y-2">
+                  <BrainCircuit className="h-8 w-8 text-white/10 mx-auto mb-2" />
+                  <p className="text-muted-foreground text-sm">Identifying risk factors...</p>
+                </div>
+              )}
             </div>
           </section>
 

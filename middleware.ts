@@ -6,10 +6,18 @@ const isProtectedRoute = createRouteMatcher([
   '/rankings(.*)',
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   // Protect the routes defined above
   if (isProtectedRoute(req)) {
-    auth.protect();
+    await auth.protect();
+  }
+  
+  // Also protect specific API POST routes
+  if (req.method === 'POST') {
+    if (req.nextUrl.pathname.startsWith('/api/comments/') || 
+        req.nextUrl.pathname.startsWith('/api/polls/')) {
+      await auth.protect();
+    }
   }
 });
 

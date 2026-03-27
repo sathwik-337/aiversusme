@@ -33,8 +33,17 @@ export const jobPolls = pgTable("job_polls", {
 export const comments = pgTable("comments", {
   id: uuid("id").defaultRandom().primaryKey(),
   job_slug: text("job_slug").notNull(),
+  user_id: text("user_id").notNull(), // Added user_id
   name: text("name").notNull(),
   email: text("email"),
   content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const pollVotes = pgTable("poll_votes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  job_slug: text("job_slug").notNull(),
+  user_id: text("user_id").notNull(),
+  vote_type: text("vote_type").notNull(), // highly_likely, moderate, etc.
   created_at: timestamp("created_at").defaultNow().notNull(),
 });

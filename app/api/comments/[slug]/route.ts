@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { comments } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
   req: NextRequest,
@@ -27,6 +28,11 @@ export async function POST(
   context: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { slug } = await context.params;
     const { name, email, content } = await req.json();
 
@@ -36,6 +42,7 @@ export async function POST(
 
     const [newComment] = await db.insert(comments).values({
       job_slug: slug,
+      user_id: userId,
       name,
       email,
       content,

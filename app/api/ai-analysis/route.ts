@@ -267,7 +267,36 @@ Required JSON structure:
             job_wage: getNum(w, "job_wage", 400000),
             national_median: getNum(w, "national_median", 350000),
           }));
-    const drivers = arr<Record<string, unknown>>(input.drivers, []).map((d) => ({ name: getStr(d, "name", "Factor"), impact: getNum(d, "impact", 50) })).slice(0, 8);
+    const driversIn = input.drivers || input.risk_drivers || input.automation_drivers;
+    let drivers: { name: string; impact: number }[] = [];
+    
+    if (Array.isArray(driversIn)) {
+      drivers = driversIn.map((d) => {
+        if (typeof d === "string") return { name: d, impact: 50 + Math.floor(Math.random() * 30) };
+        const o = obj(d);
+        return { 
+          name: getStr(o, "name", getStr(o, "factor", getStr(o, "driver", "Factor"))), 
+          impact: getNum(o, "impact", getNum(o, "score", 50)) 
+        };
+      });
+    } else if (driversIn && typeof driversIn === "object") {
+      drivers = Object.entries(driversIn as Record<string, any>).map(([name, impact]) => ({
+        name,
+        impact: typeof impact === "number" ? impact : 50
+      }));
+    }
+
+    if (drivers.length === 0) {
+      drivers = [
+        { name: "Routine Tasks", impact: 85 },
+        { name: "AI Maturity", impact: 70 },
+        { name: "Data Volume", impact: 65 },
+        { name: "Decision Complexity", impact: 40 },
+        { name: "Human Interaction", impact: 30 }
+      ];
+    }
+    drivers = drivers.slice(0, 8);
+
     const task_impactIn = obj(input.task_impact);
     const task_impact = {
       replaced: n(task_impactIn.replaced, 30),

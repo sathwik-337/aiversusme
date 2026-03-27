@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ChevronDown, MessageSquare, User } from "lucide-react";
+import { useUser, SignInButton } from "@clerk/nextjs";
 
 interface Comment {
   id: string;
@@ -22,11 +23,22 @@ const SectionHeader = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function CommentsSection({ jobSlug, initialCommentsCount }: CommentsSectionProps) {
+  const { isLoaded, isSignedIn, user } = useUser();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", content: "" });
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.fullName || user.username || "",
+        email: user.primaryEmailAddress?.emailAddress || ""
+      }));
+    }
+  }, [isLoaded, isSignedIn, user]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -44,6 +56,7 @@ export default function CommentsSection({ jobSlug, initialCommentsCount }: Comme
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSignedIn) return;
     if (!formData.name || !formData.content) return;
 
     setPosting(true);
@@ -51,7 +64,7 @@ export default function CommentsSection({ jobSlug, initialCommentsCount }: Comme
     try {
       const response = await axios.post(`/api/comments/${jobSlug}`, formData);
       setComments([response.data, ...comments]);
-      setFormData({ name: "", email: "", content: "" });
+      setFormData(prev => ({ ...prev, content: "" }));
       setMessage({ type: "success", text: "Comment posted successfully!" });
     } catch (error) {
       console.error("Failed to post comment:", error);
@@ -74,46 +87,61 @@ export default function CommentsSection({ jobSlug, initialCommentsCount }: Comme
         {/* Post Comment Form */}
         <div className="space-y-8 mb-16">
           <p className="text-sm font-bold text-blue-400">Leave a reply about this occupation</p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <textarea
-              className="w-full bg-[#111315] border border-white/10 rounded-lg p-4 h-32 text-sm focus:outline-none focus:border-blue-500/50 transition-colors text-white"
-              placeholder="Comment"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              required
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                className="bg-[#111315] border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-500/50 transition-colors text-white"
-                placeholder="Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          
+          {!isLoaded ? (
+            <div className="h-32 w-full bg-[#111315] animate-pulse rounded-lg" />
+          ) : !isSignedIn ? (
+            <div className="bg-[#111315] border border-white/10 rounded-xl p-8 text-center space-y-4">
+              <p className="text-[#cbd5e1]">Please sign in to join the conversation.</p>
+              <SignInButton mode="modal">
+                <button className="bg-white text-black font-bold px-8 py-2 rounded-full hover:bg-gray-200 transition-colors">
+                  Sign In to Comment
+                </button>
+              </SignInButton>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <textarea
+                className="w-full bg-[#111315] border border-white/10 rounded-lg p-4 h-32 text-sm focus:outline-none focus:border-blue-500/50 transition-colors text-white"
+                placeholder="Your comment..."
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 required
               />
-              <input
-                type="email"
-                className="bg-[#111315] border border-white/10 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-500/50 transition-colors text-white"
-                placeholder="Email (optional, not published)"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                type="submit"
-                disabled={posting}
-                className="bg-[#00e5ff]/20 hover:bg-[#00e5ff]/30 text-[#00e5ff] font-bold px-6 py-2 rounded-lg transition-colors text-sm border border-[#00e5ff]/30 disabled:opacity-50"
-              >
-                {posting ? "Posting..." : "Post Comment"}
-              </button>
-              {message && (
-                <span className={`text-sm ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
-                  {message.text}
-                </span>
-              )}
-            </div>
-          </form>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  className="bg-[#111315]/50 border border-white/10 rounded-lg p-3 text-sm text-[#94a3b8] cursor-not-allowed"
+                  placeholder="Name"
+                  value={formData.name}
+                  readOnly
+                  disabled
+                />
+                <input
+                  type="email"
+                  className="bg-[#111315]/50 border border-white/10 rounded-lg p-3 text-sm text-[#94a3b8] cursor-not-allowed"
+                  placeholder="Email"
+                  value={formData.email}
+                  readOnly
+                  disabled
+                />
+              </div>
+              <div className="flex items-center gap-4">
+                <button
+                  type="submit"
+                  disabled={posting || !formData.content.trim()}
+                  className="bg-[#00e5ff]/20 hover:bg-[#00e5ff]/30 text-[#00e5ff] font-bold px-6 py-2 rounded-lg transition-colors text-sm border border-[#00e5ff]/30 disabled:opacity-50"
+                >
+                  {posting ? "Posting..." : "Post Comment"}
+                </button>
+                {message && (
+                  <span className={`text-sm ${message.type === "success" ? "text-green-400" : "text-red-400"}`}>
+                    {message.text}
+                  </span>
+                )}
+              </div>
+            </form>
+          )}
         </div>
 
         {/* Comments List */}
