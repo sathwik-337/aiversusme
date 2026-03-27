@@ -158,6 +158,56 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* 🆕 BRANCHSELECTOR SECTION */}
+      <div className="w-full py-20 bg-gradient-to-b from-black to-zinc-900 border-b border-white/10">
+  <div className="max-w-5xl mx-auto px-6 text-center">
+
+    {/* Heading */}
+    <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+      Build a Career That Actually Fits You
+    </h2>
+
+    {/* Subheading */}
+    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+      Discover your ideal path with AI-powered career guidance and psychometric tests.
+      Stop guessing — start choosing the right future.
+    </p>
+
+    {/* Logo */}
+   <div className="w-full flex justify-center items-center py-10">
+  <div className="flex items-center gap-3">
+    <Image
+      src="/branchlogo.png"
+      alt="BranchSelector Logo"
+      width={55}
+      height={55}
+      className="object-contain"
+    />
+
+    <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-wide">
+      BranchSelector
+    </h1>
+  </div>
+</div>
+
+    {/* Brand Name
+    <h3 className="text-2xl font-semibold text-white mb-8">
+      BranchSelector
+    </h3> */}
+
+    {/* CTA Button */}
+    <a
+      href="https://branchselector.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block bg-white text-black font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-lg"
+    >
+      Get Started →
+    </a>
+
+  </div>
+</div>
+
       {/* INNER CONTAINER */}
       <div className="max-w-6xl mx-auto px-6 py-12">
 
@@ -199,21 +249,8 @@ export default function Footer() {
 
           </div>
 
-          {/* RIGHT - SOCIAL */}
-          <div className="flex flex-col gap-4">
-            <span className="text-gray-400 uppercase text-xs">Follow</span>
-            <div className="flex gap-4">
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaGithub size={16} />
-              </a>
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaTwitter size={16} />
-              </a>
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaLinkedin size={16} />
-              </a>
-            </div>
-          </div>
+          
+    
         </div>
 
         {/* DIVIDER */}

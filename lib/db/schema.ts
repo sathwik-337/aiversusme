@@ -16,5 +16,35 @@ export const jobs = pgTable("jobs", {
   volume: integer("volume"),
   job_score: text("job_score"),
   description: text("description").notNull(),
+  synonyms: text("synonyms"),
+  job_code: text("job_code"), // Custom AIVSME code
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const jobPolls = pgTable("job_polls", {
+  slug: text("slug").unique().notNull(),
+  highly_likely: integer("highly_likely").default(0).notNull(),
+  moderate: integer("moderate").default(0).notNull(),
+  uncertain: integer("uncertain").default(0).notNull(),
+  low: integer("low").default(0).notNull(),
+  no_chance: integer("no_chance").default(0).notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const comments = pgTable("comments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  job_slug: text("job_slug").notNull(),
+  user_id: text("user_id").notNull(), // Added user_id
+  name: text("name").notNull(),
+  email: text("email"),
+  content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const pollVotes = pgTable("poll_votes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  job_slug: text("job_slug").notNull(),
+  user_id: text("user_id").notNull(),
+  vote_type: text("vote_type").notNull(), // highly_likely, moderate, etc.
   created_at: timestamp("created_at").defaultNow().notNull(),
 });

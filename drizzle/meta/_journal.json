@@ -15,6 +15,41 @@
       "when": 1774001650021,
       "tag": "0001_spooky_stellaris",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774349931880,
+      "tag": "0002_sticky_lady_ursula",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774521344871,
+      "tag": "0003_amazing_gambit",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774524970776,
+      "tag": "0004_concerned_rachel_grey",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774589266617,
+      "tag": "0005_motionless_caretaker",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774602256344,
+      "tag": "0006_many_silver_centurion",
+      "breakpoints": true
     }
   ]
 }

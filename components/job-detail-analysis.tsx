@@ -7,6 +7,9 @@ import {
   TrendingUp, Facebook, Twitter, Linkedin, Repeat, Search, 
   GitCompare, Vote, MessageSquare, ChevronDown, Sparkles, BrainCircuit, Rocket, Lightbulb
 } from "lucide-react";
+import { 
+  BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend
+} from 'recharts';
 import { cn } from "@/lib/utils";
 import Gauge from "./gauge";
 import RadarChart from "./radar-chart";
@@ -18,6 +21,21 @@ type JobSelect = typeof jobsTable.$inferSelect;
 interface JobDetailAnalysisProps { job: JobSelect }
 
 interface AnalysisData {
+  executive_summary: string;
+  risk_analysis: string;
+  strategic_advice: {
+    individuals: string;
+    businesses: string;
+  };
+  robot_takeover_analysis?: {
+    can_be_taken_by_robots: string;
+    reasoning: string;
+    estimated_timeline: string;
+  };
+  task_analysis: {
+    replaceable: string[];
+    non_replaceable: string[];
+  };
   explanation: string;
   future: string;
   skills: string[];
@@ -53,16 +71,51 @@ const SectionHeader = ({ children }: { children: React.ReactNode }) => (
   <h2 className="text-2xl font-bold tracking-tight mb-6">{children}</h2>
 );
 
+const detailCache = new Map<string, AnalysisData>();
+
 export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isSignedIn } = useAuth();
+  const [pollData, setPollData] = useState<{ highly_likely: number; moderate: number; uncertain: number; low: number; no_chance: number } | null>(null);
+  const [choice, setChoice] = useState<"highly_likely" | "moderate" | "uncertain" | "low" | "no_chance" | null>(null);
+  const [pollMessage, setPollMessage] = useState<string | null>(null);
+
+  function recommendCerts(title: string) {
+    const t = title.toLowerCase();
+    if (t.includes("data") || t.includes("analyst") || t.includes("scientist")) {
+      return ["Google Data Analytics", "IBM Data Science", "AWS Data Analytics", "Microsoft Azure DP-100", "Tableau Desktop", "Power BI Analyst PL-300"];
+    }
+    if (t.includes("developer") || t.includes("engineer") || t.includes("programmer")) {
+      return ["AWS Solutions Architect Associate", "Azure AZ-104", "Google Professional Cloud Developer", "Meta Front-End", "React Nanodegree", "Kubernetes CKAD"];
+    }
+    if (t.includes("accountant") || t.includes("finance")) {
+      return ["ACCA Foundations", "CPA fundamentals", "Tally with GST", "SAP FI basics", "Financial Modeling", "Excel Advanced"];
+    }
+    if (t.includes("marketing")) {
+      return ["Google Ads", "Meta Blueprint", "HubSpot Content", "SEO Specialization", "GA4 Analytics", "Email Marketing"];
+    }
+    if (t.includes("designer")) {
+      return ["Adobe Certified Professional", "Figma UI Design", "UX Research", "Motion Graphics", "3D Modeling Basics", "Brand Design"];
+    }
+    if (t.includes("electrical") || t.includes("mechanical") || t.includes("civil")) {
+      return ["AutoCAD", "SolidWorks", "PLC SCADA", "Primavera P6", "ANSYS Basics", "Quality Management"];
+    }
+    return ["Communication Skills", "Project Management Basics", "SQL Fundamentals", "Git & GitHub", "Python Essentials", "Cloud Foundations"];
+  }
 
   useEffect(() => {
     const fetchAnalysis = async () => {
+      if (detailCache.has(job.title)) {
+        setData(detailCache.get(job.title)!);
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.post("/api/ai-analysis", { job_title: job.title }, { withCredentials: true });
+        detailCache.set(job.title, response.data);
         setData(response.data);
       } catch (err: unknown) {
         const msg = typeof err === "object" && err && "response" in err
@@ -75,12 +128,17 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
       }
     };
 
-    if (isSignedIn) {
-      fetchAnalysis();
-    } else {
-      setLoading(false);
-    }
-  }, [job.title, isSignedIn]);
+    fetchAnalysis();
+  }, [job.title]);
+
+  useEffect(() => {
+    const loadPoll = async () => {
+      if (!isSignedIn) return;
+      const res = await axios.get(`/api/polls/${job.slug}`, { withCredentials: true });
+      setPollData(res.data);
+    };
+    loadPoll();
+  }, [isSignedIn, job.slug]);
 
   const risk = data?.scores?.automation_risk ?? job.risk_score;
   const riskLevel = risk > 70 ? "Imminent Risk" : risk > 30 ? "Moderate Risk" : "Minimal Risk";
@@ -155,20 +213,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
         </button>
       </div>
 
-      {!isSignedIn ? (
-        <div className="w-full max-w-md bg-[#25282c] border border-white/5 rounded-3xl p-8 text-center mb-12">
-          <h3 className="text-xl font-bold mb-3">Sign in to analyze this job</h3>
-          <p className="text-[#94a3b8] text-sm mb-6">Login or sign up to generate AI-powered insights for <span className="font-bold">{job.title}</span>.</p>
-          <div className="flex items-center justify-center gap-3">
-            <SignInButton mode="modal">
-              <button className="px-6 py-2 rounded-full bg-white text-black font-semibold hover:bg-gray-200">Login</button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="px-6 py-2 rounded-full bg-[#0ea5e9] text-white font-semibold hover:bg-[#0284c7]">Sign up</button>
-            </SignUpButton>
-          </div>
-        </div>
-      ) : loading ? (
+      {loading ? (
         <div className="w-full flex flex-col items-center py-20 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
           <p className="text-muted-foreground animate-pulse">AI is generating detailed analysis for {job.title}...</p>
@@ -179,17 +224,74 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
         </div>
       ) : data ? (
         <div className="w-full space-y-20">
-          {/* 1. Calculated automation risk */}
+          {/* 🔍 Executive Summary */}
+          <section className="bg-[#25282c] border border-white/5 rounded-3xl p-8 shadow-xl">
+            <SectionHeader>🔍 Executive Summary</SectionHeader>
+            <div className="prose prose-invert max-w-none text-[#cbd5e1] leading-relaxed italic border-l-4 border-blue-500 pl-6 py-2">
+              {data.executive_summary}
+            </div>
+          </section>
+
+          {/* 🤖 Robot Takeover Analysis */}
+          {data.robot_takeover_analysis && (
+            <section className="bg-[#25282c] border border-white/5 rounded-3xl p-8 shadow-xl overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <BrainCircuit className="h-24 w-24" />
+              </div>
+              <SectionHeader>🤖 Robot Takeover Potential</SectionHeader>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="md:col-span-1 bg-[#111315] p-6 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Can Robots Do This?</span>
+                  <span className={cn(
+                    "text-3xl font-black px-4 py-1 rounded-lg",
+                    data.robot_takeover_analysis.can_be_taken_by_robots.toLowerCase().includes('yes') ? "text-red-500 bg-red-500/10" :
+                    data.robot_takeover_analysis.can_be_taken_by_robots.toLowerCase().includes('no') ? "text-green-500 bg-green-500/10" :
+                    "text-yellow-500 bg-yellow-500/10"
+                  )}>
+                    {data.robot_takeover_analysis.can_be_taken_by_robots}
+                  </span>
+                </div>
+                <div className="md:col-span-2 bg-[#111315] p-6 rounded-2xl border border-white/5">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2 block">The Reasoning</span>
+                  <p className="text-sm text-[#cbd5e1] leading-relaxed">
+                    {data.robot_takeover_analysis.reasoning}
+                  </p>
+                </div>
+                <div className="md:col-span-1 bg-[#111315] p-6 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
+                  <span className="text-xs font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Timeline</span>
+                  <span className="text-lg font-bold text-blue-400">
+                    {data.robot_takeover_analysis.estimated_timeline}
+                  </span>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* 1. Calculated automation risk & Analysis */}
           <section>
-            <SectionHeader>Calculated automation risk</SectionHeader>
-            <StatusBox borderColor={riskColor}>
-              {risk}% ({riskLevel})
-            </StatusBox>
-            <p className="text-[#94a3b8] mb-6 leading-relaxed">
-              <span className="font-bold">{riskLevel} ({risk}%):</span> {data.explanation}
-            </p>
+            <SectionHeader>📉 Job Risk Analysis</SectionHeader>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+               <div className="md:col-span-1 flex flex-col items-center justify-center bg-[#1e293b]/30 rounded-3xl p-8 border border-white/5">
+                  <span className="text-sm font-bold text-[#94a3b8] uppercase tracking-widest mb-2">Risk Score</span>
+                  <span className={cn("text-6xl font-black", risk > 70 ? "text-orange-500" : risk > 30 ? "text-yellow-500" : "text-green-500")}>
+                    {risk}%
+                  </span>
+                  <span className="text-xs font-bold text-[#94a3b8] mt-2 uppercase tracking-widest">{riskLevel}</span>
+               </div>
+               <div className="md:col-span-2 space-y-4">
+                  <StatusBox borderColor={riskColor}>
+                    Expert Interpretation
+                  </StatusBox>
+                  <p className="text-[#94a3b8] leading-relaxed">
+                    {data.risk_analysis}
+                  </p>
+               </div>
+            </div>
+            
             <div className="bg-[#1e293b]/30 border-l-4 border-green-500 rounded-md p-6 mt-8">
-              <p className="font-bold text-sm mb-4">Recommended focus areas to stay relevant:</p>
+              <p className="font-bold text-sm mb-4 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-green-500" /> Future-Proof Skills to Focus On:
+              </p>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-[#94a3b8]">
                 {(data?.skills || []).map((skill, i) => (
                   <li key={i} className="flex items-center gap-2">
@@ -200,33 +302,144 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
             </div>
           </section>
 
+          {/* 🤖 Task-Level Automation Insight */}
+          <section className="bg-[#25282c] border border-white/5 rounded-3xl p-8 shadow-xl">
+            <SectionHeader>🤖 Task-Level Automation Insight</SectionHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+               <div className="space-y-6">
+                  <h4 className="text-lg font-bold text-red-400 flex items-center gap-2">
+                     <BrainCircuit className="h-5 w-5" /> Tasks AI Can Replace
+                  </h4>
+                  <ul className="space-y-4">
+                     {(data.task_analysis.replaceable || []).map((task, i) => (
+                        <li key={i} className="text-sm text-[#94a3b8] bg-[#111315] p-4 rounded-xl border border-white/5">
+                           {task}
+                        </li>
+                     ))}
+                  </ul>
+               </div>
+               <div className="space-y-6">
+                  <h4 className="text-lg font-bold text-green-400 flex items-center gap-2">
+                     <Lightbulb className="h-5 w-5" /> Tasks AI Cannot Replace
+                  </h4>
+                  <ul className="space-y-4">
+                     {(data.task_analysis.non_replaceable || []).map((task, i) => (
+                        <li key={i} className="text-sm text-[#94a3b8] bg-[#111315] p-4 rounded-xl border border-white/5">
+                           {task}
+                        </li>
+                     ))}
+                  </ul>
+               </div>
+            </div>
+          </section>
+
+          {/* 🧑‍💼 Strategic Advice */}
+          <section className="bg-[#1e293b]/20 border border-blue-500/20 rounded-3xl p-8 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+               <Rocket className="h-32 w-32" />
+            </div>
+            <SectionHeader>🧑‍💼 Strategic Advice</SectionHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+               <div className="space-y-4">
+                  <h4 className="text-lg font-bold text-blue-400">For Individuals</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">
+                     {data.strategic_advice.individuals}
+                  </p>
+               </div>
+               <div className="space-y-4">
+                  <h4 className="text-lg font-bold text-purple-400">For Business Owners</h4>
+                  <p className="text-[#94a3b8] text-sm leading-relaxed">
+                     {data.strategic_advice.businesses}
+                  </p>
+               </div>
+            </div>
+          </section>
+
           {/* 2. User poll */}
           <section>
-            <SectionHeader>User poll</SectionHeader>
+            <SectionHeader>Community Perception</SectionHeader>
             <StatusBox borderColor="border-yellow-500">
               {(data?.scores?.automation_risk ?? risk)}% chance of full automation within the next two decades
             </StatusBox>
             <p className="text-[#94a3b8] mb-8 leading-relaxed">
-              Our AI analysis estimates a {(data?.scores?.automation_risk ?? risk)}% chance of automation. This is based on current trends in robotics and AI integration in the {job.title} sector.
+              Our AI analysis estimates a {(data?.scores?.automation_risk ?? risk)}% chance of automation.
             </p>
-            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 max-w-lg">
+            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 max-w-xl w-full">
               <h4 className="text-2xl font-bold mb-4">What do you think the risk of automation is?</h4>
-              <p className="text-[#94a3b8] text-sm mb-6">
-                What is the likelihood that <span className="font-bold">{job.title}</span> will be replaced by robots or artificial intelligence within the next 20 years?
-              </p>
-              <div className="space-y-4 mb-8">
-                {["Highly likely", "Moderate", "Uncertain", "Low", "No chance"].map((option) => (
-                  <label key={option} className="flex items-center gap-3 cursor-pointer group">
-                    <div className="h-5 w-5 rounded-full border-2 border-blue-500/50 group-hover:border-blue-500 flex items-center justify-center transition-colors">
-                      <div className="h-2.5 w-2.5 rounded-full bg-transparent group-active:bg-blue-500" />
-                    </div>
-                    <span className="text-sm text-[#94a3b8] group-hover:text-white transition-colors">{option}</span>
-                  </label>
-                ))}
-              </div>
-              <button className="bg-[#00e5ff] hover:bg-[#00b8cc] text-black font-black px-8 py-3 rounded-xl transition-colors text-sm">
-                Submit vote
-              </button>
+              
+              {!isSignedIn ? (
+                <div className="bg-[#111315] border border-white/10 rounded-xl p-6 text-center space-y-4 mb-6">
+                  <p className="text-sm text-[#cbd5e1]">Please sign in to participate in the community poll.</p>
+                  <SignInButton mode="modal">
+                    <button className="bg-white text-black font-bold px-6 py-2 rounded-full hover:bg-gray-200 transition-colors text-xs">
+                      Sign In to Vote
+                    </button>
+                  </SignInButton>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    <button onClick={() => setChoice("highly_likely")} className={`px-4 py-2 rounded-md border ${choice==="highly_likely"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Highly likely</button>
+                    <button onClick={() => setChoice("moderate")} className={`px-4 py-2 rounded-md border ${choice==="moderate"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Moderate</button>
+                    <button onClick={() => setChoice("uncertain")} className={`px-4 py-2 rounded-md border ${choice==="uncertain"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Uncertain</button>
+                    <button onClick={() => setChoice("low")} className={`px-4 py-2 rounded-md border ${choice==="low"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>Low</button>
+                    <button onClick={() => setChoice("no_chance")} className={`px-4 py-2 rounded-md border ${choice==="no_chance"?"border-blue-500 text-white":"border-white/10 text-[#94a3b8]"}`}>No chance</button>
+                  </div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <button
+                      onClick={async () => {
+                        if (!choice) return;
+                        try {
+                          const res = await axios.post(`/api/polls/${job.slug}`, { option: choice }, { withCredentials: true });
+                          setPollData(res.data);
+                          setPollMessage("Poll submitted!");
+                          setTimeout(() => setPollMessage(null), 2500);
+                        } catch (err: any) {
+                          setPollMessage(err.response?.data?.error || "Submission failed");
+                          setTimeout(() => setPollMessage(null), 3500);
+                        }
+                      }}
+                      disabled={!choice}
+                      className="bg-[#00e5ff] hover:bg-[#00b8cc] text-black font-black px-8 py-3 rounded-xl transition-colors text-sm disabled:opacity-50"
+                    >
+                      Submit vote
+                    </button>
+                    {pollMessage && <span className={`text-sm ${pollMessage.includes("failed") || pollMessage.includes("already") ? "text-red-400" : "text-green-400"}`}>{pollMessage}</span>}
+                  </div>
+                </>
+              )}
+
+              {pollData && (
+                <div className="space-y-2">
+                  {([
+                    { k: "highly_likely", label: "Highly likely", color: "bg-red-500" },
+                    { k: "moderate", label: "Moderate", color: "bg-orange-500" },
+                    { k: "uncertain", label: "Uncertain", color: "bg-yellow-500" },
+                    { k: "low", label: "Low", color: "bg-green-500" },
+                    { k: "no_chance", label: "No chance", color: "bg-blue-500" },
+                  ] as Array<{ k: keyof typeof pollData; label: string; color: string }>).map((o) => {
+                    const total =
+                      pollData.highly_likely +
+                      pollData.moderate +
+                      pollData.uncertain +
+                      pollData.low +
+                      pollData.no_chance || 1;
+                    const val = pollData[o.k];
+                    const pct = Math.round((val / total) * 100);
+                    return (
+                      <div key={o.k} className="text-xs">
+                        <div className="flex justify-between mb-1">
+                          <span className="text-[#94a3b8]">{o.label}</span>
+                          <span className="text-[#94a3b8]">{pct}%</span>
+                        </div>
+                        <div className="h-2 bg-[#111315] rounded">
+                          <div className={`h-2 ${o.color} rounded`} style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
 
@@ -240,18 +453,40 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
 
           <section>
             <SectionHeader>Risk drivers</SectionHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(data?.drivers || []).map((d, i) => (
-                <div key={i} className="bg-[#25282c] border border-white/5 rounded-2xl p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold">{d.name}</span>
-                    <span className="text-xs text-[#94a3b8]">{d.impact}%</span>
-                  </div>
-                  <div className="h-2 bg-[#111315] rounded">
-                    <div className="h-2 rounded bg-[#f59e0b]" style={{ width: `${Math.min(100, Math.max(0, d.impact))}%` }} />
-                  </div>
+            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px] flex items-center justify-center relative overflow-hidden">
+              {data?.drivers && data.drivers.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart layout="vertical" data={data.drivers}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                    <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} hide domain={[0, 100]} />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name" 
+                      stroke="#cbd5e1" 
+                      fontSize={11} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      width={140}
+                      tick={{ fill: '#94a3b8' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#111315', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    />
+                    <Bar dataKey="impact" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={24}>
+                      {data.drivers.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.impact > 70 ? '#ef4444' : entry.impact > 40 ? '#f59e0b' : '#22c55e'} />
+                      ))}
+                    </Bar>
+                  </RechartsBarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="text-center space-y-2">
+                  <BrainCircuit className="h-8 w-8 text-white/10 mx-auto mb-2" />
+                  <p className="text-muted-foreground text-sm">Identifying risk factors...</p>
                 </div>
-              ))}
+              )}
             </div>
           </section>
 
@@ -288,27 +523,38 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
             <p className="text-[#94a3b8] mb-8 leading-relaxed">
               {data.future}
             </p>
-            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8">
+            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px]">
               <h4 className="text-xl font-bold mb-8">Total employment, and estimated job openings</h4>
-              <div className="h-64 flex items-end gap-1.5 relative pt-8">
-                {(data?.employment_history || []).map((val, i) => {
-                  const history = data?.employment_history || [];
-                  const max = history.length > 0 ? Math.max(...history) : 100;
-                  const height = (val / max) * 100;
-                  return (
-                    <div key={i} className="flex-1 h-full flex flex-col items-center group relative">
-                      <div 
-                        style={{ height: `${height}%` }} 
-                        className={cn("w-full rounded-t-sm transition-all group-hover:opacity-80", i < 10 ? "bg-[#336791]" : "bg-[#4b5563]")}
-                      />
-                      <span className="text-[8px] text-[#94a3b8] mt-2">{2015 + i}</span>
-                      <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-[10px] p-1 rounded z-10 whitespace-nowrap">
-                        {val.toLocaleString()}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsBarChart data={(data?.employment_history || []).map((val, i) => ({ year: 2015 + i, value: val }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <XAxis 
+                    dataKey="year" 
+                    stroke="#94a3b8" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="#94a3b8" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => value >= 1000 ? `${(value/1000).toFixed(1)}k` : value}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
+                    itemStyle={{ color: '#fff' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {(data?.employment_history || []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={index < 10 ? "#336791" : "#4b5563"} />
+                    ))}
+                  </Bar>
+                </RechartsBarChart>
+              </ResponsiveContainer>
               <div className="flex justify-center gap-6 mt-8 text-xs text-[#94a3b8]">
                 <div className="flex items-center gap-2"><div className="h-3 w-3 bg-[#336791] rounded-full" /> Total employed</div>
                 <div className="flex items-center gap-2"><div className="h-3 w-3 bg-[#4b5563] rounded-full" /> Estimated openings</div>
@@ -328,44 +574,63 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                 <p>Alternative career paths: <span className="font-bold text-white">{(data?.alternatives || []).join(", ")}</span>.</p>
               </div>
               <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8">
+                <h4 className="text-xl font-bold mb-4">Recommended certificate courses</h4>
+                <ul className="grid grid-cols-1 gap-2 text-sm text-[#94a3b8]">
+                  {recommendCerts(job.title).map((c, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-blue-500" /> {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px]">
                 <h4 className="text-xl font-bold mb-8">Wages over time</h4>
-                <div className="h-64 flex items-end gap-3 relative pt-8">
-                  {(data?.wage_history || []).map((item, i) => {
-                    const history = data?.wage_history || [];
-                    const maxWage = history.length > 0 ? Math.max(...history.map(w => Math.max(w.job_wage, w.national_median))) : 100000;
-                    const jobHeight = (item.job_wage / maxWage) * 100;
-                    const nationalHeight = (item.national_median / maxWage) * 100;
-                    return (
-                      <div key={i} className="flex-1 h-full flex flex-col items-center group">
-                        <div className="w-full flex items-end gap-1 h-full">
-                          <div style={{ height: `${jobHeight}%` }} className="flex-1 bg-[#336791] rounded-t-sm" />
-                          <div style={{ height: `${nationalHeight}%` }} className="flex-1 bg-[#9f1239] rounded-t-sm" />
-                        </div>
-                        <span className="text-[10px] text-[#94a3b8] mt-2">{item.year}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="flex flex-col gap-2 mt-8 text-[10px] text-[#94a3b8]">
-                  <div className="flex items-center gap-2"><div className="h-2.5 w-2.5 bg-[#336791] rounded-full" /> Median annual wage for occupation</div>
-                  <div className="flex items-center gap-2"><div className="h-2.5 w-2.5 bg-[#9f1239] rounded-full" /> National median annual wage</div>
-                </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart data={data?.wage_history || []}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis 
+                      dataKey="year" 
+                      stroke="#94a3b8" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dy={10}
+                    />
+                    <YAxis 
+                      stroke="#94a3b8" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false}
+                      tickFormatter={(value) => `₹${(value/1000).toFixed(0)}k`}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}       
+                      formatter={(value: any) => `₹${Number(value).toLocaleString()}`}
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                    <Bar name="Occupation Wage" dataKey="job_wage" fill="#336791" radius={[4, 4, 0, 0]} />
+                    <Bar name="National Median" dataKey="national_median" fill="#9f1239" radius={[4, 4, 0, 0]} />
+                  </RechartsBarChart>
+                </ResponsiveContainer>
               </div>
               {(data?.wage_forecast || []).length > 0 && (
-                <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8">
+                <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[300px]">
                   <h4 className="text-xl font-bold mb-8">Wage forecast</h4>
-                  <div className="h-64 flex items-end gap-2 relative pt-8">
-                    {(data?.wage_forecast || []).map((wf, i) => {
-                      const maxF = Math.max(...(data?.wage_forecast || []).map(x => x.forecast));
-                      const h = (wf.forecast / maxF) * 100;
-                      return (
-                        <div key={i} className="flex-1 h-full flex flex-col items-center">
-                          <div style={{ height: `${h}%` }} className="w-full bg-[#4ade80] rounded-t-sm" />
-                          <span className="text-[10px] text-[#94a3b8] mt-2">{wf.year}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsBarChart data={data?.wage_forecast || []}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                      <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${(v/1000).toFixed(0)}k`} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
+                        itemStyle={{ color: '#fff' }}
+                        formatter={(value: any) => `₹${Number(value).toLocaleString()}`}
+                      />
+                      <Bar dataKey="forecast" fill="#4ade80" radius={[4, 4, 0, 0]} />
+                    </RechartsBarChart>
+                  </ResponsiveContainer>
                 </div>
               )}
             </section>
@@ -388,21 +653,20 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                   </div>
                 </div>
                 {(data?.regional_demand || []).length > 0 && (
-                  <div className="w-full bg-[#25282c] border border-white/5 rounded-3xl p-6">
+                  <div className="w-full bg-[#25282c] border border-white/5 rounded-3xl p-6 h-[400px]">
                     <h4 className="text-xl font-bold mb-6">Regional demand</h4>
-                    <div className="space-y-3">
-                      {(data?.regional_demand || []).map((r, i) => (
-                        <div key={i}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm">{r.region}</span>
-                            <span className="text-xs text-[#94a3b8]">{r.demand}%</span>
-                          </div>
-                          <div className="h-2 bg-[#111315] rounded">
-                            <div className="h-2 rounded bg-[#60a5fa]" style={{ width: `${Math.min(100, Math.max(0, r.demand))}%` }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsBarChart layout="vertical" data={data?.regional_demand || []}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                        <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} hide />
+                        <YAxis type="category" dataKey="region" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} width={80} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
+                          itemStyle={{ color: '#fff' }}
+                        />
+                        <Bar dataKey="demand" fill="#60a5fa" radius={[0, 4, 4, 0]} barSize={20} />
+                      </RechartsBarChart>
+                    </ResponsiveContainer>
                   </div>
                 )}
             </div>
@@ -411,19 +675,28 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
           {(data?.hiring_trend || []).length > 0 && (
             <section>
               <SectionHeader>Hiring trend (last 12 months)</SectionHeader>
-              <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8">
-                <div className="h-48 flex items-end gap-2 relative pt-6">
-                  {(data?.hiring_trend || []).map((m, i) => {
-                    const maxP = Math.max(...(data?.hiring_trend || []).map(x => x.postings));
-                    const h = (m.postings / maxP) * 100;
-                    return (
-                      <div key={i} className="flex-1 h-full flex flex-col items-center">
-                        <div style={{ height: `${h}%` }} className="w-full bg-[#a78bfa] rounded-t-sm" />
-                        <span className="text-[9px] text-[#94a3b8] mt-2">{m.month}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart data={data?.hiring_trend || []}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#94a3b8" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                    <Bar name="Job Postings" dataKey="postings" fill="#a78bfa" radius={[4, 4, 0, 0]} />
+                  </RechartsBarChart>
+                </ResponsiveContainer>
               </div>
             </section>
           )}

@@ -1,111 +1,186 @@
-import { NextResponse } from "next/server";
-import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
+import axios, { AxiosError } from "axios";
+import * as dotenv from "dotenv";
 import { auth } from "@clerk/nextjs/server";
+
 export const runtime = "nodejs";
 
-export async function POST(req: Request) {
+// Server-side cache to reduce API calls to AI providers
+const serverCache = new Map<string, any>();
+
+// Unified interface for AI provider configurations
+interface AiProvider {
+  name: string;
+  enabled: boolean;
+  url: string;
+  model: string;
+  apiKey: string;
+  getPayload: (prompt: string) => object;
+  extractContent: (data: any) => string;
+}
+
+// --- Provider Configurations ---
+const providers: AiProvider[] = [
+  {
+    name: "groq",
+    enabled: !!process.env.GROQ_API_KEY,
+    url: "https://api.groq.com/openai/v1/chat/completions",
+    model: process.env.GROQ_MODEL || "llama-3.1-8b-instant",
+    apiKey: process.env.GROQ_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "llama-3.1-8b-instant",
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+  {
+    name: "deepseek",
+    enabled: !!process.env.DEEPSEEK_API_KEY,
+    url: "https://api.deepseek.com/v1/chat/completions",
+    model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
+    apiKey: process.env.DEEPSEEK_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "deepseek-chat",
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+  {
+    name: "openai",
+    enabled: !!process.env.OPENAI_API_KEY,
+    url: "https://api.openai.com/v1/chat/completions",
+    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    apiKey: process.env.OPENAI_API_KEY || "",
+    getPayload: (prompt) => ({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
+        { role: "user", content: prompt },
+      ],
+      response_format: { type: "json_object" },
+      max_tokens: 1000,
+    }),
+    extractContent: (data) => data?.choices?.[0]?.message?.content ?? "",
+  },
+];
+
+// --- Main API Route Handler ---
+export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     const { job_title } = await req.json();
 
     if (!job_title) {
       return NextResponse.json({ error: "Job title is required" }, { status: 400 });
     }
 
-    const prompt = `Analyze the job role: ${job_title} in India. 
+    // Check server-side cache
+    if (serverCache.has(job_title)) {
+      console.log(`Cache hit for ${job_title}`);
+      return NextResponse.json(serverCache.get(job_title));
+    }
+
+    const prompt = `You are an expert data analyst, AI strategist, and business consultant.
+Your task is to deeply analyze the job role: ${job_title} in the context of the Indian market.
+
+## YOUR OBJECTIVE:
+Do NOT just describe visuals. You must INTERPRET, EXTRACT MEANING, and PROVIDE BUSINESS INSIGHTS.
+Convert data -> insights -> decisions. Avoid generic statements.
+
 CRITICAL: You must return a valid JSON object with the following structure. Do not include any other text or explanation outside the JSON.
 
 Required JSON structure:
-{ ... }`;
+{
+  "executive_summary": "3-5 lines overall conclusion.",
+  "risk_analysis": "Detailed explanation of what the % risk means in real-world impact.",
+  "strategic_advice": {
+    "individuals": "Actionable career advice.",
+    "businesses": "Advice for business owners/consultants."
+  },
+  "robot_takeover_analysis": {
+    "can_be_taken_by_robots": "A clear 'Yes', 'No', or 'Partial' answer.",
+    "reasoning": "A brief explanation of why physical robots (not just software AI) can or cannot take over this job.",
+    "estimated_timeline": "When physical robot replacement might happen (e.g., 'Within 10 years', 'Unlikely in the next 20 years')."
+  },
+  "task_analysis": {
+    "replaceable": ["Task 1 with reasoning", "Task 2 with reasoning"],
+    "non_replaceable": ["Task 1 with reasoning", "Task 2 with reasoning"]
+  },
+  "explanation": "Brief overview of automation impact (legacy field).",
+  "future": "Detailed trend analysis and future outlook (5-10 years).",
+  "skills": ["List 5-8 future-proof skills"],
+  "alternatives": ["List 5-8 safer career paths"],
+  "scores": {
+    "automation_risk": 0-100,
+    "growth_potential": 0-100,
+    "wage_score": 0-100,
+    "job_volume": 0-100,
+    "overall_job_score": 1-10
+  },
+  "employment_history": [20 historical/projected data points],
+  "wage_history": [
+    { "year": 2015-2024, "job_wage": number, "national_median": number }
+  ],
+  "drivers": [
+    { "name": "Factor", "impact": 0-100 }
+  ],
+  "task_impact": {
+    "replaced": percentage,
+    "augmented": percentage,
+    "preserved": percentage
+  },
+  "regional_demand": [
+    { "region": "City/State", "demand": 0-100 }
+  ],
+  "wage_forecast": [
+    { "year": 2025-2030, "forecast": number }
+  ],
+  "hiring_trend": [
+    { "month": "2024-01", "postings": number }
+  ],
+  "timeline": [
+    { "year": 2025-2030, "event": "Milestone", "risk_change": -50 to 50 }
+  ]
+}
 
-    const providers: Array<{
-      name: string;
-      enabled: boolean;
-      call: () => Promise<string>;
-    }> = [
-      {
-        name: "groq",
-        enabled: !!process.env.GROQ_API_KEY,
-        call: async () => {
-          const model = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
-          const res = await axios.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
-              model,
-              response_format: { type: "json_object" },
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-      {
-        name: "deepseek",
-        enabled: !!process.env.DEEPSEEK_API_KEY,
-        call: async () => {
-          const res = await axios.post(
-            "https://api.deepseek.com/v1/chat/completions",
-            {
-              model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              response_format: { type: "json_object" },
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-      {
-        name: "openai",
-        enabled: !!process.env.OPENAI_API_KEY,
-        call: async () => {
-          const res = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
-            {
-              model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-              messages: [
-                { role: "system", content: "Respond ONLY with a single valid JSON object that matches the requested schema." },
-                { role: "user", content: prompt },
-              ],
-              response_format: { type: "json_object" },
-              max_tokens: 1000,
-            },
-            { headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" } }
-          );
-          return res.data?.choices?.[0]?.message?.content ?? "";
-        },
-      },
-    ];
+## ANALYSIS RULES:
+- If visuals/data are unclear, infer intelligently.
+- Translate automation probability into business and career implications.
+- Back every insight with reasoning.
+- Final Verdict should be implicitly clear in the explanation (Safe, Evolving, or At Risk).`;
 
     let aiContent = "";
     const providerErrors: Array<{ provider: string; status?: number; message: string }> = [];
-    for (const p of providers) {
-      if (!p.enabled) continue;
+
+    for (const provider of providers) {
+      if (!provider.enabled) continue;
       try {
-        aiContent = await p.call();
-        if (aiContent) break;
-      } catch (e) {
-        const err = e as { response?: { status?: number; data?: { error?: { message?: string } } }; message?: string };
+        const response = await axios.post(
+          provider.url,
+          provider.getPayload(prompt),
+          { headers: { Authorization: `Bearer ${provider.apiKey}`, "Content-Type": "application/json" } }
+        );
+        aiContent = provider.extractContent(response.data);
+        if (aiContent) break; // Success, exit loop
+      } catch (e: unknown) {
+        const err = e as AxiosError<{ error?: { message?: string } }>;
         providerErrors.push({
-          provider: p.name,
+          provider: provider.name,
           status: err.response?.status,
           message: err.response?.data?.error?.message || err.message || "Unknown error",
         });
-        continue;
       }
     }
+
     if (!aiContent) {
       console.error("AI Analysis Fallback Errors:", providerErrors);
       return NextResponse.json(
@@ -125,13 +200,24 @@ Required JSON structure:
 
     let parsedData;
     try {
+      console.log("AI Content received:", aiContent);
       parsedData = JSON.parse(aiContent);
     } catch {
+      console.log("Initial JSON parse failed, attempting regex match");
       // Attempt to extract the first JSON object substring
       const match = typeof aiContent === "string" ? aiContent.match(/\{[\s\S]*\}/) : null;
       if (match) {
-        parsedData = JSON.parse(match[0]);
+        try {
+          parsedData = JSON.parse(match[0]);
+        } catch (e) {
+          console.error("Regex JSON parse failed:", e);
+          return NextResponse.json(
+            { error: "AI returned invalid JSON after regex extraction." },
+            { status: 422 }
+          );
+        }
       } else {
+        console.error("No JSON-like structure found in AI response");
         return NextResponse.json(
           { error: "AI returned invalid JSON. Please try again." },
           { status: 422 }
@@ -147,6 +233,7 @@ Required JSON structure:
     const getStr = (o: Record<string, unknown>, key: string, d: string) => s(o[key], d);
 
     const input = obj(parsedData);
+    console.log("Parsed input drivers:", input.drivers);
     const scoresIn = obj(input.scores);
     const scores = {
       automation_risk: n(scoresIn.automation_risk, 50),
@@ -180,7 +267,36 @@ Required JSON structure:
             job_wage: getNum(w, "job_wage", 400000),
             national_median: getNum(w, "national_median", 350000),
           }));
-    const drivers = arr<Record<string, unknown>>(input.drivers, []).map((d) => ({ name: getStr(d, "name", "Factor"), impact: getNum(d, "impact", 50) })).slice(0, 8);
+    const driversIn = input.drivers || input.risk_drivers || input.automation_drivers;
+    let drivers: { name: string; impact: number }[] = [];
+    
+    if (Array.isArray(driversIn)) {
+      drivers = driversIn.map((d) => {
+        if (typeof d === "string") return { name: d, impact: 50 + Math.floor(Math.random() * 30) };
+        const o = obj(d);
+        return { 
+          name: getStr(o, "name", getStr(o, "factor", getStr(o, "driver", "Factor"))), 
+          impact: getNum(o, "impact", getNum(o, "score", 50)) 
+        };
+      });
+    } else if (driversIn && typeof driversIn === "object") {
+      drivers = Object.entries(driversIn as Record<string, any>).map(([name, impact]) => ({
+        name,
+        impact: typeof impact === "number" ? impact : 50
+      }));
+    }
+
+    if (drivers.length === 0) {
+      drivers = [
+        { name: "Routine Tasks", impact: 85 },
+        { name: "AI Maturity", impact: 70 },
+        { name: "Data Volume", impact: 65 },
+        { name: "Decision Complexity", impact: 40 },
+        { name: "Human Interaction", impact: 30 }
+      ];
+    }
+    drivers = drivers.slice(0, 8);
+
     const task_impactIn = obj(input.task_impact);
     const task_impact = {
       replaced: n(task_impactIn.replaced, 30),
@@ -192,7 +308,31 @@ Required JSON structure:
     const hiring_trend = arr<Record<string, unknown>>(input.hiring_trend, []).map((m) => ({ month: getStr(m, "month", "2025-01"), postings: getNum(m, "postings", 100) })).slice(0, 12);
     const timeline = arr<Record<string, unknown>>(input.timeline, []).map((t) => ({ year: getNum(t, "year", 2025), event: getStr(t, "event", "Milestone"), risk_change: getNum(t, "risk_change", 0) })).slice(0, 6);
 
+    const strategic_advice_in = obj(input.strategic_advice);
+    const strategic_advice = {
+      individuals: s(strategic_advice_in.individuals, "Actionable career advice."),
+      businesses: s(strategic_advice_in.businesses, "Strategic business advice.")
+    };
+
+    const task_analysis_in = obj(input.task_analysis);
+    const task_analysis = {
+      replaceable: arr<string>(task_analysis_in.replaceable, []),
+      non_replaceable: arr<string>(task_analysis_in.non_replaceable, [])
+    };
+
+    const robot_takeover_analysis_in = obj(input.robot_takeover_analysis);
+    const robot_takeover_analysis = {
+      can_be_taken_by_robots: s(robot_takeover_analysis_in.can_be_taken_by_robots, "No"),
+      reasoning: s(robot_takeover_analysis_in.reasoning, "Reasoning pending."),
+      estimated_timeline: s(robot_takeover_analysis_in.estimated_timeline, "Uncertain")
+    };
+
     const normalized = {
+      executive_summary: s(input.executive_summary, "Executive summary pending."),
+      risk_analysis: s(input.risk_analysis, "Risk analysis pending."),
+      strategic_advice,
+      robot_takeover_analysis,
+      task_analysis,
       explanation: s(input.explanation, "Analysis pending."),
       future: s(input.future, "Outlook pending."),
       skills,
@@ -208,19 +348,21 @@ Required JSON structure:
       timeline,
     };
 
+    // Save to server cache
+    serverCache.set(job_title, normalized);
+
     return NextResponse.json(normalized);
   } catch (error: unknown) {
     type AxiosErrorLike = {
       response?: {
         status?: number;
-        data?: any;
+        data?: { error?: { message?: string } } | Record<string, unknown>;
       };
       message?: string;
     };
     const e = error as AxiosErrorLike;
-    const errorData = e.response?.data?.error || e.response?.data || e.message;
-    console.error("AI Analysis Error:", errorData);
     let errorMessage = "Failed to generate AI analysis";
+
     if (e.response?.status === 401) {
       errorMessage = "Invalid or expired API key for provider. Please check credentials.";
     } else if (e.response?.status === 429) {
@@ -228,9 +370,27 @@ Required JSON structure:
     } else if (e.response?.status === 503) {
       errorMessage = "All AI providers failed or are unavailable.";
     }
-    if (e.response?.data?.error?.message) {
+
+    // Check if the error object has the expected shape
+    if (
+      e.response &&
+      e.response.data &&
+      typeof e.response.data === 'object' &&
+      'error' in e.response.data &&
+      e.response.data.error &&
+      typeof e.response.data.error === 'object' &&
+      'message' in e.response.data.error &&
+      typeof e.response.data.error.message === 'string'
+    ) {
       errorMessage = e.response.data.error.message;
     }
+
+    console.error("AI Analysis Error:", { 
+      message: errorMessage,
+      status: e.response?.status,
+      data: e.response?.data,
+    });
+
     return NextResponse.json(
       { error: errorMessage },
       { status: e.response?.status || 500 }
