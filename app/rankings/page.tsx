@@ -44,7 +44,7 @@ export default async function RankingsPage() {
 
         {/* Column Headers */}
         <div className="flex items-center gap-4 mb-4 px-2">
-          <div className="w-64 shrink-0">
+          <div className="w-36 md:w-64 shrink-0">
             <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
               JOBS
             </span>
@@ -59,8 +59,8 @@ export default async function RankingsPage() {
 
         {/* Grid lines + Rows */}
         <div className="relative">
-          {/* Vertical grid lines */}
-          <div className="absolute inset-0 left-64 right-0 pointer-events-none" aria-hidden>
+          {/* Vertical grid lines — desktop only */}
+          <div className="absolute inset-0 left-64 right-0 pointer-events-none hidden md:block" aria-hidden>
             {[0, 25, 50, 75, 100].map((pct) => (
               <div
                 key={pct}
@@ -83,7 +83,7 @@ export default async function RankingsPage() {
                   className="group flex items-center gap-4 rounded-xl px-2 py-2 transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10"
                 >
                   {/* Rank + Job Name */}
-                  <div className="w-64 shrink-0 flex items-center gap-2">
+                  <div className="w-36 md:w-64 shrink-0 flex items-center gap-2">
                     <span className="text-xs font-bold w-7 text-right shrink-0 text-gray-500">
                       #{idx + 1}
                     </span>
@@ -95,8 +95,8 @@ export default async function RankingsPage() {
                     </span>
                   </div>
 
-                  {/* Bar */}
-                  <div className="flex-1 relative h-7 flex items-center">
+                  {/* Bar — desktop only */}
+                  <div className="flex-1 relative h-7 hidden md:flex items-center">
                     <div
                       className={`h-full rounded-r-full transition-all duration-500 group-hover:brightness-110 ${getBarColor(job.risk_score)}`}
                       style={{ width: `${widthPct}%`, minWidth: "8px" }}
@@ -104,8 +104,8 @@ export default async function RankingsPage() {
                   </div>
 
                   {/* Score + Badge */}
-                  <div className="flex items-center gap-2 shrink-0 w-32 justify-end">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${risk.color}`}>
+                  <div className="flex items-center gap-1 md:gap-2 shrink-0 w-20 md:w-32 justify-end">
+                    <span className={`hidden md:inline text-xs font-bold px-2 py-0.5 rounded-full border ${risk.color}`}>
                       {risk.label}
                     </span>
                     <span className="text-lg font-black tabular-nums text-white">

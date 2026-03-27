@@ -11,13 +11,16 @@ export default function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
   const { isSignedIn } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
+<<<<<<< dev
+      setScrolled(window.scrollY > 20);
+=======
       const currentScroll = window.scrollY;
       setScrolled(currentScroll > 20);
+>>>>>>> main
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -59,10 +62,24 @@ export default function Navbar() {
     <>
       {/* NAVBAR */}
       <div
-        className={`fixed left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl transition-all duration-500 ${
-          visible ? "top-4 opacity-100" : "-top-20 opacity-0"
-        } ${scrolled ? "scale-[0.98]" : "scale-100"}`}
+        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+          scrolled ? "bg-black/90 backdrop-blur-md shadow-lg" : "bg-black"
+        }`}
       >
+<<<<<<< dev
+        <nav className="flex items-center justify-between px-8 max-w-7xl mx-auto text-white h-[110px]">
+
+          {/* LOGO */}
+<div className="flex items-center flex-shrink-0 h-full overflow-hidden">
+  <Link href="/">
+    <img
+      src="/bgremovedlogo.png"
+      alt="logo"
+      className="h-[190px] w-auto object-contain cursor-pointer"
+    />
+  </Link>
+</div>
+=======
         <nav
           className={`flex items-center justify-between px-6 py-3 rounded-full transition-all duration-300 ${
             scrolled ? "bg-black/80 backdrop-blur-md shadow-lg" : "bg-black shadow-md"
@@ -72,9 +89,10 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
            <img src="/bgremovedlogo.png" alt="logo" className="w-[132.5px] object-contain scale-250" />
           </div>
+>>>>>>> main
 
           {/* DESKTOP LINKS */}
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <div className="hidden md:flex items-center gap-8 text-base font-medium">
             {navLinks.map((link) => {
               const isHash = link.href.startsWith("#");
               const isActive = pathname === link.href;
@@ -104,7 +122,7 @@ export default function Navbar() {
           </div>
 
           {/* LOGIN BUTTON */}
-          <div className="hidden md:block">
+          <div className="hidden md:block flex-shrink-0">
             {isSignedIn ? (
               <UserButton />
             ) : (
@@ -124,9 +142,15 @@ export default function Navbar() {
           </div>
         </nav>
 
+<<<<<<< dev
+        {/* MOBILE MENU */}
+        {menuOpen && (
+          <div className="md:hidden bg-black text-white p-6 flex flex-col items-center gap-6 overflow-y-auto max-h-[80vh] border-t border-white/10">
+=======
         {/* MOBILE MENU — inside navbar div, drops below the pill */}
         {menuOpen && (
           <div className="md:hidden mt-2 bg-black text-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-6 overflow-y-auto max-h-[80vh]">
+>>>>>>> main
             {navLinks.map((link) => {
               const isHash = link.href.startsWith("#");
 
@@ -158,9 +182,17 @@ export default function Navbar() {
             })}
 
             {!isSignedIn ? (
+<<<<<<< dev
+              <SignInButton mode="modal">
+                <button className="bg-white text-black px-6 py-2 rounded-full font-medium">
+                  Login
+                </button>
+              </SignInButton>
+=======
               <button className="bg-white text-black px-6 py-2 rounded-full font-medium">
                 <SignInButton mode="modal">Login</SignInButton>
               </button>
+>>>>>>> main
             ) : (
               <div className="bg-white text-black px-3 py-2 rounded-full">
                 <UserButton />
@@ -169,6 +201,12 @@ export default function Navbar() {
           </div>
         )}
       </div>
+<<<<<<< dev
+
+      {/* Spacer — must match navbar height */}
+      <div className="h-[90px]" />
+=======
+>>>>>>> main
     </>
   );
 }

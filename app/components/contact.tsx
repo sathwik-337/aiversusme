@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,9 @@ export default function ContactSection() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [apiError, setApiError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const captchaRef = useRef<HCaptcha>(null);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -21,6 +25,7 @@ export default function ContactSection() {
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Invalid email";
     if (!formData.subject.trim()) newErrors.subject = "Subject is required";
     if (!formData.message.trim()) newErrors.message = "Message is required";
+    if (!captchaToken) newErrors.captcha = "Please complete the captcha";
     return newErrors;
   };
 
@@ -48,21 +53,27 @@ export default function ContactSection() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, captchaToken }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         setApiError(data.error || "Failed to send message. Please try again.");
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
         return;
       }
 
       setSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
       setTimeout(() => setSubmitted(false), 5000);
     } catch (err) {
       setApiError("Network error. Please try again.");
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -178,6 +189,23 @@ export default function ContactSection() {
                 className={`bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none transition w-full resize-none ${errors.message ? "border-red-500/60" : "border-white/10 focus:border-white/30"}`}
               />
               {errors.message && <p className="text-red-400 text-xs mt-1">{errors.message}</p>}
+            </div>
+
+            {/* ✅ hCaptcha — scroll trap fix */}
+            <div className="mb-4" onWheel={(e) => e.stopPropagation()}>
+              <HCaptcha
+                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+                onVerify={(token) => {
+                  setCaptchaToken(token);
+                  setErrors((prev) => ({ ...prev, captcha: "" }));
+                }}
+                onExpire={() => setCaptchaToken(null)}
+                ref={captchaRef}
+                theme="dark"
+              />
+              {errors.captcha && (
+                <p className="text-red-400 text-xs mt-1">{errors.captcha}</p>
+              )}
             </div>
 
             <div className="flex justify-center">
