@@ -1,9 +1,20 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Sparkles } from "lucide-react";
-import { blogPosts } from "@/app/components/blog";
+import { blogPosts } from "@/app/data/blog-posts";
 
 export default function BlogDetail({ slug }: { slug: string }) {
+  const router = useRouter();
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 2) {
+      router.back();
+    } else {
+      router.push("/blog");
+    }
+  };
+
   const post = blogPosts.find((p) => p.slug === slug);
 
   if (!post) {
@@ -14,13 +25,13 @@ export default function BlogDetail({ slug }: { slug: string }) {
     <div className="min-h-screen bg-black text-white pt-40 pb-12 px-4 md:px-8">
       <article className="max-w-4xl mx-auto">
         {/* Back Link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-8 text-sm font-medium"
+        <button
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-8 text-sm font-medium cursor-pointer"
         >
           <ArrowLeft size={16} />
           Back to all insights
-        </Link>
+        </button>
 
         {/* Header */}
         <header className="mb-10 text-center md:text-left">

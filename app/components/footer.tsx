@@ -174,20 +174,26 @@ export default function Footer() {
     </p>
 
     {/* Logo */}
-    <div className="flex justify-center mb-6">
-      <Image
-        src="/branchlogo.png"
-        alt="BranchSelector Logo"
-        width={180}
-        height={90}
-        className="object-contain opacity-90 hover:opacity-100 transition duration-300"
-      />
-    </div>
+   <div className="w-full flex justify-center items-center py-10">
+  <div className="flex items-center gap-3">
+    <Image
+      src="/branchlogo.png"
+      alt="BranchSelector Logo"
+      width={55}
+      height={55}
+      className="object-contain"
+    />
 
-    {/* Brand Name */}
+    <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-wide">
+      BranchSelector
+    </h1>
+  </div>
+</div>
+
+    {/* Brand Name
     <h3 className="text-2xl font-semibold text-white mb-8">
       BranchSelector
-    </h3>
+    </h3> */}
 
     {/* CTA Button */}
     <a
