@@ -43,6 +43,13 @@
       "when": 1774589266617,
       "tag": "0005_motionless_caretaker",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774602256344,
+      "tag": "0006_many_silver_centurion",
+      "breakpoints": true
     }
   ]
 }
