@@ -12,7 +12,13 @@ import FeatureSection from "@/app/components/featuresection";
 import LandingHero from "@/app/components/hero";
 
 export default async function Home() {
-  const featuredJobs = await db.select().from(jobs).orderBy(desc(jobs.created_at)).limit(6);
+  let featuredJobs = [];
+  try {
+    featuredJobs = await db.select().from(jobs).orderBy(desc(jobs.created_at)).limit(6);
+  } catch (error) {
+    console.error("Failed to fetch featured jobs:", error);
+    // Fallback to empty array so the page still loads
+  }
 
   return (
     <div className="flex flex-col items-center">
