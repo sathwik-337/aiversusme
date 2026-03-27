@@ -18,7 +18,11 @@ export async function GET(req: Request) {
         slug: jobs.slug,
       })
       .from(jobs)
-      .where(or(ilike(jobs.title, `%${query}%`), ilike(jobs.slug, `%${query}%`)))
+      .where(or(
+        ilike(jobs.title, `%${query}%`),
+        ilike(jobs.slug, `%${query}%`),
+        ilike(jobs.synonyms, `%${query}%`)
+      ))
       .limit(5);
 
     return NextResponse.json(results);

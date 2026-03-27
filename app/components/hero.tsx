@@ -72,15 +72,7 @@ export default function LandingHero() {
           </div>
         </div>
 
-        {/* RANDOM EXAMPLE */}
-        <div className="mb-12">
-          <p className="text-white/50 text-sm">
-            or show{" "}
-            <span className="text-white/80 underline decoration-white/30 underline-offset-4 cursor-pointer hover:text-blue-400 hover:decoration-blue-400 transition-colors duration-300">
-              random example
-            </span>
-          </p>
-        </div>
+        
 
         {/* EXPLORE LINKS */}
         <div className="pt-8 border-t border-white/5">
