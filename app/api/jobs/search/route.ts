@@ -1,10 +1,11 @@
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { jobs } from "@/lib/db/schema";
 import { ilike, or } from "drizzle-orm";
-import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
+export async function GET(req: NextRequest) {
+  console.log("Search API hit with URL:", req.url);
+  const { searchParams } = req.nextUrl;
   const query = searchParams.get("q");
 
   if (!query || query.length < 2) {
@@ -16,6 +17,7 @@ export async function GET(req: Request) {
       .select({
         title: jobs.title,
         slug: jobs.slug,
+        job_code: jobs.job_code,
       })
       .from(jobs)
       .where(or(

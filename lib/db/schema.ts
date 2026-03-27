@@ -16,7 +16,8 @@ export const jobs = pgTable("jobs", {
   volume: integer("volume"),
   job_score: text("job_score"),
   description: text("description").notNull(),
-  synonyms: text("synonyms"), // Added synonyms column
+  synonyms: text("synonyms"),
+  job_code: text("job_code"), // Custom AIVSME code
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
 

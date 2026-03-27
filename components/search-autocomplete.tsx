@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { cn } from "@/lib/utils";
 
 interface JobSuggestion {
   title: string;
   slug: string;
+  job_code?: string;
 }
 
 
@@ -27,10 +27,18 @@ export default function SearchAutocomplete({ className = "" }: { className?: str
       }
 
       try {
-        const response = await axios.get(`/api/jobs/search?q=${query}`);
-        setSuggestions(response.data);
+        console.log(`Fetching suggestions for: ${query} from origin: ${window.location.origin}`);
+        const response = await fetch(`/api/jobs/search?q=${encodeURIComponent(query)}`, {
+          cache: 'no-store'
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Suggestions received:", data);
+        setSuggestions(data);
       } catch (err) {
-        console.error("Failed to fetch suggestions:", err);
+        console.error("Fetch search error:", err);
       }
     };
 
@@ -92,11 +100,18 @@ export default function SearchAutocomplete({ className = "" }: { className?: str
           {suggestions.map((job) => (
             <button
               key={job.slug}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2"
+              className="w-full text-left px-4 py-3 text-sm hover:bg-muted transition-colors flex items-center justify-between gap-2"
               onClick={() => handleSelect(job.slug)}
             >
-              <Search className="h-3 w-3 text-muted-foreground" />
-              {job.title}
+              <div className="flex items-center gap-2">
+                <Search className="h-3 w-3 text-muted-foreground" />
+                <span className="font-medium">{job.title}</span>
+              </div>
+              {job.job_code && (
+                <span className="text-xs text-muted-foreground font-mono">
+                  {job.job_code}
+                </span>
+              )}
             </button>
           ))}
         </div>
