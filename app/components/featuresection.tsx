@@ -170,16 +170,8 @@ function FeaturesBottom() {
           ))}
         </div>
 
-        {/* CTA Button */}
-        <div className="mt-16 flex justify-center">
-          <button className="group relative px-8 py-3.5 bg-white text-black font-semibold rounded-full overflow-hidden shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] transition-all duration-300 hover:-translate-y-0.5 border border-white/20">
-            <span className="relative z-10 flex items-center gap-2">
-              Create your Account
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-100 to-cyan-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-          </button>
-        </div>
+       
+       
       </div>
     </section>
   );

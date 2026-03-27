@@ -159,25 +159,48 @@ export default function Footer() {
       </div>
 
       {/* 🆕 BRANCHSELECTOR SECTION */}
-      <div className="w-full border-b border-white/10 py-16 bg-white/5">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h4 className="text-2xl md:text-3xl font-black mb-10 text-transparent bg-clip-text text-white">
-            Want to build a successful career? Choose BranchSelector — your path to the right future.
-          </h4>
-          <div className="flex justify-center">
-            <a href="https://branchselector.com" target="_blank" rel="noopener noreferrer">
-              <Image
-              
-                src="/branchlogo.png"
-                alt="BranchSelector Logo"
-                width={170}
-                height={80}
-                className="object-contain opacity-90 hover:opacity-100 transition duration-300"
-              />
-            </a>
-          </div>
-        </div>
-      </div>
+      <div className="w-full py-20 bg-gradient-to-b from-black to-zinc-900 border-b border-white/10">
+  <div className="max-w-5xl mx-auto px-6 text-center">
+
+    {/* Heading */}
+    <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+      Build a Career That Actually Fits You
+    </h2>
+
+    {/* Subheading */}
+    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+      Discover your ideal path with AI-powered career guidance and psychometric tests.
+      Stop guessing — start choosing the right future.
+    </p>
+
+    {/* Logo */}
+    <div className="flex justify-center mb-6">
+      <Image
+        src="/branchlogo.png"
+        alt="BranchSelector Logo"
+        width={180}
+        height={90}
+        className="object-contain opacity-90 hover:opacity-100 transition duration-300"
+      />
+    </div>
+
+    {/* Brand Name */}
+    <h3 className="text-2xl font-semibold text-white mb-8">
+      BranchSelector
+    </h3>
+
+    {/* CTA Button */}
+    <a
+      href="https://branchselector.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block bg-white text-black font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-lg"
+    >
+      Get Started →
+    </a>
+
+  </div>
+</div>
 
       {/* INNER CONTAINER */}
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -220,21 +243,8 @@ export default function Footer() {
 
           </div>
 
-          {/* RIGHT - SOCIAL */}
-          <div className="flex flex-col gap-4">
-            <span className="text-gray-400 uppercase text-xs">Follow</span>
-            <div className="flex gap-4">
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaGithub size={16} />
-              </a>
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaTwitter size={16} />
-              </a>
-              <a href="#" className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition">
-                <FaLinkedin size={16} />
-              </a>
-            </div>
-          </div>
+          
+    
         </div>
 
         {/* DIVIDER */}
