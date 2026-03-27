@@ -1,15 +1,28 @@
-
-
-
-
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, subject, message } = await req.json();
+    const { name, email, subject, message, captchaToken } = await req.json();
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
+    }
+
+    // ✅ Verify hCaptcha token
+    if (!captchaToken) {
+      return NextResponse.json({ error: "Captcha is required." }, { status: 400 });
+    }
+
+    const captchaVerify = await fetch("https://api.hcaptcha.com/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `response=${captchaToken}&secret=${process.env.HCAPTCHA_SECRET_KEY}`,
+    });
+
+    const captchaData = await captchaVerify.json();
+
+    if (!captchaData.success) {
+      return NextResponse.json({ error: "Captcha verification failed. Please try again." }, { status: 400 });
     }
 
     // ✅ Controlled via .env.local — just swap the values when going live
