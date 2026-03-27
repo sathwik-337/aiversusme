@@ -67,6 +67,8 @@ const baseJobs = [
   { title: "Carpenter", category: "Construction", risk: 10, salary: "₹2,40,000 - ₹7,20,000", demand: "High", synonyms: "Woodworker, Furniture Maker" },
   { title: "Plumber", category: "Skilled", risk: 10, salary: "₹2,40,000 - ₹6,00,000", demand: "High", synonyms: "Pipefitter, Plumbing Technician" },
   { title: "Electrician", category: "Skilled", risk: 15, salary: "₹2,40,000 - ₹7,20,000", demand: "High", synonyms: "Electrical Technician, Wireman" },
+  { title: "Electrical Engineer", category: "Skilled", risk: 10, salary: "₹4,00,000 - ₹18,00,000", demand: "High", synonyms: "Power Engineer" },
+  { title: "Mechanical Engineer", category: "Skilled", risk: 15, salary: "₹4,00,000 - ₹20,00,000", demand: "Medium", synonyms: "Design Engineer" },
   { title: "Painter", category: "Construction", risk: 20, salary: "₹1,80,000 - ₹4,80,000", demand: "High", synonyms: "Wall Painter, Decorator" },
   { title: "Welder", category: "Construction", risk: 45, salary: "₹3,00,000 - ₹8,40,000", demand: "High", synonyms: "Fabricator, Metal Worker" },
 

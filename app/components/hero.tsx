@@ -3,6 +3,7 @@
 import { FaRobot } from "react-icons/fa";
 import SearchAutocomplete from "@/components/search-autocomplete";
 import TrendingJobs from "@/app/components/trending-jobs";
+import { useRouter } from "next/navigation";
 
 const trendingJobs = [
   "Computer Programmers",
@@ -17,15 +18,31 @@ const trendingJobs = [
 ];
 
 const exploreLinks = [
-  "Productivity software",
-  "AI career guidance",
-  "Emerging tech career",
-  "Industry influence analysis",
-  "Entrepreneurship resources",
-  "Career transition services",
+  "Marketing",
+  "Healthcare",
+  "Finance",
+  "Construction",
+  "Technology",
+  "Education",
 ];
 
 export default function LandingHero() {
+  const router = useRouter();
+
+  const handleExploreClick = async (item: string) => {
+    try {
+      const response = await fetch(`/api/jobs/search?q=${encodeURIComponent(item)}`);
+      if (!response.ok) throw new Error("Search failed");
+      const data = await response.json();
+      const match = data?.[0];
+      if (match?.slug) {
+        router.push(`/job/${match.slug}`);
+      }
+    } catch (err) {
+      console.error("Explore click failed", err);
+    }
+  };
+
   return (
     <section className="relative w-full min-h-[100vh] flex flex-col items-center justify-center bg-[#050505] px-4 pt-32 pb-20 overflow-hidden">
 
@@ -83,6 +100,7 @@ export default function LandingHero() {
             {exploreLinks.map((item, index) => (
               <button
                 key={index}
+                onClick={() => handleExploreClick(item)}
                 className="bg-transparent border border-white/10 text-white/60 text-sm px-5 py-2 rounded-full hover:bg-white/5 hover:text-white/90 hover:border-white/20 transition-all duration-300 hover:-translate-y-0.5"
               >
                 {item}

@@ -1,6 +1,5 @@
  "use client";
  
- import axios from "axios";
  import { useRouter } from "next/navigation";
  
  interface Props {
@@ -29,9 +28,15 @@
         return;
       }
       const q = title.replace(/s\b/i, ""); // simple singular fallback
-      const res = await axios.get(`/api/jobs/search?q=${encodeURIComponent(q)}`);
-      const match = res.data?.[0];
-      if (match?.slug) router.push(`/job/${match.slug}`);
+      const response = await fetch(`/api/jobs/search?q=${encodeURIComponent(q)}`);
+      if (!response.ok) throw new Error("Search failed");
+      const data = await response.json();
+      const match = data?.[0];
+      if (match?.slug) {
+        router.push(`/job/${match.slug}`);
+      } else {
+        console.warn(`No job found for: ${title}`);
+      }
      } catch (e) {
        console.error("Trending click failed", e);
      }
