@@ -74,10 +74,12 @@ export default function SearchAutocomplete({ className = "" }: { className?: str
     <div className={cn("w-full space-y-2 relative", className)} ref={containerRef}>
       <form className="flex space-x-2" onSubmit={handleSubmit}>
         <div className="relative flex-grow">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-500" />
+          </div>
           <input
-            className="flex h-12 w-full rounded-full border border-white/20 bg-black text-white px-9 py-2 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-            placeholder="Search job roles (e.g., Software Developer)"
+            className="flex h-12 w-full rounded-full border border-white/20 bg-black text-white pl-11 pr-4 py-2 text-sm placeholder-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            placeholder="Search job roles..."
             type="search"
             value={query}
             onChange={(e) => {
@@ -85,11 +87,13 @@ export default function SearchAutocomplete({ className = "" }: { className?: str
               setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
+            suppressHydrationWarning
           />
         </div>
         <button
           className="inline-flex items-center justify-center rounded-md bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#111827]"
           type="submit"
+          suppressHydrationWarning
         >
           Analyze
         </button>

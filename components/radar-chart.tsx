@@ -91,11 +91,11 @@ export default function RadarChart({ data, size = 250 }: RadarChartProps) {
               key={label}
               x={x}
               y={y}
-              fontSize="10"
+              fontSize="9"
               fill="#94a3b8"
               textAnchor="middle"
               dominantBaseline="middle"
-              className="uppercase tracking-widest font-bold"
+              className="uppercase tracking-widest font-bold md:text-[10px]"
             >
               {label}
             </text>

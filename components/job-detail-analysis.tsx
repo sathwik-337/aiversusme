@@ -5,7 +5,8 @@ import axios from "axios";
 import Link from "next/link";
 import { 
   TrendingUp, Facebook, Twitter, Linkedin, Repeat, Search, 
-  GitCompare, Vote, MessageSquare, ChevronDown, Sparkles, BrainCircuit, Rocket, Lightbulb
+  GitCompare, Vote, MessageSquare, ChevronDown, Sparkles, BrainCircuit, Rocket, Lightbulb,
+  Mail, MessageCircle, FileDown, Download
 } from "lucide-react";
 import { 
   BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend
@@ -73,6 +74,70 @@ const SectionHeader = ({ children }: { children: React.ReactNode }) => (
 
 const detailCache = new Map<string, AnalysisData>();
 
+const WrappedTick = (props: any) => {
+  const { x, y, payload } = props;
+  const words = payload.value.split(' ');
+  const lines = [];
+  let currentLine = words[0];
+
+  for (let i = 1; i < words.length; i++) {
+    if ((currentLine + ' ' + words[i]).length < 15) {
+      currentLine += ' ' + words[i];
+    } else {
+      lines.push(currentLine);
+      currentLine = words[i];
+    }
+  }
+  lines.push(currentLine);
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {lines.map((line: string, i: number) => (
+        <text
+          key={i}
+          x={-10}
+          y={i * 12 - (lines.length - 1) * 6}
+          dy={4}
+          textAnchor="end"
+          fill="#94a3b8"
+          fontSize={10}
+          className="font-medium"
+        >
+          {line}
+        </text>
+      ))}
+    </g>
+  );
+};
+
+const CustomTooltip = ({ active, payload, isMobile }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const value = payload[0].value;
+    const name = payload[0].name || 'impact';
+    const isCurrency = name.toLowerCase().includes('wage') || name.toLowerCase().includes('salary');
+
+    return (
+      <div className="bg-[#111315] border border-white/10 rounded-xl p-3 shadow-2xl max-w-[200px] md:max-w-[300px]">
+        <p className="text-white font-bold text-xs md:text-sm mb-1 break-words whitespace-normal">
+          {data.name || data.region || data.year || data.label}
+        </p>
+        <p className="text-cyan-400 font-medium text-[10px] md:text-xs">
+          {name} : {isCurrency ? `₹${Number(value).toLocaleString()}` : value}
+          {payload[0].unit || ''}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+const getIndefiniteArticle = (title: string) => {
+  if (!title) return "A";
+  const firstLetter = title.trim().charAt(0).toLowerCase();
+  return ["a", "e", "i", "o", "u"].includes(firstLetter) ? "An" : "A";
+};
+
 export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,6 +146,22 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
   const [pollData, setPollData] = useState<{ highly_likely: number; moderate: number; uncertain: number; low: number; no_chance: number } | null>(null);
   const [choice, setChoice] = useState<"highly_likely" | "moderate" | "uncertain" | "low" | "no_chance" | null>(null);
   const [pollMessage, setPollMessage] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Dynamic screen size detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(3);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   function recommendCerts(title: string) {
     const t = title.toLowerCase();
@@ -167,6 +248,21 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
       const yOffset = -80; // Account for fixed header if any
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareText = `Check out the AI risk analysis for ${job.title} on AI vs ME!`;
+  const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent("AI Risk Analysis: " + job.title)}&body=${encodeURIComponent(shareText + "\n\n" + shareUrl)}`;
+  const whatsappLink = `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`;
+
+  const handleShare = (platform: string) => {
+    if (!isSignedIn) return;
+    
+    switch (platform) {
+      case "pdf":
+        window.print();
+        break;
     }
   };
 
@@ -448,10 +544,14 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
 
           <section>
             <SectionHeader>Risk drivers</SectionHeader>
-            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-8 h-[400px] flex items-center justify-center relative overflow-hidden">
+            <div className="bg-[#25282c] border border-white/5 rounded-3xl p-4 md:p-8 h-[400px] flex items-center justify-center relative">
               {data?.drivers && data.drivers.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart layout="vertical" data={data.drivers}>
+                  <RechartsBarChart 
+                    layout="vertical" 
+                    data={data.drivers}
+                    margin={{ top: 5, right: 30, left: isMobile ? 10 : 20, bottom: 5 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
                     <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} hide domain={[0, 100]} />
                     <YAxis 
@@ -461,12 +561,11 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                       fontSize={11} 
                       tickLine={false} 
                       axisLine={false} 
-                      width={140}
-                      tick={{ fill: '#94a3b8' }}
+                      width={isMobile ? 100 : 140}
+                      tick={isMobile ? <WrappedTick /> : { fill: '#94a3b8' }}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#111315', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
-                      itemStyle={{ color: '#fff' }}
+                      content={<CustomTooltip isMobile={isMobile} />}
                       cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                     />
                     <Bar dataKey="impact" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={24}>
@@ -523,21 +622,31 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
               <div className="flex-grow w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <RechartsBarChart 
-                    data={(data?.employment_history || []).map((val, i) => {
-                      let year, value;
-                      if (typeof val === 'object' && val !== null) {
-                        year = (val as any).year || (2015 + i);
-                        value = (val as any).job_count || (val as any).value || (val as any).count || 0;
-                      } else {
-                        year = 2015 + i;
-                        value = val;
-                      }
-                      return {
-                        year,
-                        value
-                      };
-                    })}
-                    margin={{ top: 10, right: -15, left: -25, bottom: 0 }}
+                    data={(data?.employment_history || [])
+                      .map((val, i) => {
+                        let year, value;
+                        if (typeof val === 'object' && val !== null) {
+                          year = (val as any).year || (2015 + i);
+                          value = Number((val as any).job_count || (val as any).value || (val as any).count || 0);
+                        } else {
+                          year = 2015 + i;
+                          value = Number(val || 0);
+                        }
+                        return { year, value };
+                      })
+                      .filter((item, index, array) => {
+                        // Filter out leading zeros to prevent empty space
+                        if (item.value > 0) return true;
+                        // Keep item if there's a non-zero value later in the array
+                        return array.slice(index).some(laterItem => {
+                          const laterVal = typeof laterItem === 'object' ? 
+                            ((laterItem as any).job_count || (laterItem as any).value || (laterItem as any).count || 0) : 
+                            laterItem;
+                          return Number(laterVal) > 0;
+                        });
+                      })
+                    }
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                     <XAxis 
@@ -546,24 +655,23 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                       fontSize={9} 
                       tickLine={false} 
                       axisLine={false} 
-                      interval={4}
+                      interval={isMobile ? 4 : 2}
                     />
                     <YAxis 
                       stroke="#94a3b8" 
                       fontSize={9} 
                       tickLine={false} 
                       axisLine={false}
-                      width={40}
+                      width={50}
                       tickFormatter={(value) => value >= 1000 ? `${(value/1000).toFixed(0)}k` : value}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                      itemStyle={{ color: '#fff' }}
+                      content={<CustomTooltip isMobile={isMobile} />}
                       cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                     />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {(data?.employment_history || []).map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={index < 10 ? "#336791" : "#4b5563"} />
+                        <Cell key={`cell-${index}`} fill={index < (data?.employment_history?.length || 0) / 2 ? "#336791" : "#4b5563"} />
                       ))}
                     </Bar>
                   </RechartsBarChart>
@@ -605,7 +713,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                 <h4 className="text-lg md:text-xl font-bold mb-6">Wages over time</h4>
                 <div className="flex-grow w-full min-h-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RechartsBarChart data={data?.wage_history || []} margin={{ top: 10, right: -15, left: -25, bottom: 0 }}>
+                    <RechartsBarChart data={data?.wage_history || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                       <XAxis 
                         dataKey="year" 
@@ -613,21 +721,19 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                         fontSize={9} 
                         tickLine={false} 
                         axisLine={false} 
-                        interval={4}
+                        interval={isMobile ? 4 : 2}
                       />
                       <YAxis 
                         stroke="#94a3b8" 
                         fontSize={9} 
                         tickLine={false} 
                         axisLine={false}
-                        width={40}
+                        width={50}
                         tickFormatter={(value) => `₹${(value/1000).toFixed(0)}k`}
                       />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                        itemStyle={{ color: '#fff' }}
+                        content={<CustomTooltip isMobile={isMobile} />}
                         cursor={{ fill: 'rgba(255,255,255,0.05)' }}       
-                        formatter={(value: any) => `₹${Number(value).toLocaleString()}`}
                       />
                       <Legend iconType="circle" verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px', fontSize: '10px' }} />
                       <Bar name="Occupation Wage" dataKey="job_wage" fill="#336791" radius={[4, 4, 0, 0]} />
@@ -641,7 +747,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                   <h4 className="text-lg md:text-xl font-bold mb-6">Wage forecast</h4>
                   <div className="flex-grow w-full min-h-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RechartsBarChart data={data?.wage_forecast || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <RechartsBarChart data={data?.wage_forecast || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                         <XAxis dataKey="year" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} />
                         <YAxis 
@@ -649,13 +755,11 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                           fontSize={9} 
                           tickLine={false} 
                           axisLine={false} 
-                          width={40}
+                          width={50}
                           tickFormatter={(v) => `₹${(v/1000).toFixed(0)}k`} 
                         />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                          itemStyle={{ color: '#fff' }}
-                          formatter={(value: any) => `₹${Number(value).toLocaleString()}`}
+                          content={<CustomTooltip isMobile={isMobile} />}
                         />
                         <Bar dataKey="forecast" fill="#4ade80" radius={[4, 4, 0, 0]} />
                       </RechartsBarChart>
@@ -683,17 +787,29 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                   </div>
                 </div>
                 {(data?.regional_demand || []).length > 0 && (
-                  <div className="w-full bg-[#25282c] border border-white/5 rounded-3xl p-6 h-[400px] flex flex-col">
+                  <div className="w-full bg-[#25282c] border border-white/5 rounded-3xl p-4 md:p-6 h-[400px] flex flex-col">
                     <h4 className="text-lg md:text-xl font-bold mb-6">Regional demand</h4>
                     <div className="flex-grow w-full min-h-0">
                       <ResponsiveContainer width="100%" height="100%">
-                        <RechartsBarChart layout="vertical" data={data?.regional_demand || []} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                        <RechartsBarChart 
+                          layout="vertical" 
+                          data={data?.regional_demand || []} 
+                          margin={{ top: 5, right: 30, left: isMobile ? 10 : 0, bottom: 5 }}
+                        >
                           <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
                           <XAxis type="number" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} hide />
-                          <YAxis type="category" dataKey="region" stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={70} />
+                          <YAxis 
+                            type="category" 
+                            dataKey="region" 
+                            stroke="#94a3b8" 
+                            fontSize={9} 
+                            tickLine={false} 
+                            axisLine={false} 
+                            width={isMobile ? 80 : 70} 
+                            tick={isMobile ? <WrappedTick /> : { fill: '#94a3b8' }}
+                          />
                           <Tooltip 
-                            contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                            itemStyle={{ color: '#fff' }}
+                            content={<CustomTooltip isMobile={isMobile} />}
                           />
                           <Bar dataKey="demand" fill="#60a5fa" radius={[0, 4, 4, 0]} barSize={20} />
                         </RechartsBarChart>
@@ -710,7 +826,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
               <div className="bg-[#25282c] border border-white/5 rounded-3xl p-6 md:p-8 h-[350px] md:h-[400px] flex flex-col">
                 <div className="flex-grow w-full min-h-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RechartsBarChart data={data?.hiring_trend || []} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                    <RechartsBarChart data={data?.hiring_trend || []} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                       <XAxis 
                         dataKey="month" 
@@ -723,10 +839,9 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                         height={50}
                         interval={0}
                       />
-                      <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={40} />
+                      <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} axisLine={false} width={50} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-                        itemStyle={{ color: '#fff' }}
+                        content={<CustomTooltip isMobile={isMobile} />}
                       />
                       <Bar name="Job Postings" dataKey="postings" fill="#a78bfa" radius={[4, 4, 0, 0]} />
                     </RechartsBarChart>
@@ -757,25 +872,73 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
           <section className="bg-[#25282c] border border-white/5 rounded-3xl p-8">
             <SectionHeader>Job description</SectionHeader>
             <p className="text-[#94a3b8] mb-6 leading-relaxed">
-              {job.description}
+              {job.description.startsWith("A ") || job.description.startsWith("An ") 
+                ? `${getIndefiniteArticle(job.title)} ${job.description.split(' ').slice(1).join(' ')}`
+                : job.description}
             </p>
           </section>
 
           {/* Next Steps Section */}
           <div className="w-full max-w-md bg-[#25282c] rounded-3xl p-6 md:p-8 border border-white/5 space-y-6 text-center mb-16 mx-auto">
             <h3 className="text-xl font-bold">Where Would You Like to Go Next?</h3>
-            <p className="text-muted-foreground text-sm px-2">Share your results with friends and family.</p>
-            <div className="flex justify-center gap-4">
-              <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><Facebook className="h-5 w-5" /></button>
-              <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><Twitter className="h-5 w-5" /></button>
-              <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><Linkedin className="h-5 w-5" /></button>
-              <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"><Repeat className="h-5 w-5" /></button>
+            
+            <div className="space-y-4">
+              <p className="text-muted-foreground text-sm px-2">Share your results with friends and family.</p>
+              
+              <div className="flex flex-wrap justify-center gap-3">
+                {isSignedIn ? (
+                  <>
+                    <a 
+                      href={gmailLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all hover:scale-110 flex items-center justify-center" 
+                      title="Share via Gmail"
+                    >
+                      <Mail className="h-5 w-5" />
+                    </a>
+                    <a 
+                      href={whatsappLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all hover:scale-110 flex items-center justify-center" 
+                      title="WhatsApp"
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                    </a>
+                  </>
+                ) : (
+                  <SignInButton mode="modal">
+                    <button className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-sm font-medium transition-all">
+                      Login to share results
+                    </button>
+                  </SignInButton>
+                )}
+              </div>
             </div>
+
+            <div className="pt-2">
+              {isSignedIn ? (
+                <button 
+                  onClick={() => handleShare("pdf")}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-500/10 border border-blue-500/50 text-blue-400 font-bold hover:bg-blue-500/20 transition-all"
+                >
+                  <FileDown className="h-5 w-5" /> Download Analysis PDF
+                </button>
+              ) : (
+                <SignInButton mode="modal">
+                  <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 font-bold hover:bg-white/10 transition-all opacity-50 cursor-pointer">
+                    <Download className="h-5 w-5" /> Login to download PDF
+                  </button>
+                </SignInButton>
+              )}
+            </div>
+
             <div className="flex flex-col gap-3 pt-4 px-2">
-              <Link href="/" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-blue-500/50 text-blue-400 font-bold hover:bg-blue-500/10 transition-colors text-sm md:text-base">
+              <Link href="/" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors text-sm md:text-base">
                 <Search className="h-4 w-4" /> Get results for another job
               </Link>
-              <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-blue-500/50 text-blue-400 font-bold hover:bg-blue-500/10 transition-colors text-sm md:text-base">
+              <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors text-sm md:text-base">
                 <GitCompare className="h-4 w-4" /> Compare to another job
               </button>
             </div>

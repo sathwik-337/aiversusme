@@ -221,7 +221,7 @@ export default function Footer() {
           </div>
 
           {/* CENTER - LINKS */}
-          <div className="grid grid-cols-2 sm:flex sm:flex-row gap-x-8 gap-y-6 md:gap-10 text-sm">
+          <div className="grid grid-cols-3 sm:flex sm:flex-row gap-x-4 gap-y-6 md:gap-10 text-sm">
 
             <div className="flex flex-col gap-2 md:gap-3">
               <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Product</span>

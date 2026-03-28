@@ -49,6 +49,7 @@
            key={`${title}-${i}`}
            onClick={() => handleClick(title)}
            className="px-4 py-1.5 rounded-full bg-white text-black text-sm border border-white/20 hover:bg-gray-200 hover:scale-105 transition shadow"
+           suppressHydrationWarning
          >
            {title}
          </button>

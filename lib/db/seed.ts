@@ -441,6 +441,11 @@ const standardJobTitles = [
   "Writers and Authors", "Zoologists and Wildlife Biologists"
 ];
 
+function getArticle(word: string) {
+  const first = word.trim().charAt(0).toLowerCase();
+  return ["a", "e", "i", "o", "u"].includes(first) ? "An" : "A";
+}
+
 function generateJobs() {
   const generated: any[] = [];
   const seenSlugs = new Set();
@@ -456,7 +461,7 @@ function generateJobs() {
         salary: job.salary,
         growth_rate: job.risk > 70 ? "Declining" : job.risk > 40 ? "Steady" : "High",
         demand_level: job.demand,
-        description: `A ${job.title} is responsible for various tasks in the ${job.category} sector. The risk of automation is estimated at ${job.risk}% based on current AI and robotics trends.`,
+        description: `${getArticle(job.title)} ${job.title} is responsible for various tasks in the ${job.category} sector. The risk of automation is estimated at ${job.risk}% based on current AI and robotics trends.`,
         synonyms: job.synonyms,
         job_code: `AIVSME:${Math.random().toString(36).substring(2, 9).toUpperCase()}`
       });
@@ -490,7 +495,7 @@ function generateJobs() {
         salary: "₹4,00,000 - ₹18,00,000", // Default range
         growth_rate: risk > 70 ? "Declining" : risk > 40 ? "Steady" : "High",
         demand_level: ["High", "Medium", "Very High", "Low"][Math.floor(Math.random() * 4)],
-        description: `A ${title} is a professional role involving various specialized tasks. The risk of automation is estimated at ${risk}% based on market trends.`,
+        description: `${getArticle(title)} ${title} is a professional role involving various specialized tasks. The risk of automation is estimated at ${risk}% based on market trends.`,
         synonyms: synonyms,
         job_code: `AIVSME:${Math.random().toString(36).substring(2, 9).toUpperCase()}`
       });

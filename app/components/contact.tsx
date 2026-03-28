@@ -166,12 +166,14 @@ export default function ContactSection() {
               <div>
                 <input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={handleChange}
                   className={`bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none transition w-full ${errors.name ? "border-red-500/60" : "border-white/10 focus:border-white/30"}`}
+                  suppressHydrationWarning
                 />
                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
               </div>
               <div>
                 <input type="email" name="email" placeholder="Your Email" value={formData.email} onChange={handleChange}
                   className={`bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none transition w-full ${errors.email ? "border-red-500/60" : "border-white/10 focus:border-white/30"}`}
+                  suppressHydrationWarning
                 />
                 {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
               </div>
@@ -180,6 +182,7 @@ export default function ContactSection() {
             <div className="mb-3">
               <input type="text" name="subject" placeholder="Subject" value={formData.subject} onChange={handleChange}
                 className={`bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none transition w-full ${errors.subject ? "border-red-500/60" : "border-white/10 focus:border-white/30"}`}
+                suppressHydrationWarning
               />
               {errors.subject && <p className="text-red-400 text-xs mt-1">{errors.subject}</p>}
             </div>
@@ -187,6 +190,7 @@ export default function ContactSection() {
             <div className="mb-4">
               <textarea name="message" placeholder="Message" value={formData.message} onChange={handleChange} rows={5}
                 className={`bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none transition w-full resize-none ${errors.message ? "border-red-500/60" : "border-white/10 focus:border-white/30"}`}
+                suppressHydrationWarning
               />
               {errors.message && <p className="text-red-400 text-xs mt-1">{errors.message}</p>}
             </div>
@@ -211,6 +215,7 @@ export default function ContactSection() {
             <div className="flex justify-center">
               <button onClick={handleSubmit} disabled={loading}
                 className="px-10 py-3 rounded-full text-sm font-semibold transition-all hover:scale-105 active:scale-100 disabled:opacity-60 disabled:cursor-not-allowed bg-white text-black hover:bg-gray-100"
+                suppressHydrationWarning
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

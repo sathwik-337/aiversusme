@@ -16,6 +16,23 @@ interface SentimentChartProps {
   height?: number;
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-[#111315] border border-white/10 rounded-xl p-3 shadow-2xl max-w-[200px] md:max-w-[300px]">
+        <p className="text-white font-bold text-xs md:text-sm mb-1 break-words whitespace-normal">
+          {data.label}
+        </p>
+        <p className="text-cyan-400 font-medium text-[10px] md:text-xs">
+          Risk : {payload[0].value}%
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function SentimentChart({ data, height = 300 }: SentimentChartProps) {
   const getColor = (v: number) => {
     if (v < 60) return "#84cc16";
@@ -30,7 +47,7 @@ export default function SentimentChart({ data, height = 300 }: SentimentChartPro
       </div>
       <div className="flex-grow w-full min-h-0">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+          <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
             <XAxis 
               dataKey="label" 
@@ -43,11 +60,9 @@ export default function SentimentChart({ data, height = 300 }: SentimentChartPro
               interval={4}
               height={50}
             />
-            <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}%`} />
+            <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} width={50} tickFormatter={(v) => `${v}%`} />
             <Tooltip 
-              contentStyle={{ backgroundColor: '#111315', borderColor: '#1e293b', borderRadius: '12px' }}
-              itemStyle={{ color: '#fff' }}
-              formatter={(value: any) => `${value}%`}
+              content={<CustomTooltip />}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {data.map((entry, index) => (
