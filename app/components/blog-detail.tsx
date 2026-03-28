@@ -1,37 +1,36 @@
 "use client";
 
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Sparkles } from "lucide-react";
 import { blogPosts } from "@/app/data/blog-posts";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function BlogDetail({ slug }: { slug: string }) {
-  const router = useRouter();
-  const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 2) {
-      router.back();
-    } else {
-      router.push("/blog");
-    }
-  };
-
+function BlogDetailContent({ slug }: { slug: string }) {
   const post = blogPosts.find((p) => p.slug === slug);
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
 
   if (!post) {
     notFound();
   }
 
+  const backHref = from === "blogs" ? "/blogs" : 
+    Number(post.id) <= 13 ? "/#blog-section" : "/blogs";
+
   return (
     <div className="min-h-screen bg-black text-white pt-40 pb-12 px-4 md:px-8">
       <article className="max-w-4xl mx-auto">
+
         {/* Back Link */}
-        <button
-          onClick={handleBack}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-8 text-sm font-medium cursor-pointer"
+        <Link
+          href={backHref}
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors mb-8 text-sm font-medium cursor-pointer relative z-50"
         >
           <ArrowLeft size={16} />
           Back to all insights
-        </button>
+        </Link>
 
         {/* Header */}
         <header className="mb-10 text-center md:text-left">
@@ -110,7 +109,28 @@ export default function BlogDetail({ slug }: { slug: string }) {
             </span>
           ))}
         </div>
+
+        {/* View More Button */}
+        <div className="flex justify-center mt-12">
+          <Link
+            href={backHref}
+            className="group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium backdrop-blur-md hover:bg-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.2)] transition-all duration-300"
+          >
+            <span>View All Articles</span>
+            <ArrowLeft size={16} className="text-cyan-400 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/0 via-cyan-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          </Link>
+        </div>
+
       </article>
     </div>
+  );
+}
+
+export default function BlogDetail({ slug }: { slug: string }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <BlogDetailContent slug={slug} />
+    </Suspense>
   );
 }
