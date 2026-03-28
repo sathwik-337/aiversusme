@@ -45,9 +45,15 @@ export default function RadarChart({ data, size = 250 }: RadarChartProps) {
     })
     .join(" ") + " Z";
 
+  const padding = 60;
+  
   return (
-    <div className="flex flex-col items-center justify-center relative">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <div className="flex flex-col items-center justify-center relative w-full max-w-full overflow-hidden">
+      <svg
+        viewBox={`${-padding} ${-padding/2} ${size + padding * 2} ${size + padding}`}
+        className="w-full h-auto overflow-visible"
+        style={{ maxWidth: size + padding * 2 }}
+      >
         {/* Grid Circles */}
         {[0.2, 0.4, 0.6, 0.8, 1].map((r) => (
           <circle

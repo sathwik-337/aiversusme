@@ -44,13 +44,13 @@ export default async function RankingsPage() {
 
         {/* Column Headers */}
         <div className="flex items-center gap-4 mb-4 px-2">
-          <div className="w-36 md:w-64 shrink-0">
+          <div className="w-[180px] md:w-64 shrink-0">
             <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
               JOBS
             </span>
           </div>
           <div className="flex-1" />
-          <div>
+          <div className="shrink-0">
             <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
               RISK SCORE
             </span>
@@ -80,19 +80,21 @@ export default async function RankingsPage() {
                 <Link
                   key={job.id}
                   href={`/job/${job.slug}`}
-                  className="group flex items-center gap-4 rounded-xl px-2 py-2 transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10"
+                  className="group flex items-center gap-4 rounded-xl px-2 py-3 md:py-2 transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10"
                 >
                   {/* Rank + Job Name */}
-                  <div className="w-36 md:w-64 shrink-0 flex items-center gap-2">
-                    <span className="text-xs font-bold w-7 text-right shrink-0 text-gray-500">
+                  <div className="w-[180px] md:w-64 shrink-0 flex items-center gap-3">
+                    <span className="text-xs font-bold w-6 text-right shrink-0 text-gray-500">
                       #{idx + 1}
                     </span>
-                    <span
-                      className="text-sm font-bold text-center px-3 py-1.5 rounded-full w-full leading-snug bg-white/10 text-white"
-                      style={{ whiteSpace: "normal", wordBreak: "break-word" }}
-                    >
-                      {job.title}
-                    </span>
+                    <div className="flex-1 flex items-center justify-center min-h-[40px] px-4 py-2 rounded-2xl md:rounded-full bg-white/10 text-white">
+                      <span
+                        className="text-xs md:text-sm font-bold text-center leading-tight md:leading-snug"
+                        style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
+                      >
+                        {job.title}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Bar — desktop only */}

@@ -44,7 +44,7 @@ export default function LandingHero() {
   };
 
   return (
-    <section className="relative w-full min-h-[100vh] flex flex-col items-center justify-center bg-[#050505] px-4 pt-32 pb-20 overflow-hidden">
+    <section className="relative w-full min-h-[100vh] flex flex-col items-center justify-center bg-[#050505] px-4 pt-16 md:pt-32 pb-20 overflow-hidden">
 
       {/* Subtle glowing radial background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-900/10 via-purple-900/10 to-transparent rounded-full blur-[150px] pointer-events-none" />

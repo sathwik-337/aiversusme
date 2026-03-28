@@ -165,6 +165,7 @@ function BlogSectionContent() {
                 type="text"
                 placeholder="Search articles, insights, or careers..."
                 className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all backdrop-blur-md"
+                suppressHydrationWarning
               />
             </div>
           </div>
@@ -183,6 +184,7 @@ function BlogSectionContent() {
                     ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                     : "bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:text-white"
                 )}
+                suppressHydrationWarning
               >
                 {category}
               </button>
@@ -203,6 +205,7 @@ function BlogSectionContent() {
                 onClick={handlePrev}
                 className="absolute -left-2 md:-left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/10 border border-white/10 text-white backdrop-blur-md hover:bg-white/20 hover:border-cyan-500/50 transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex items-center justify-center shadow-lg"
                 aria-label="Previous slide"
+                suppressHydrationWarning
               >
                 <ChevronLeft size={24} />
               </button>
@@ -211,6 +214,7 @@ function BlogSectionContent() {
                 onClick={handleNext}
                 className="absolute -right-2 md:-right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/10 border border-white/10 text-white backdrop-blur-md hover:bg-white/20 hover:border-cyan-500/50 transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex items-center justify-center shadow-lg"
                 aria-label="Next slide"
+                suppressHydrationWarning
               >
                 <ChevronRight size={24} />
               </button>
@@ -303,6 +307,7 @@ function BlogSectionContent() {
                   <button
                     onClick={() => setActiveCategory("All")}
                     className="mt-4 text-cyan-400 hover:text-cyan-300 text-sm font-medium"
+                    suppressHydrationWarning
                   >
                     Clear filters
                   </button>
@@ -325,6 +330,7 @@ function BlogSectionContent() {
                       : "w-2 bg-white/20 hover:bg-white/40"
                   )}
                   aria-label={`Go to slide ${idx + 1}`}
+                  suppressHydrationWarning
                 />
               ))}
             </div>

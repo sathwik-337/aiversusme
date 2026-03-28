@@ -116,21 +116,21 @@ export default function Footer() {
     <footer className="w-full bg-black text-white">
 
       {/* 🆕 PARTNERS SECTION */}
-      <div className="w-full border-b border-white/10 py-10">
+      <div className="w-full border-b border-white/10 py-6 md:py-8">
         <div className="max-w-6xl mx-auto px-6 text-center">
 
-          <h3 className="text-lg md:text-xl font-semibold mb-8 text-white/80">
+          <h3 className="text-sm md:text-base font-semibold mb-4 md:mb-6 text-white/80">
             Our Partners
           </h3>
 
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12">
 
             <a href="https://torsecure.com" target="_blank" rel="noopener noreferrer">
               <Image
                 src="/partners/torsecure.png"
                 alt="Torsecure"
-                width={140}
-                height={50}
+                width={110}
+                height={40}
                 className="object-contain opacity-80 hover:opacity-100 hover:scale-105 transition duration-300"
               />
             </a>
@@ -139,8 +139,8 @@ export default function Footer() {
               <Image
                 src="/partners/panama.png"
                 alt="Panama Corporation"
-                width={140}
-                height={50}
+                width={110}
+                height={40}
                 className="object-contain opacity-80 hover:opacity-100 hover:scale-105 transition duration-300"
               />
             </a>
@@ -149,8 +149,8 @@ export default function Footer() {
               <Image
                 src="/partners/surepass.jpeg"
                 alt="Surepass"
-                width={140}
-                height={50}
+                width={110}
+                height={40}
                 className="object-contain opacity-80 hover:opacity-100 hover:scale-105 transition duration-300"
               />
             </a>
@@ -159,48 +159,43 @@ export default function Footer() {
       </div>
 
       {/* 🆕 BRANCHSELECTOR SECTION */}
-      <div className="w-full py-20 bg-gradient-to-b from-black to-zinc-900 border-b border-white/10">
+      <div className="w-full py-8 md:py-12 bg-gradient-to-b from-black to-zinc-900 border-b border-white/10">
   <div className="max-w-5xl mx-auto px-6 text-center">
 
     {/* Heading */}
-    <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">
+    <h2 className="text-2xl md:text-4xl font-extrabold text-white leading-tight mb-3 md:mb-4">
       Build a Career That Actually Fits You
     </h2>
 
     {/* Subheading */}
-    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+    <p className="text-sm md:text-lg text-gray-400 max-w-2xl mx-auto mb-4 md:mb-6">
       Discover your ideal path with AI-powered career guidance and psychometric tests.
       Stop guessing — start choosing the right future.
     </p>
 
     {/* Logo */}
-   <div className="w-full flex justify-center items-center py-10">
+   <div className="w-full flex justify-center items-center py-4 md:py-6">
   <div className="flex items-center gap-3">
     <Image
       src="/branchlogo.png"
       alt="BranchSelector Logo"
-      width={55}
-      height={55}
+      width={45}
+      height={45}
       className="object-contain"
     />
 
-    <h1 className="text-3xl md:text-4xl font-semibold text-white tracking-wide">
+    <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-wide">
       BranchSelector
     </h1>
   </div>
 </div>
-
-    {/* Brand Name
-    <h3 className="text-2xl font-semibold text-white mb-8">
-      BranchSelector
-    </h3> */}
 
     {/* CTA Button */}
     <a
       href="https://branchselector.com"
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-block bg-white text-black font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-lg"
+      className="inline-block bg-white text-black font-semibold px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-lg text-sm md:text-base"
     >
       Get Started →
     </a>
@@ -209,15 +204,15 @@ export default function Footer() {
 </div>
 
       {/* INNER CONTAINER */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-8 md:py-10">
 
         {/* TOP SECTION */}
-        <div className="flex flex-col md:flex-row justify-between gap-10">
+        <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-10">
 
           {/* LEFT - BRAND */}
-          <div className="flex flex-col gap-4 max-w-sm">
+          <div className="flex flex-col gap-2 md:gap-4 max-w-sm">
             <div className="flex items-center gap-2">
-              <img src="/bgremovedlogo.png" alt="logo" height={200} width={200} />
+              <img src="/bgremovedlogo.png" alt="logo" height={140} width={140} className="md:h-[160px] md:w-[160px]" />
             </div>
             <p className="text-gray-400 text-sm">
               Discover how AI will impact your career. Analyze job risks,
@@ -226,25 +221,25 @@ export default function Footer() {
           </div>
 
           {/* CENTER - LINKS */}
-          <div className="flex flex-col md:flex-row gap-10 text-sm">
+          <div className="grid grid-cols-2 sm:flex sm:flex-row gap-x-8 gap-y-6 md:gap-10 text-sm">
 
-            <div className="flex flex-col gap-3">
-              <span className="text-gray-400 uppercase text-xs">Product</span>
-              <Link href="/" className="hover:text-gray-300">Home</Link>
-              <Link href="/#about" className="hover:text-gray-300">About</Link>
-              <Link href="/rankings" className="hover:text-gray-300">Rankings</Link>
+            <div className="flex flex-col gap-2 md:gap-3">
+              <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Product</span>
+              <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
+              <Link href="/#about" className="hover:text-gray-300 transition-colors">About</Link>
+              <Link href="/rankings" className="hover:text-gray-300 transition-colors">Rankings</Link>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <span className="text-gray-400 uppercase text-xs">Company</span>
-              <Link href="/#blog-section" className="hover:text-gray-300">Blog</Link>
-              <Link href="/contact" className="hover:text-gray-300">Contact</Link>
+            <div className="flex flex-col gap-2 md:gap-3">
+              <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Company</span>
+              <Link href="/#blog-section" className="hover:text-gray-300 transition-colors">Blog</Link>
+              <Link href="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <span className="text-gray-400 uppercase text-xs">Legal</span>
-              <Link href="/privacy" className="hover:text-gray-300">Privacy</Link>
-              <Link href="/terms" className="hover:text-gray-300">Terms</Link>
+            <div className="flex flex-col gap-2 md:gap-3">
+              <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Legal</span>
+              <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
             </div>
 
           </div>
@@ -254,7 +249,7 @@ export default function Footer() {
         </div>
 
         {/* DIVIDER */}
-        <div className="border-t border-gray-800 my-8"></div>
+        <div className="border-t border-gray-800 my-6"></div>
 
         {/* BOTTOM */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
@@ -281,7 +276,7 @@ export default function Footer() {
           }
         `}</style>
         <p className="disclaimer-loop text-sm font-medium text-yellow-400">
-          ⚠️ All insights provided are AI-generated and for informational purposes only; please verify independently before making career decisions.
+          ⚠️ All insights provided are AI-generated and for informational purposes only; Please verify independently before making career decisions.
         </p>
       </div>
 

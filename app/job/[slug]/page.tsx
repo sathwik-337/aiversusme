@@ -33,8 +33,10 @@ export default async function JobPage({ params }: { params: Promise<{ slug: stri
         {/* Pass the job to the analysis component */}
         <JobDetailAnalysis job={job} />
         
-        {/* Footer sections that remain relatively static but styled */}
-        <CommentsSection jobSlug={job.slug} initialCommentsCount={job.votes_count || 0} />
+        <div id="comments-section">
+          {/* Footer sections that remain relatively static but styled */}
+          <CommentsSection jobSlug={job.slug} initialCommentsCount={job.votes_count || 0} />
+        </div>
       </div>
     );
   } catch (error) {

@@ -61,7 +61,7 @@ export default function Navbar() {
           scrolled ? "bg-black/90 backdrop-blur-md shadow-lg" : "bg-black"
         }`}
       >
-        <nav className="flex items-center justify-between px-8 max-w-7xl mx-auto text-white h-[110px]">
+        <nav className="flex items-center justify-between px-4 md:px-8 max-w-7xl mx-auto text-white h-[80px] md:h-[110px]">
 
           {/* LOGO */}
 <div className="flex items-center flex-shrink-0 h-full overflow-hidden">
@@ -69,7 +69,7 @@ export default function Navbar() {
     <img
       src="/bgremovedlogo.png"
       alt="logo"
-      className="h-[190px] w-auto object-contain cursor-pointer"
+      className="h-[120px] md:h-[190px] w-auto object-contain cursor-pointer"
     />
   </Link>
 </div>
@@ -174,7 +174,7 @@ export default function Navbar() {
       </div>
 
       {/* Spacer — must match navbar height */}
-      <div className="h-[90px]" />
+      <div className="h-[70px] md:h-[90px]" />
     </>
   );
 }

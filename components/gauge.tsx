@@ -17,12 +17,11 @@ export default function Gauge({ value, size = 300 }: GaugeProps) {
   const needleRotation = (normalizedValue / 100) * 180 - 90;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full max-w-full overflow-hidden">
       <svg
-        width={size}
-        height={size / 1.5}
-        viewBox="0 0 240 160"
-        className="overflow-visible"
+        viewBox="-40 0 320 160"
+        className="w-full h-auto overflow-visible"
+        style={{ maxWidth: size }}
       >
         {/* Gauge Background (Sectors) */}
         <defs>
@@ -57,7 +56,7 @@ export default function Gauge({ value, size = 300 }: GaugeProps) {
           <circle cx={center} cy={center} r="6" fill="#475569" />
         </g>
       </svg>
-      <div className="text-4xl font-black mt-[-20px] text-white">
+      <div className="text-3xl md:text-4xl font-black mt-[-10px] md:mt-[-20px] text-white">
         {normalizedValue}%
       </div>
     </div>
