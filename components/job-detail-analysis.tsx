@@ -296,7 +296,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
         <Gauge value={risk} size={400} />
       </div>
 
-      <h2 className="text-xl md:text-2xl font-bold tracking-tight text-center mb-8 px-4">Or, Explore This Profession In Greater Detail...</h2>
+      <h2 className="text-xl md:text-2xl font-bold tracking-tight text-center mb-8 px-4"> Explore This Profession In Greater Detail</h2>
       
       <div className="flex gap-4 justify-center mb-12 px-4">
         <button 
@@ -918,7 +918,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                   </>
                 ) : (
                   <SignInButton mode="modal">
-                    <button className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-sm font-medium transition-all">
+                    <button className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-sm font-medium transition-all text-white">
                       Login to share results
                     </button>
                   </SignInButton>
@@ -935,11 +935,20 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
                   <FileDown className="h-5 w-5" /> Download Analysis PDF
                 </button>
               ) : (
-                <SignInButton mode="modal">
-                  <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 font-bold hover:bg-white/10 transition-all opacity-50 cursor-pointer">
-                    <Download className="h-5 w-5" /> Login to download PDF
-                  </button>
-                </SignInButton>
+               <SignInButton mode="modal">
+  <button className="flex items-center justify-center gap-2 w-full py-3 rounded-xl 
+    bg-gradient-to-r from-blue-500/20 to-blue-600/20 
+    border border-blue-500/50 
+    text-blue-300 font-bold 
+    hover:from-blue-500/30 hover:to-blue-600/30 
+    hover:scale-[1.02] active:scale-[0.98]
+    transition-all duration-200 
+    cursor-pointer shadow-md hover:shadow-blue-500/20">
+    
+    <Download className="h-5 w-5 text-blue-300" /> 
+    Login to download PDF
+  </button>
+</SignInButton>
               )}
             </div>
 
