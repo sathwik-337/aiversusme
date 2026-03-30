@@ -80,7 +80,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="w-full bg-black px-6 pt-6 pb-12">
+    <section id="contact" className="w-full bg-black px-6 pt-6 pb-12 scroll-mt-[80px] md:scroll-mt-[110px]">
       <div className="max-w-5xl mx-auto">
 
         {/* Gradient Header */}

@@ -1,4 +1,4 @@
 import Navbar from "@/app/components/navbar";
-export default function Header({ userId }: { userId: string | null }) {
+export default function Header() {
   return <Navbar />;
 }

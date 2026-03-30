@@ -83,11 +83,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Job title is required" }, { status: 400 });
     }
 
-    // Check server-side cache
+    // Temporarily disabled cache to ensure prompt changes take effect
+    /*
     if (serverCache.has(job_title)) {
       console.log(`Cache hit for ${job_title}`);
       return NextResponse.json(serverCache.get(job_title));
     }
+    */
 
     const prompt = `You are an expert data analyst, AI strategist, and business consultant.
 Your task is to deeply analyze the job role: ${job_title} in the context of the Indian market.
@@ -118,6 +120,12 @@ Required JSON structure:
   "explanation": "Brief overview of automation impact (legacy field).",
   "future": "Detailed trend analysis and future outlook (5-10 years).",
   "skills": ["List 5-8 future-proof skills"],
+  "certifications": [
+    "A mandatory list of 4-6 REAL-WORLD, SPECIFIC professional certifications for ${job_title}.",
+    "CRITICAL: If the job is 'Nurse', do NOT list 'SQL' or 'Python'. List 'Advanced Clinical AI', 'Patient Care Tech', etc.",
+    "CRITICAL: If the job is 'Truck Driver', list 'Autonomous Vehicle Management', 'Logistics AI Tools', etc.",
+    "ALWAYS include the provider name (e.g., 'Google', 'IBM', 'Microsoft', 'AWS', 'Coursera', 'Udemy', or industry-specific associations)."
+  ],
   "alternatives": ["List 5-8 safer career paths"],
   "scores": {
     "automation_risk": 0-100,
@@ -223,6 +231,17 @@ Required JSON structure:
           { status: 422 }
         );
       }
+    }
+
+    // Final validation for certifications to ensure they are high-quality strings
+    if (parsedData.certifications && Array.isArray(parsedData.certifications)) {
+      parsedData.certifications = parsedData.certifications.filter((c: any) => 
+        typeof c === "string" && 
+        c.length > 5 && 
+        !c.toLowerCase().includes("list") && 
+        !c.toLowerCase().includes("mandatory") &&
+        !c.toLowerCase().includes("critical")
+      );
     }
 
     const n = (v: unknown, d: number) => (typeof v === "number" && isFinite(v) ? v : d);

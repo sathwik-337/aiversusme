@@ -60,6 +60,7 @@ interface AnalysisData {
   wage_forecast?: { year: number; forecast: number }[];
   hiring_trend?: { month: string; postings: number }[];
   timeline?: { year: number; event: string; risk_change: number }[];
+  certifications?: string[];
 }
 
 const StatusBox = ({ children, borderColor = "border-orange-500" }: { children: React.ReactNode, borderColor?: string }) => (
@@ -168,31 +169,39 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
     if (t.includes("data") || t.includes("analyst") || t.includes("scientist")) {
       return ["Google Data Analytics", "IBM Data Science", "AWS Data Analytics", "Microsoft Azure DP-100", "Tableau Desktop", "Power BI Analyst PL-300"];
     }
-    if (t.includes("developer") || t.includes("engineer") || t.includes("programmer")) {
+    if (t.includes("developer") || t.includes("engineer") || t.includes("programmer") || t.includes("software") || t.includes("web")) {
       return ["AWS Solutions Architect Associate", "Azure AZ-104", "Google Professional Cloud Developer", "Meta Front-End", "React Nanodegree", "Kubernetes CKAD"];
     }
-    if (t.includes("accountant") || t.includes("finance")) {
+    if (t.includes("accountant") || t.includes("finance") || t.includes("banking")) {
       return ["ACCA Foundations", "CPA fundamentals", "Tally with GST", "SAP FI basics", "Financial Modeling", "Excel Advanced"];
     }
-    if (t.includes("marketing")) {
+    if (t.includes("marketing") || t.includes("sales") || t.includes("advertising")) {
       return ["Google Ads", "Meta Blueprint", "HubSpot Content", "SEO Specialization", "GA4 Analytics", "Email Marketing"];
     }
-    if (t.includes("designer")) {
+    if (t.includes("designer") || t.includes("ui") || t.includes("ux") || t.includes("creative")) {
       return ["Adobe Certified Professional", "Figma UI Design", "UX Research", "Motion Graphics", "3D Modeling Basics", "Brand Design"];
     }
-    if (t.includes("electrical") || t.includes("mechanical") || t.includes("civil")) {
+    if (t.includes("electrical") || t.includes("mechanical") || t.includes("civil") || t.includes("industrial")) {
       return ["AutoCAD", "SolidWorks", "PLC SCADA", "Primavera P6", "ANSYS Basics", "Quality Management"];
     }
-    return ["Communication Skills", "Project Management Basics", "SQL Fundamentals", "Git & GitHub", "Python Essentials", "Cloud Foundations"];
+    if (t.includes("nurse") || t.includes("doctor") || t.includes("medical") || t.includes("health")) {
+      return ["AI in Healthcare (Stanford)", "Health Informatics (Coursera)", "Medical Technology Basics", "Digital Health Foundations", "Patient Care Analytics", "Telemedicine Fundamentals"];
+    }
+    if (t.includes("law") || t.includes("legal") || t.includes("attorney")) {
+      return ["AI in Law Specialization", "Legal Tech Foundations", "eDiscovery Management", "Contract Analysis Tools", "Legal Data Privacy", "Digital Evidence Management"];
+    }
+    return ["AI Fundamentals", "Project Management Basics", "Digital Literacy", "Modern Workplace Tools", "Problem Solving Skills", "Critical Thinking"];
   }
 
   useEffect(() => {
     const fetchAnalysis = async () => {
+      /* Temporarily disabled cache to ensure prompt changes take effect
       if (detailCache.has(job.title)) {
         setData(detailCache.get(job.title)!);
         setLoading(false);
         return;
       }
+      */
 
       try {
         const response = await axios.post("/api/ai-analysis", { job_title: job.title }, { withCredentials: true });
@@ -701,7 +710,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
               <div className="bg-[#25282c] border border-white/5 rounded-3xl p-6 md:p-8">
                 <h4 className="text-lg md:text-xl font-bold mb-6">Recommended certificate courses</h4>
                 <ul className="grid grid-cols-1 gap-3 text-sm text-[#94a3b8]">
-                  {recommendCerts(job.title).map((c, i) => (
+                  {(data?.certifications?.filter(c => !c.toLowerCase().includes("list")) || recommendCerts(job.title)).map((c, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" /> {c}
                     </li>

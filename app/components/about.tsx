@@ -25,7 +25,7 @@ const features = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="w-full bg-black text-white py-20 px-6">
+    <section id="about" className="w-full bg-black text-white py-20 px-6 scroll-mt-[80px] md:scroll-mt-[110px]">
 
       {/* CONTAINER */}
       <div className="max-w-6xl mx-auto">

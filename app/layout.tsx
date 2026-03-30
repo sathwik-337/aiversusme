@@ -3,7 +3,6 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import Header from "@/components/header";
 import Footer from "@/app/components/footer";
 import { cn } from "@/lib/utils";
@@ -16,13 +15,11 @@ export const metadata: Metadata = {
   
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId } = await auth();
-
   return (
     <ClerkProvider>
       <html
@@ -35,7 +32,7 @@ export default async function RootLayout({
         )}
       >
         <body className="min-h-full flex flex-col">
-          <Header userId={userId} />
+          <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
         </body>
