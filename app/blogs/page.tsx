@@ -50,7 +50,7 @@ const remainingPosts = blogPosts;
   });
 
   return (
-    <div className="min-h-screen bg-black text-white py-32 px-4 md:px-8">
+    <div className="min-h-screen bg-black text-white py-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
