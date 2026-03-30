@@ -5,7 +5,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/header";
 import Footer from "@/app/components/footer";
-import Chatbot from "@/components/chatbot";
+import ChatbotProvider from "@/components/chatbot-provider";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -29,11 +29,11 @@ export default function RootLayout({
           GeistMono.variable
         )}
       >
-        <body className="min-h-full flex flex-col">
+        <body className="min-h-full flex flex-col bg-black">
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
-          <Chatbot />
+          <ChatbotProvider />
         </body>
       </html>
     </ClerkProvider>

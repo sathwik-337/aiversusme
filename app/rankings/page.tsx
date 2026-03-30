@@ -23,7 +23,7 @@ export default async function RankingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white py-16 px-4 md:px-8">
+    <div className="min-h-screen bg-black text-white pt-[80px] md:pt-[110px] pb-16 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
@@ -43,14 +43,15 @@ export default async function RankingsPage() {
         </div>
 
         {/* Column Headers */}
-        <div className="flex items-center gap-4 mb-4 px-2">
-          <div className="w-[180px] md:w-64 shrink-0">
+        <div className="hidden md:flex items-center gap-4 mb-4 px-2">
+          <div className="w-[180px] md:w-80 shrink-0 flex items-center gap-3">
+            <div className="w-6 shrink-0" /> {/* Spacer for rank number */}
             <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
               JOBS
             </span>
           </div>
           <div className="flex-1" />
-          <div className="shrink-0">
+          <div className="shrink-0 w-24 md:w-32 text-right">
             <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
               RISK SCORE
             </span>
@@ -60,7 +61,7 @@ export default async function RankingsPage() {
         {/* Grid lines + Rows */}
         <div className="relative">
           {/* Vertical grid lines — desktop only */}
-          <div className="absolute inset-0 left-64 right-0 pointer-events-none hidden md:block" aria-hidden>
+          <div className="absolute inset-0 left-80 right-0 pointer-events-none hidden md:block" aria-hidden>
             {[0, 25, 50, 75, 100].map((pct) => (
               <div
                 key={pct}
@@ -83,13 +84,13 @@ export default async function RankingsPage() {
                   className="group flex items-center gap-4 rounded-xl px-2 py-3 md:py-2 transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10"
                 >
                   {/* Rank + Job Name */}
-                  <div className="w-[180px] md:w-64 shrink-0 flex items-center gap-3">
+                  <div className="w-[180px] md:w-80 shrink-0 flex items-center gap-3">
                     <span className="text-xs font-bold w-6 text-right shrink-0 text-gray-500">
                       #{idx + 1}
                     </span>
-                    <div className="flex-1 flex items-center justify-center min-h-[40px] px-4 py-2 rounded-2xl md:rounded-full bg-white/10 text-white">
+                    <div className="flex-1 flex items-center justify-start min-h-[40px] px-4 py-2 rounded-2xl md:rounded-full bg-white/10 text-white">
                       <span
-                        className="text-xs md:text-sm font-bold text-center leading-tight md:leading-snug"
+                        className="text-xs md:text-sm font-bold text-left leading-tight md:leading-snug"
                         style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
                       >
                         {job.title}
@@ -106,8 +107,8 @@ export default async function RankingsPage() {
                   </div>
 
                   {/* Score + Badge */}
-                  <div className="flex items-center gap-1 md:gap-2 shrink-0 w-20 md:w-32 justify-end">
-                    <span className={`hidden md:inline text-xs font-bold px-2 py-0.5 rounded-full border ${risk.color}`}>
+                  <div className="flex items-center gap-1 md:gap-2 shrink-0 w-24 md:w-32 justify-end">
+                    <span className={`hidden md:inline text-[10px] font-bold px-2 py-0.5 rounded-full border ${risk.color}`}>
                       {risk.label}
                     </span>
                     <span className="text-lg font-black tabular-nums text-white">
@@ -121,7 +122,7 @@ export default async function RankingsPage() {
         </div>
 
         {/* Legend */}
-        <div className="mt-10 flex flex-wrap gap-4 items-center">
+        <div className="mt-10 hidden md:flex flex-wrap gap-4 items-center">
           <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
             Risk Level:
           </span>

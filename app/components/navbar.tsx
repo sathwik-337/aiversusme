@@ -176,9 +176,6 @@ export default function Navbar() {
           </div>
         )}
       </div>
-
-      {/* Spacer — must match navbar height */}
-      <div className="h-[70px] md:h-[90px]" />
     </>
   );
 }

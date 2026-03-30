@@ -232,7 +232,7 @@ export default function Footer() {
 
             <div className="flex flex-col gap-2 md:gap-3">
               <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Company</span>
-              <Link href="/#blog-section" className="hover:text-gray-300 transition-colors">Blog</Link>
+              <Link href="/blogs" className="hover:text-gray-300 transition-colors">Blog</Link>
               <Link href="/contact" className="hover:text-gray-300 transition-colors">Contact</Link>
             </div>
 
@@ -240,6 +240,7 @@ export default function Footer() {
               <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Legal</span>
               <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
               <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
+              <Link href="/disclaimer" className="hover:text-gray-300 transition-colors">Disclaimer</Link>
             </div>
 
           </div>

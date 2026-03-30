@@ -774,7 +774,7 @@ export const blogPosts: BlogPost[] = [
     readingTime: "8 min read",
     date: "Jul 20, 2027",
     isTrending: true,
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://imgproxy.divecdn.com/-OwYxUXWv0C9nSm3eW6E5k5GJyU0wZ8F1_zYkfTrS5k/g:ce/rs:fill:1200:675:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9HZXR0eUltYWdlcy0yMjE2MTkwODA5LmpwZw==.webp",
     sections: [
       { title: "What Agents Can Do", content: "AI agents can browse the web, write and execute code, send emails, book meetings, and manage files — all autonomously, based on a single high-level instruction." },
       { title: "Jobs Most at Risk", content: "Roles involving sequential, rule-based tasks across digital systems — like data entry, scheduling, and basic research — are directly in the crosshairs of AI agent deployment." }

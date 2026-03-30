@@ -109,9 +109,9 @@ export default function ContactSection() {
               </div>
               <div>
                 <p className="text-white font-semibold text-xs mb-1">Office Address</p>
-                <p className="text-gray-400 text-xs leading-relaxed">
+                <a href="https://maps.google.com/?q=Torsecure+Cyber+LLP,+Door+No.+4-9-765/17,+Second+Floor,+Manasa+Towers,+MG+Road,+Kodialbail,+Mangalore,+Karnataka" target="_blank" rel="noopener noreferrer" className="text-gray-400 text-xs leading-relaxed hover:text-white transition-colors">
                   Torsecure Cyber LLP, Door No. 4-9-765/17, Second Floor, Manasa Towers, MG Road, Kodialbail, Mangalore, Karnataka
-                </p>
+                </a>
               </div>
             </div>
 
@@ -124,7 +124,7 @@ export default function ContactSection() {
               </div>
               <div>
                 <p className="text-white font-semibold text-xs mb-1">Call Us</p>
-                <p className="text-gray-400 text-xs">+91 89515 11111</p>
+                <a href="tel:+918951511111" className="text-gray-400 text-xs hover:text-white transition-colors">+91 89515 11111</a>
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function ContactSection() {
               </div>
               <div>
                 <p className="text-white font-semibold text-xs mb-1">Email Us</p>
-                <p className="text-gray-400 text-xs">support@torsecure.com</p>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@torsecure.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 text-xs hover:text-white transition-colors">support@torsecure.com</a>
               </div>
             </div>
           </div>

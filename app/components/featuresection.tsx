@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useAuth, SignUpButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Users,
@@ -124,7 +126,7 @@ function FeaturesBottom() {
     {
       title: "AI Risk Insights",
       description: "Understand how vulnerable your job is to automation using real data and trend analysis.",
-      ctaText: "Search Job Posting",
+      ctaText: "Search Job Analysis",
       icon: Briefcase,
       color: "text-blue-400",
       bgHover: "hover:border-blue-500/30 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]",
@@ -134,7 +136,7 @@ function FeaturesBottom() {
     {
       title: "Career Intelligence",
       description: "Explore salaries, demand levels, and growth forecasts for different professions.",
-      ctaText: "Explore Community",
+      ctaText: "Explore Jobs",
       icon: UsersRound,
       color: "text-purple-400",
       bgHover: "hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]",
@@ -183,6 +185,45 @@ function FeatureCard({
   title: string; description: string; ctaText: string; icon: React.ElementType;
   color?: string; bgHover?: string; iconBg?: string; iconBorder?: string;
 }) {
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  const handleCTAClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (ctaText === "Start Your Profile") {
+      if (isSignedIn) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else if (ctaText === "Search Job Analysis") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (ctaText === "Explore Jobs") {
+      router.push("/rankings");
+    }
+  };
+
+  const renderCTA = () => {
+    const ctaContent = (
+      <span className="inline-flex items-center font-medium text-white/80 transition-colors cursor-pointer group-hover:text-white">
+        {ctaText}
+        <ArrowRight className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+      </span>
+    );
+
+    if (ctaText === "Start Your Profile" && !isSignedIn) {
+      return (
+        <SignUpButton mode="modal">
+          {ctaContent}
+        </SignUpButton>
+      );
+    }
+
+    return (
+      <button onClick={handleCTAClick}>
+        {ctaContent}
+      </button>
+    );
+  };
+
   return (
     <div className={`flex flex-col bg-white/5 p-8 rounded-2xl border border-white/10 transition-all duration-300 h-full group ${bgHover || 'hover:bg-white/[0.07]'}`}>
       <div className={`mb-6 border w-12 h-12 flex items-center justify-center rounded-xl ${iconBg || 'bg-white/5'} ${iconBorder || 'border-white/10'}`}>
@@ -191,10 +232,7 @@ function FeatureCard({
       <h3 className="text-xl font-bold mb-4 text-white group-hover:text-white/90 transition-colors">{title}</h3>
       <p className="text-gray-400 leading-relaxed flex-grow group-hover:text-gray-300 transition-colors">{description}</p>
       <div className="mt-8">
-        <a href="#" className="inline-flex items-center font-medium text-white/80 transition-colors">
-          {ctaText}
-          <ArrowRight className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-        </a>
+        {renderCTA()}
       </div>
     </div>
   );

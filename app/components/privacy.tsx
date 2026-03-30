@@ -145,7 +145,7 @@ export default function PrivacyPolicy() {
       />
 
       {/* Hero Header */}
-      <div className="w-full pt-32 pb-16 px-6 relative border-b border-white/10 bg-black/50 overflow-hidden">
+      <div className="w-full pt-[80px] md:pt-[110px] pb-12 px-6 relative border-b border-white/10 bg-black/50 overflow-hidden">
         {/* Glow effect */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-blue-600/10 via-cyan-500/10 to-purple-600/10 blur-[100px] rounded-full pointer-events-none" />
         

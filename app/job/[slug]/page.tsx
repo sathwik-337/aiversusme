@@ -29,7 +29,7 @@ export default async function JobPage({ params }: { params: Promise<{ slug: stri
     }
 
     return (
-      <div className="min-h-screen bg-[#1a1c1e] text-white flex flex-col items-center px-6 py-12 md:py-24">
+      <div className="min-h-screen bg-[#1a1c1e] text-white flex flex-col items-center px-6 pt-[80px] md:pt-[110px] pb-12 md:pb-24">
         {/* Pass the job to the analysis component */}
         <JobDetailAnalysis job={job} />
         

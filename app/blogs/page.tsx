@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, TrendingUp, ArrowRight, Search, Sparkles } from "lucide-react";
+import { Clock, TrendingUp, ArrowRight, Search, Sparkles, ChevronDown } from "lucide-react";
 import { blogPosts } from "@/app/data/blog-posts";
 
 const categories = ["All", "AI Risk", "Careers", "Tech Jobs"];
+const sortOptions = [
+  { label: "Latest", value: "latest" },
+  { label: "Oldest", value: "oldest" },
+  { label: "Reading Time", value: "readingTime" },
+];
 
 export default function BlogsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
 
   // Only show posts from index 13 onwards (first 13 are on homepage)
   
@@ -49,8 +55,23 @@ const remainingPosts = blogPosts;
     return categoryMatch && searchMatch;
   });
 
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (sortBy === "latest") {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+    if (sortBy === "oldest") {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    }
+    if (sortBy === "readingTime") {
+      const timeA = parseInt(a.readingTime) || 0;
+      const timeB = parseInt(b.readingTime) || 0;
+      return timeA - timeB;
+    }
+    return 0;
+  });
+
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 md:px-8">
+    <div className="min-h-screen bg-black text-white pt-[80px] md:pt-[110px] pb-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -83,28 +104,47 @@ const remainingPosts = blogPosts;
             </div>
           </div>
 
-          {/* Filter Categories */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-md ${
-                  activeCategory === category
-                    ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-                    : "bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:text-white"
-                }`}
+          {/* Filter Categories & Sort */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <div className="flex flex-wrap justify-center gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-md ${
+                    activeCategory === category
+                      ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                      : "bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative group">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-white/5 text-gray-300 border border-white/10 rounded-full px-6 py-2 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 hover:bg-white/10 transition-all backdrop-blur-md cursor-pointer"
               >
-                {category}
-              </button>
-            ))}
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value} className="bg-zinc-900 text-white">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                <ChevronDown size={14} />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Grid */}
-        {filteredPosts.length > 0 ? (
+        {sortedPosts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPosts.map((post) => (
+            {sortedPosts.map((post) => (
               <Link
                 key={post.id}
                 href={`/blogs/${post.slug}?from=blogs`}
@@ -159,7 +199,7 @@ const remainingPosts = blogPosts;
             <Search size={48} className="mb-4 opacity-20" />
             <p className="text-lg">No articles found.</p>
             <button
-              onClick={() => { setActiveCategory("All"); setSearchQuery(""); }}
+              onClick={() => { setActiveCategory("All"); setSearchQuery(""); setSortBy("latest"); }}
               className="mt-4 text-cyan-400 hover:text-cyan-300 text-sm font-medium"
             >
               Clear filters

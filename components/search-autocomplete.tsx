@@ -100,24 +100,26 @@ export default function SearchAutocomplete({ className = "" }: { className?: str
       </form>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-50 overflow-hidden">
-          {suggestions.map((job) => (
-            <button
-              key={job.slug}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-muted transition-colors flex items-center justify-between gap-2"
-              onClick={() => handleSelect(job.slug)}
-            >
-              <div className="flex items-center gap-2">
-                <Search className="h-3 w-3 text-muted-foreground" />
-                <span className="font-medium">{job.title}</span>
-              </div>
-              {job.job_code && (
-                <span className="text-xs text-muted-foreground font-mono">
-                  {job.job_code}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-[100] max-h-[400px] overflow-y-auto custom-scrollbar">
+          <div className="py-1">
+            {suggestions.map((job) => (
+              <button
+                key={job.slug}
+                className="w-full text-left px-4 md:px-6 py-3 md:py-4 text-sm hover:bg-gray-50 transition-all flex items-center justify-between group border-b border-gray-50 last:border-0"
+                onClick={() => handleSelect(job.slug)}
+              >
+                <div className="flex items-center gap-2 md:gap-3 flex-grow min-w-0">
+                  <Search className="h-4 w-4 text-gray-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                  <span className="font-semibold text-gray-700 group-hover:text-black truncate">{job.title}</span>
+                </div>
+                {job.job_code && (
+                  <span className="text-[9px] md:text-[10px] text-gray-400 font-mono tracking-tighter opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                    AIVSME : {job.job_code}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

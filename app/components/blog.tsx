@@ -155,20 +155,8 @@ function BlogSectionContent() {
             Explore how AI is shaping the future of jobs, automating tasks, and creating new opportunities worldwide.
           </motion.p>
 
-          {/* Search Bar */}
-          <div className="w-full max-w-2xl mb-12">
-            <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-500" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search articles, insights, or careers..."
-                className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all backdrop-blur-md"
-                suppressHydrationWarning
-              />
-            </div>
-          </div>
+         
+       
 
           {/* Filter Categories */}
           <div className="flex flex-wrap justify-center gap-3">

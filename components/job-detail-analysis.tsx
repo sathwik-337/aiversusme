@@ -882,7 +882,12 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
             <SectionHeader>Job description</SectionHeader>
             <p className="text-[#94a3b8] mb-6 leading-relaxed">
               {job.description.startsWith("A ") || job.description.startsWith("An ") 
-                ? `${getIndefiniteArticle(job.title)} ${job.description.split(' ').slice(1).join(' ')}`
+                ? (
+                  <>
+                    {getIndefiniteArticle(job.title)} <span className="text-white font-bold italic">&quot;{job.title}&quot;</span>
+                    {job.description.split(job.title)[1] || ` ${job.description.split(' ').slice(1).join(' ')}`}
+                  </>
+                )
                 : job.description}
             </p>
           </section>
