@@ -12,9 +12,17 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
   description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills. Analyze your career with AI.",
-  keywords: "AI vs humans, job automation risk, career insights, AI analysis, future-proof skills, job security",
-  canonical: "https://aiversusme.com",
-  robots: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+  metadataBase: new URL("https://aiversusme.com"),
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+    },
+  },
   openGraph: {
     title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
     description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills.",
