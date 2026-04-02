@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://aiversusme.com/aiversusme.jpeg",
+        url: "https://aiversusme.com/aiversusume.jpeg",
         width: 1200,
         height: 630,
         alt: "AI VS ME - Job Automation Risk Analysis",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
     description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills.",
-    images: ["https://aiversusme.com/aiversusme.jpeg"],
+    images: ["https://aiversusme.com/aiversusumite.jpeg"],
   },
 };
 
