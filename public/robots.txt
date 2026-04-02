@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /_next/
+Disallow: /.env
+
+# Sitemap location
+Sitemap: https://aiversusme.com/sitemap.xml
+
+# Crawl delay to be friendly to servers
+Crawl-delay: 1
