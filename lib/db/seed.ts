@@ -98,6 +98,10 @@ const baseJobs = [
   { title: "Mechanic", category: "Skilled", risk: 20, salary: "₹2,40,000 - ₹7,20,000", demand: "High", synonyms: "Auto Mechanic, Repairman, Fitter", isProfessional: false },
   { title: "Technician", category: "Skilled", risk: 30, salary: "₹3,00,000 - ₹8,40,000", demand: "High", synonyms: "Maintenance Technician, Service Engineer", isProfessional: false },
   { title: "Coffee Maker", category: "Service", risk: 70, salary: "₹1,80,000 - ₹3,60,000", demand: "High", synonyms: "Barista, Coffee Brewer", isProfessional: false },
+
+  // --- Training & Consulting ---
+  { title: "Softskill Trainer", category: "Education", risk: 35, salary: "₹4,00,000 - ₹15,00,000", demand: "High", synonyms: "Training Specialist, Professional Trainer, Corporate Trainer, Personality Development Trainer", isProfessional: true },
+  { title: "Admission Consultant", category: "Education", risk: 58, salary: "₹3,00,000 - ₹12,00,000", demand: "High", synonyms: "College Advisor, Education Counselor, University Consultant, Career Counselor", isProfessional: true },
 ];
 
 const industries = [
