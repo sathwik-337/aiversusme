@@ -9,7 +9,7 @@ const termsSections = [
     title: "1. Introduction",
     content: (
       <p>
-        Welcome to <strong>AI Take My Job?</strong> ("we," "our," or "the platform"). This platform is designed as an informational resource to help users understand the potential ongoing impact of Artificial Intelligence and automation on various career paths.
+        Welcome to <strong>AI Take My Job?</strong> (&quot;we,&quot; &quot;our,&quot; or &quot;the platform&quot;). This platform is designed as an informational resource to help users understand the potential ongoing impact of Artificial Intelligence and automation on various career paths.
       </p>
     )
   },
@@ -28,7 +28,7 @@ const termsSections = [
     content: (
       <ul className="list-disc pl-6 space-y-3">
         <li>Users are permitted to freely explore job insights, industry analyses, and AI risk scores provided on the platform.</li>
-        <li>You must not misuse, scrape, clone, reverse-engineer, or exploit the platform's proprietary data or infrastructure for commercial gain without explicit written permission.</li>
+        <li>You must not misuse, scrape, clone, reverse-engineer, or exploit the platform&apos;s proprietary data or infrastructure for commercial gain without explicit written permission.</li>
         <li>Any illegal, harmful, or malicious usage of the platform (like automated attacks) is strictly prohibited and will result in immediate termination of access.</li>
       </ul>
     )
@@ -61,7 +61,7 @@ const termsSections = [
     title: "6. Limitation of Liability",
     content: (
       <p>
-        We continuously strive to provide the most accurate market predictions possible. However, the platform is provided "as is." We bear no liability for any inaccuracies in the data, nor do we offer any guarantees regarding specific job outcomes, market predictions, or long-term career safety. 
+        We continuously strive to provide the most accurate market predictions possible. However, the platform is provided &quot;as is.&quot; We bear no liability for any inaccuracies in the data, nor do we offer any guarantees regarding specific job outcomes, market predictions, or long-term career safety. 
       </p>
     )
   },

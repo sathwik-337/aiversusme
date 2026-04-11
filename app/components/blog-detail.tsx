@@ -81,7 +81,7 @@ function BlogDetailContent({ slug }: { slug: string }) {
 
           {post.quote && (
             <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-2xl my-10 italic text-xl text-gray-200 border-l-4 border-l-cyan-500 leading-relaxed shadow-lg shadow-black">
-              "{post.quote}"
+              &quot;{post.quote}&quot;
             </div>
           )}
 

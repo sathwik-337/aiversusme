@@ -108,7 +108,6 @@
 "use client";
 
 import Link from "next/link";
-import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
 import Image from "next/image";
 
 export default function Footer() {
@@ -212,7 +211,13 @@ export default function Footer() {
           {/* LEFT - BRAND */}
           <div className="flex flex-col gap-2 md:gap-4 max-w-sm">
             <div className="flex items-center gap-2">
-              <img src="/bgremovedlogo.png" alt="logo" height={140} width={140} className="md:h-[160px] md:w-[160px]" />
+              <Image
+                src="/bgremovedlogo.png"
+                alt="logo"
+                width={160}
+                height={160}
+                className="h-[140px] w-[140px] md:h-[160px] md:w-[160px]"
+              />
             </div>
             <p className="text-gray-400 text-sm">
               Discover how AI will impact your career. Analyze job risks,
@@ -226,6 +231,7 @@ export default function Footer() {
             <div className="flex flex-col gap-2 md:gap-3">
               <span className="text-gray-400 uppercase text-[10px] md:text-xs font-semibold tracking-wider">Product</span>
               <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
+              <Link href="/academy" className="hover:text-gray-300 transition-colors">E-Learning</Link>
               <Link href="/#about" className="hover:text-gray-300 transition-colors">About</Link>
               <Link href="/rankings" className="hover:text-gray-300 transition-colors">Rankings</Link>
             </div>

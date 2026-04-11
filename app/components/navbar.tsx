@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,6 +26,7 @@ export default function Navbar() {
     { name: "Home", href: "#home" },
     { name: "Purpose", href: "#feature" },
     { name: "About", href: "#about" },
+    { name: "E-Learning", href: "/academy" },
     { name: "Blog", href: "/blogs" },
     { name: "Rankings", href: "/rankings" },
     { name: "Contact", href: "#contact" },
@@ -66,9 +68,11 @@ export default function Navbar() {
           {/* LEFT - LOGO */}
           <div className="flex items-center flex-shrink-0 h-full overflow-hidden mr-auto md:mr-0 md:w-1/4">
             <Link href="/">
-              <img
+              <Image
                 src="/bgremovedlogo.png"
                 alt="logo"
+                width={190}
+                height={190}
                 className="h-[120px] md:h-[190px] w-auto object-contain cursor-pointer"
               />
             </Link>

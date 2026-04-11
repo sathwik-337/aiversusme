@@ -77,7 +77,7 @@ const privacySections = [
   },
   {
     id: "children",
-    title: "8. Children's Privacy",
+    title: "8. Children&apos;s Privacy",
     content: (
       <p>
         Our AI career analysis tools are designed specifically for adults navigating their professional lifetimes. Therefore, the platform is not intended for use by anyone under the age of <strong>13</strong>, and we do not knowingly or intentionally collect personal data from children.

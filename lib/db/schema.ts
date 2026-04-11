@@ -1,4 +1,12 @@
-import { pgTable, text, integer, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  jsonb,
+  pgTable,
+  text,
+  integer,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const jobs = pgTable("jobs", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -48,3 +56,78 @@ export const pollVotes = pgTable("poll_votes", {
   vote_type: text("vote_type").notNull(), // highly_likely, moderate, etc.
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    clerk_user_id: text("clerk_user_id").notNull(),
+    email: text("email"),
+    first_name: text("first_name"),
+    last_name: text("last_name"),
+    full_name: text("full_name"),
+    image_url: text("image_url"),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    usersClerkUserIdUnique: uniqueIndex("users_clerk_user_id_unique").on(
+      table.clerk_user_id
+    ),
+  })
+);
+
+export const academyAssessmentResults = pgTable(
+  "academy_assessment_results",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    user_id: text("user_id").notNull(),
+    course_slug: text("course_slug").notNull(),
+    module_id: text("module_id").notNull(),
+    assessment_type: text("assessment_type").notNull(),
+    score: integer("score").notNull(),
+    total_questions: integer("total_questions").notNull(),
+    answers: jsonb("answers")
+      .$type<Record<string, string>>()
+      .notNull()
+      .default({}),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    academyAssessmentUnique: uniqueIndex("academy_assessment_unique").on(
+      table.user_id,
+      table.course_slug,
+      table.module_id,
+      table.assessment_type
+    ),
+  })
+);
+
+export const academyCertificates = pgTable(
+  "academy_certificates",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    user_id: text("user_id").notNull(),
+    course_slug: text("course_slug").notNull(),
+    certificate_number: text("certificate_number").notNull(),
+    recipient_name: text("recipient_name").notNull(),
+    recipient_email: text("recipient_email").notNull(),
+    course_title: text("course_title").notNull(),
+    grade: text("grade").notNull(),
+    percentage: integer("percentage").notNull(),
+    completed_at: timestamp("completed_at").notNull(),
+    email_status: text("email_status").notNull().default("pending"),
+    email_sent_at: timestamp("email_sent_at"),
+    created_at: timestamp("created_at").defaultNow().notNull(),
+    updated_at: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    academyCertificateUserCourseUnique: uniqueIndex(
+      "academy_certificate_user_course_unique"
+    ).on(table.user_id, table.course_slug),
+    academyCertificateNumberUnique: uniqueIndex(
+      "academy_certificate_number_unique"
+    ).on(table.certificate_number),
+  })
+);

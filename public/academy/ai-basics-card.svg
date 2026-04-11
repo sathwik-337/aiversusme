@@ -1,0 +1,34 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#08111A"/>
+  <rect x="36" y="36" width="1128" height="728" rx="36" fill="url(#bg)"/>
+  <circle cx="954" cy="182" r="158" fill="#1A8BFF" fill-opacity="0.18"/>
+  <circle cx="216" cy="648" r="194" fill="#16C784" fill-opacity="0.16"/>
+  <circle cx="584" cy="384" r="284" fill="#F5A524" fill-opacity="0.12"/>
+  <rect x="108" y="124" width="210" height="44" rx="22" fill="#E7F8EF" fill-opacity="0.12"/>
+  <text x="140" y="152" fill="#D7FCE7" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">AI VS ME E-Learning</text>
+  <text x="108" y="262" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700">AI for</text>
+  <text x="108" y="338" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700">Beginners</text>
+  <text x="108" y="404" fill="#C0CDD8" font-family="Arial, Helvetica, sans-serif" font-size="30">Start using AI tools confidently without coding.</text>
+  <rect x="108" y="476" width="194" height="84" rx="28" fill="#FFFFFF" fill-opacity="0.08"/>
+  <rect x="324" y="476" width="194" height="84" rx="28" fill="#FFFFFF" fill-opacity="0.08"/>
+  <rect x="540" y="476" width="194" height="84" rx="28" fill="#FFFFFF" fill-opacity="0.08"/>
+  <text x="142" y="516" fill="#8FDDB0" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">4 modules</text>
+  <text x="142" y="544" fill="#D5DEE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Absolute beginner</text>
+  <text x="358" y="516" fill="#95C9FF" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">2-3 hours</text>
+  <text x="358" y="544" fill="#D5DEE5" font-family="Arial, Helvetica, sans-serif" font-size="20">8 short video lessons</text>
+  <text x="574" y="516" fill="#F7CB75" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Quizzes + exam</text>
+  <text x="574" y="544" fill="#D5DEE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Progress tracked per learner</text>
+  <rect x="802" y="214" width="248" height="290" rx="36" fill="#08111A" fill-opacity="0.64" stroke="#FFFFFF" stroke-opacity="0.12"/>
+  <circle cx="926" cy="306" r="52" fill="#0F1D2A" stroke="#FFFFFF" stroke-opacity="0.1"/>
+  <path d="M906 306L944 283.5V328.5L906 306Z" fill="#16C784"/>
+  <text x="848" y="410" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Learn</text>
+  <text x="848" y="450" fill="#C0CDD8" font-family="Arial, Helvetica, sans-serif" font-size="22">Watch the module</text>
+  <text x="848" y="482" fill="#C0CDD8" font-family="Arial, Helvetica, sans-serif" font-size="22">take the quiz</text>
+  <text x="848" y="514" fill="#C0CDD8" font-family="Arial, Helvetica, sans-serif" font-size="22">unlock the next step</text>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="88" x2="1080" y2="724" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E1F30"/>
+      <stop offset="1" stop-color="#09141E"/>
+    </linearGradient>
+  </defs>
+</svg>

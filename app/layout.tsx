@@ -8,6 +8,7 @@ import Footer from "@/app/components/footer";
 import ChatbotProvider from "@/components/chatbot-provider";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { syncCurrentUserToDatabase } from "@/lib/users";
 
 export const metadata: Metadata = {
   title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
@@ -46,11 +47,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await syncCurrentUserToDatabase();
+
   return (
     <ClerkProvider>
       <html

@@ -4,6 +4,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/rankings(.*)',
+  '/academy/ai-for-non-engineers(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -15,7 +16,8 @@ export default clerkMiddleware(async (auth, req) => {
   // Also protect specific API POST routes
   if (req.method === 'POST') {
     if (req.nextUrl.pathname.startsWith('/api/comments/') || 
-        req.nextUrl.pathname.startsWith('/api/polls/')) {
+        req.nextUrl.pathname.startsWith('/api/polls/') ||
+        req.nextUrl.pathname.startsWith('/api/academy/')) {
       await auth.protect();
     }
   }

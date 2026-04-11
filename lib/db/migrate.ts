@@ -1,15 +1,23 @@
 import { migrate } from "drizzle-orm/neon-http/migrator";
 import { db, sql } from "./index";
 import * as dotenv from "dotenv";
+import { readFileSync } from "fs";
 
 dotenv.config({ path: ".env" });
+
+function splitSqlStatements(sqlText: string) {
+  return sqlText
+    .split(/;\s*(?:\r?\n|$)/)
+    .map((statement) => statement.trim())
+    .filter(Boolean);
+}
 
 async function main() {
   try {
     await migrate(db, { migrationsFolder: "drizzle" });
     console.log("Migration successful");
-  } catch (error: any) {
-    if (error.cause?.code !== '42P07') {
+  } catch (error: unknown) {
+    if (!(error instanceof Error) || (error as { cause?: { code?: string } }).cause?.code !== "42P07") {
       console.error(error);
       process.exit(1);
     }
@@ -17,13 +25,24 @@ async function main() {
 
   // Apply the latest migrations manually
   try {
-    const migration1 = require("fs").readFileSync("drizzle/0006_many_silver_centurion.sql", "utf-8");
-    await (sql as any).query(migration1);
-    console.log("Applied migration 6 successfully");
+    const manualMigrations = [
+      "drizzle/0006_many_silver_centurion.sql",
+      "drizzle/0007_add_search_index.sql",
+      "drizzle/0008_academy_assessment_results.sql",
+      "drizzle/0009_users.sql",
+      "drizzle/0010_academy_certificates.sql",
+    ];
 
-    const migration2 = require("fs").readFileSync("drizzle/0007_add_search_index.sql", "utf-8");
-    await (sql as any).query(migration2);
-    console.log("Applied migration 7 successfully");
+    for (const migrationPath of manualMigrations) {
+      const migrationSql = readFileSync(migrationPath, "utf-8");
+      const statements = splitSqlStatements(migrationSql);
+
+      for (const statement of statements) {
+        await sql.query(statement);
+      }
+
+      console.log(`Applied ${migrationPath} successfully`);
+    }
   } catch (error) {
     console.error("Failed to apply latest migrations:", error);
     process.exit(1);
