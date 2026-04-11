@@ -53,10 +53,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider  
-    domain="clerk.aiversusme.com" 
-  isSatellite={false}
-    >
+    <ClerkProvider>
       <html
         lang="en"
         suppressHydrationWarning={true}

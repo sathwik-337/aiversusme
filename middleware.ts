@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher([
   '/academy/ai-for-non-engineers(.*)',
 ]);
 
-export const proxy = clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   // Protect the routes defined above
   if (isProtectedRoute(req)) {
     await auth.protect();
@@ -23,8 +23,6 @@ export const proxy = clerkMiddleware(async (auth, req) => {
     }
   }
 });
-
-export default proxy;
 
 export const config = {
   // This matcher ensures the middleware runs on all routes
