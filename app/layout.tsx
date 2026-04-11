@@ -52,7 +52,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  await syncCurrentUserToDatabase();
+  // Only sync user in dynamic rendering contexts, not during static generation
+  if (process.env.NEXT_PHASE !== "phase-production-build") {
+    try {
+      await syncCurrentUserToDatabase();
+    } catch (e) {
+      // Ignore dynamic server usage errors during build
+    }
+  }
 
   return (
     <ClerkProvider>
@@ -95,5 +102,8 @@ export default async function RootLayout({
         </body>
       </html>
     </ClerkProvider>
+  );
+}
+/ClerkProvider>
   );
 }

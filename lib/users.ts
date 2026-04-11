@@ -4,7 +4,15 @@ import { users } from "@/lib/db/schema";
 
 export async function syncCurrentUserToDatabase() {
   try {
-    const clerkUser = await currentUser();
+    // We avoid calling dynamic clerk functions during static prerendering
+    // to prevent DYNAMIC_SERVER_USAGE errors during build.
+    let clerkUser;
+    try {
+      clerkUser = await currentUser();
+    } catch (e) {
+      // If we're in a static context, currentUser() might throw or bail
+      return null;
+    }
 
     if (!clerkUser) {
       return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, Suspense } from "react";
 import BlogDetail from "@/app/components/blog-detail";
 
 // By making this page entirely a client component, we eliminate the boundaries and allow you to 
@@ -9,5 +9,9 @@ import BlogDetail from "@/app/components/blog-detail";
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
-  return <BlogDetail slug={resolvedParams.slug} />;
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-zinc-500">Loading post...</div>}>
+      <BlogDetail slug={resolvedParams.slug} />
+    </Suspense>
+  );
 }

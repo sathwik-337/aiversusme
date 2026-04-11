@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { jobs } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
@@ -35,7 +36,9 @@ export default async function Home() {
       <AboutSection />
 
       {/* Blog section */}
-      <BlogSection />
+      <Suspense fallback={<div className="py-20 text-center text-zinc-500">Loading blog...</div>}>
+        <BlogSection />
+      </Suspense>
 
       {/* Testimonials section */}
       <TestimonialsSection />

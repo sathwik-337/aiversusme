@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   ArrowLeft,
   Clock3,
@@ -99,7 +100,9 @@ export default function AiForNonEngineersPage() {
         </div>
       </section>
 
-      <AcademyCourseOutline course={academyMiniCourse} />
+      <Suspense fallback={<div className="py-20 text-center text-zinc-500">Loading course outline...</div>}>
+        <AcademyCourseOutline course={academyMiniCourse} />
+      </Suspense>
     </div>
   );
 }
