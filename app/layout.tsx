@@ -53,46 +53,46 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        suppressHydrationWarning={true}
-        className={cn(
-          "h-full antialiased",
-          GeistSans.variable,
-          GeistMono.variable
-        )}
-      >
-        <head>
-          <Script
-            id="schema-org"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "WebApplication",
-                name: "AI VS ME",
-                description: "Analyze your job automation risk with AI-powered insights and discover future-proof skills.",
-                url: "https://aiversusme.com",
-                applicationCategory: "BusinessApplication",
-                offers: {
-                  "@type": "Offer",
-                  price: "0",
-                  priceCurrency: "USD",
-                },
-                image: "https://aiversusme.com/aiversusme.jpeg",
-              }),
-            }}
-          />
-        </head>
-        <body className="min-h-full flex flex-col bg-black">
+    <html
+      lang="en"
+      suppressHydrationWarning={true}
+      className={cn(
+        "h-full antialiased",
+        GeistSans.variable,
+        GeistMono.variable
+      )}
+    >
+      <head>
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "AI VS ME",
+              description: "Analyze your job automation risk with AI-powered insights and discover future-proof skills.",
+              url: "https://aiversusme.com",
+              applicationCategory: "BusinessApplication",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              image: "https://aiversusme.com/aiversusme.jpeg",
+            }),
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-black">
+        <ClerkProvider>
           <Header />
           <UserSync />
           <main className="flex-grow">{children}</main>
           <Footer />
           <ChatbotProvider />
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
