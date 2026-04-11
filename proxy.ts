@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher([
   '/academy/ai-for-non-engineers(.*)',
 ]);
 
-const proxy = clerkMiddleware(async (auth, req) => {
+export const proxy = clerkMiddleware(async (auth, req) => {
   // Protect the routes defined above
   if (isProtectedRoute(req)) {
     await auth.protect();
@@ -17,7 +17,8 @@ const proxy = clerkMiddleware(async (auth, req) => {
   if (req.method === 'POST') {
     if (req.nextUrl.pathname.startsWith('/api/comments/') || 
         req.nextUrl.pathname.startsWith('/api/polls/') ||
-        req.nextUrl.pathname.startsWith('/api/academy/')) {
+        req.nextUrl.pathname.startsWith('/api/academy/') ||
+        req.nextUrl.pathname.startsWith('/api/users/sync')) {
       await auth.protect();
     }
   }

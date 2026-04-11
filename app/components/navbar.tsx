@@ -117,7 +117,7 @@ export default function Navbar() {
                 <UserButton />
               ) : (
                 <SignInButton mode="modal">
-                  <button className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition" suppressHydrationWarning>
+                  <button className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition">
                     Login
                   </button>
                 </SignInButton>
@@ -168,7 +168,7 @@ export default function Navbar() {
 
             {!isSignedIn ? (
               <SignInButton mode="modal">
-                <button className="bg-white text-black px-6 py-2 rounded-full font-medium">
+                <button className="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-200 transition">
                   Login
                 </button>
               </SignInButton>
