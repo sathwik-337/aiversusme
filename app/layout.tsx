@@ -6,9 +6,9 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/header";
 import Footer from "@/app/components/footer";
 import ChatbotProvider from "@/components/chatbot-provider";
+import UserSync from "@/components/user-sync";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
-import { syncCurrentUserToDatabase } from "@/lib/users";
 
 export const metadata: Metadata = {
   title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
@@ -52,15 +52,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Only sync user in dynamic rendering contexts, not during static generation
-  if (process.env.NEXT_PHASE !== "phase-production-build") {
-    try {
-      await syncCurrentUserToDatabase();
-    } catch (e) {
-      // Ignore dynamic server usage errors during build
-    }
-  }
-
   return (
     <ClerkProvider>
       <html
@@ -96,14 +87,12 @@ export default async function RootLayout({
         </head>
         <body className="min-h-full flex flex-col bg-black">
           <Header />
+          <UserSync />
           <main className="flex-grow">{children}</main>
           <Footer />
           <ChatbotProvider />
         </body>
       </html>
     </ClerkProvider>
-  );
-}
-/ClerkProvider>
   );
 }

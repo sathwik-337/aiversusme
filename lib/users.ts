@@ -9,9 +9,14 @@ export async function syncCurrentUserToDatabase() {
     let clerkUser;
     try {
       clerkUser = await currentUser();
-    } catch (e) {
-      // If we're in a static context, currentUser() might throw or bail
-      return null;
+    } catch (e: any) {
+      // In Next.js, certain functions like headers() or currentUser() throw a special 
+      // error to signal dynamic rendering. We should catch it and return null
+      // during static generation without logging it as an error.
+      if (e?.digest === 'DYNAMIC_SERVER_USAGE' || e?.message?.includes('Dynamic server usage')) {
+        return null;
+      }
+      throw e;
     }
 
     if (!clerkUser) {

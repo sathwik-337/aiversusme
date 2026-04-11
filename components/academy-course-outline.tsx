@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useSyncExternalStore } from "react";
+import { Suspense, useEffect, useMemo, useSyncExternalStore } from "react";
 import { CheckCircle2, CirclePlay, Lock, Trophy } from "lucide-react";
 import type { AcademyCourse } from "@/app/data/academy";
 import AcademyModuleContent from "@/components/academy-module-content";
@@ -24,7 +24,7 @@ type AcademyCourseOutlineProps = {
   course: AcademyCourse;
 };
 
-export default function AcademyCourseOutline({
+function AcademyCourseOutlineContent({
   course,
 }: AcademyCourseOutlineProps) {
   const requiredPercentage = getAcademyPassPercentage();
@@ -321,5 +321,13 @@ export default function AcademyCourseOutline({
         </div>
       </div>
     </section>
+  );
+}
+
+export default function AcademyCourseOutline(props: AcademyCourseOutlineProps) {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-zinc-500">Loading course outline...</div>}>
+      <AcademyCourseOutlineContent {...props} />
+    </Suspense>
   );
 }
