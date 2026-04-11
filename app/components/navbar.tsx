@@ -12,7 +12,7 @@ export default function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +21,10 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Use isLoaded to prevent rendering buttons until auth state is known
+  const showLogin = isLoaded && !isSignedIn;
+  const showUser = isLoaded && isSignedIn;
 
   const navLinks = [
     { name: "Home", href: "#home" },
@@ -113,9 +117,8 @@ export default function Navbar() {
           <div className="flex items-center justify-end md:w-1/4 gap-4">
             {/* DESKTOP LOGIN */}
             <div className="hidden md:block flex-shrink-0">
-              {isSignedIn ? (
-                <UserButton />
-              ) : (
+              {showUser && <UserButton />}
+              {showLogin && (
                 <SignInButton mode="modal">
                   <button className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition">
                     Login
@@ -166,17 +169,17 @@ export default function Navbar() {
               );
             })}
 
-            {!isSignedIn ? (
+            {showLogin ? (
               <SignInButton mode="modal">
                 <button className="bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-200 transition">
                   Login
                 </button>
               </SignInButton>
-            ) : (
+            ) : showUser ? (
               <div className="bg-white text-black px-3 py-2 rounded-full">
                 <UserButton />
               </div>
-            )}
+            ) : null}
           </div>
         )}
       </div>
