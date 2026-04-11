@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { academyCourseCatalog } from "@/app/data/academy-catalog";
+import OpenCourseButton from "@/components/open-course-button";
 
 export const metadata: Metadata = {
   title: "AI VS ME E-Learning",
@@ -84,13 +85,7 @@ export default function AcademyPage() {
                     ))}
                   </div>
 
-                  <Link
-                    href={`/academy/${course.slug}`}
-                    className="mt-6 inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-zinc-200"
-                  >
-                    Open course
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  <OpenCourseButton slug={course.slug} />
                 </div>
               </article>
           ))}
