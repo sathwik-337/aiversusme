@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, CheckCircle2, Video, FileText, Download } from "lucide-react";
-import type { AcademyCourse } from "@/app/data/academy";
+import type { AcademyCourse, AcademyVideo } from "@/app/data/academy";
 import { cn } from "@/lib/utils";
 
 type AcademyModuleContentProps = {
