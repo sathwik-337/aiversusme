@@ -3,6 +3,8 @@ export type AcademyModule = {
   title: string;
   description: string;
   lessons: string[];
+  notes?: string;
+  notesDownloadUrl?: string;
   videos?: AcademyVideo[];
   quiz?: AcademyQuizQuestion[];
   project?: string;
@@ -12,6 +14,7 @@ export type AcademyVideo = {
   title: string;
   summary: string;
   youtubeId?: string;
+  videoEmbedUrl?: string;
   sourceUrl?: string;
   sourceUrls?: string[];
   duration: string;
@@ -55,6 +58,7 @@ export type AcademyCourse = {
   modules: AcademyModule[];
   finalExam?: AcademyQuizQuestion[];
   syllabus: AcademyWeek[];
+  isCoding?: boolean;
 };
 
 export const academyCourse: AcademyCourse = {

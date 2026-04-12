@@ -16,7 +16,9 @@ import {
   generateCertificateNumber,
   sendCertificateEmail,
 } from "@/lib/certificates";
-import { academyMiniCourse } from "@/app/data/academy-mini-course";
+import { aiBeginnersCourse } from "@/app/data/academy-ai-beginners";
+import { aiEngineersCourse } from "@/app/data/academy-ai-engineers";
+import { aiAdvancedCourse } from "@/app/data/academy-ai-advanced";
 
 type AssessmentType = "module_quiz" | "final_exam" | "enrollment";
 const ENROLLMENT_MODULE_ID = "__enrollment__";
@@ -35,8 +37,14 @@ type CertificateRow = {
 } | null;
 
 function getCourseTitle(courseSlug: string) {
-  if (academyMiniCourse.slug === courseSlug) {
-    return academyMiniCourse.title;
+  if (aiBeginnersCourse.slug === courseSlug) {
+    return aiBeginnersCourse.title;
+  }
+  if (aiEngineersCourse.slug === courseSlug) {
+    return aiEngineersCourse.title;
+  }
+  if (aiAdvancedCourse.slug === courseSlug) {
+    return aiAdvancedCourse.title;
   }
 
   return courseSlug
@@ -369,6 +377,7 @@ export async function POST(
             completionDate: now,
             grade,
             percentage,
+            courseSlug,
           });
 
           await db

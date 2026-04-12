@@ -6,7 +6,7 @@ import { academyCertificates } from "@/lib/db/schema";
 export const runtime = "nodejs";
 
 function isAuthorized(req: NextRequest) {
-  const auth = req.headers.get("authorization") || req.headers.get("x-admin-auth");
+  const auth = req.headers.get("x-admin-auth") || req.headers.get("authorization");
   // Expect "Basic YWRtaW46YWRtaW4=" (admin:admin)
   const expected = "Basic " + Buffer.from("admin:admin").toString("base64");
   return auth === expected;

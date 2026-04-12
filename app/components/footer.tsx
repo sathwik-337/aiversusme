@@ -109,8 +109,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  
+  // Hide footer on admin pages to prevent overlap with the dashboard sidebar
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="w-full bg-black text-white">
 

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useSyncExternalStore } from "react";
-import { CheckCircle2, CirclePlay, Lock, Trophy } from "lucide-react";
+import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { CheckCircle2, CirclePlay, Lock, Trophy, Minimize2, Maximize2 } from "lucide-react";
 import type { AcademyCourse } from "@/app/data/academy";
 import AcademyModuleContent from "@/components/academy-module-content";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,22 @@ function AcademyCourseOutlineContent({
     () => getAcademyProgress(userId, course.slug),
     getEmptyAcademyProgress
   );
+  const [minimizedModules, setMinimizedModules] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    course.modules.forEach(m => {
+      initial[m.id] = true;
+    });
+    return initial;
+  });
+
+  const toggleMinimize = (moduleId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMinimizedModules(prev => ({
+      ...prev,
+      [moduleId]: !prev[moduleId]
+    }));
+  };
 
   useEffect(() => {
     if (!isLoaded || !userId) {
@@ -128,66 +144,85 @@ function AcademyCourseOutlineContent({
               const score = progress.quizScores[module.id];
               const percentage = score ? getAcademyScorePercentage(score) : null;
               const passed = score ? hasPassedAcademyAssessment(score) : false;
+              const isMinimized = minimizedModules[module.id];
 
               return (
                 <div
                   key={module.id}
                   className={cn(
-                    "rounded-[24px] border p-4",
+                    "rounded-[24px] border p-4 transition-all duration-300",
                     activeModule.id === module.id
                       ? "border-sky-300/60 bg-sky-300/10"
                       : "border-white/10 bg-white/[0.03]",
                     !unlocked && "opacity-60"
                   )}
                 >
-                  <Link
-                    href={unlocked ? `/academy/${course.slug}?module=${module.id}` : "#"}
-                    className={cn("block", !unlocked && "pointer-events-none")}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
-                        Module {module.id}
-                      </span>
-                      {completed ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-300" />
-                      ) : unlocked ? (
-                        <CirclePlay className="h-4 w-4 text-sky-300" />
+                  <div className="flex items-center justify-between gap-3">
+                    <Link
+                      href={unlocked ? `/academy/${course.slug}?module=${module.id}` : "#"}
+                      className={cn("flex-grow block", !unlocked && "pointer-events-none")}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                          Module {module.id}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {completed ? (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                          ) : unlocked ? (
+                            <CirclePlay className="h-4 w-4 text-sky-300" />
+                          ) : (
+                            <Lock className="h-4 w-4 text-zinc-500" />
+                          )}
+                        </div>
+                      </div>
+                      <p className="mt-3 text-base font-semibold text-white">{module.title}</p>
+                    </Link>
+                    
+                    <button 
+                      onClick={(e) => toggleMinimize(module.id, e)}
+                      className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                      title={isMinimized ? "Maximize" : "Minimize"}
+                    >
+                      {isMinimized ? (
+                        <Maximize2 className="h-4 w-4 text-zinc-400" />
                       ) : (
-                        <Lock className="h-4 w-4 text-zinc-500" />
+                        <Minimize2 className="h-4 w-4 text-zinc-400" />
+                      )}
+                    </button>
+                  </div>
+
+                  {!isMinimized && (
+                    <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                        Quiz
+                      </p>
+                      <p className="mt-2 text-sm text-zinc-300">
+                        {score
+                          ? `Score: ${score.score}/${score.total} (${percentage}%)`
+                          : "5 questions"}
+                      </p>
+                      <p className="mt-1 text-xs text-zinc-500">
+                        {score
+                          ? passed
+                            ? "Passed. Next module unlocked."
+                            : `Need ${requiredPercentage}% to unlock the next module.`
+                          : `Minimum ${Math.ceil(((module.quiz?.length ?? 5) * requiredPercentage) / 100)} correct answers required.`}
+                      </p>
+                      {unlocked ? (
+                        <Link
+                          href={`/academy/${course.slug}/module/${module.id}/quiz`}
+                          className="mt-3 inline-flex rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:border-white/30 hover:bg-white/5"
+                        >
+                          {score ? "Retake quiz" : "Start quiz"}
+                        </Link>
+                      ) : (
+                        <div className="mt-3 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-500">
+                          Quiz locked
+                        </div>
                       )}
                     </div>
-                    <p className="mt-3 text-base font-semibold text-white">{module.title}</p>
-                  </Link>
-
-                  <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
-                      Quiz
-                    </p>
-                    <p className="mt-2 text-sm text-zinc-300">
-                      {score
-                        ? `Score: ${score.score}/${score.total} (${percentage}%)`
-                        : "5 questions"}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500">
-                      {score
-                        ? passed
-                          ? "Passed. Next module unlocked."
-                          : `Need ${requiredPercentage}% to unlock the next module.`
-                        : `Minimum ${Math.ceil(((module.quiz?.length ?? 5) * requiredPercentage) / 100)} correct answers required.`}
-                    </p>
-                    {unlocked ? (
-                      <Link
-                        href={`/academy/${course.slug}/module/${module.id}/quiz`}
-                        className="mt-3 inline-flex rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:border-white/30 hover:bg-white/5"
-                      >
-                        {score ? "Retake quiz" : "Start quiz"}
-                      </Link>
-                    ) : (
-                      <div className="mt-3 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-500">
-                        Quiz locked
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -227,7 +262,7 @@ function AcademyCourseOutlineContent({
 
         <div className="space-y-8">
           {isEnrolled ? (
-            <AcademyModuleContent key={activeModule.id} module={activeModule} />
+            <AcademyModuleContent key={activeModule.id} module={activeModule} courseSlug={course.slug} />
           ) : (
             <div className="rounded-[32px] border border-white/10 bg-zinc-950 p-8">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-zinc-500">

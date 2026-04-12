@@ -3,7 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Lock, Trophy } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Lock, Mail, Trophy } from "lucide-react";
 import type { AcademyCourse } from "@/app/data/academy";
 import AcademyModuleQuiz from "@/components/academy-module-quiz";
 import {
@@ -25,6 +25,8 @@ export default function AcademyFinalExamRoute({
 }: AcademyFinalExamRouteProps) {
   const { isLoaded, userId } = useAuth();
   const [isPngToPdfExporting, setIsPngToPdfExporting] = useState(false);
+  const [isEmailing, setIsEmailing] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const progress = useSyncExternalStore(
     (callback) => subscribeAcademyProgress(userId, course.slug, callback),
     () => getAcademyProgress(userId, course.slug),
@@ -53,6 +55,74 @@ export default function AcademyFinalExamRoute({
 
     void hydrateAcademyProgress(userId, course.slug);
   }, [course.slug, isLoaded, userId]);
+
+  const generateCertificatePdf = async () => {
+    const svgResponse = await fetch(
+      `/api/academy/certificate/${course.slug}?format=svg`,
+      { credentials: "include" }
+    );
+    const svgText = await svgResponse.text();
+    const vb = /viewBox="([^"]+)"/.exec(svgText)?.[1];
+    let w = 419.25;
+    let h = 297.75;
+    if (vb) {
+      const p = vb.split(/\s+/).map((v) => Number(v));
+      if (p.length === 4 && Number.isFinite(p[2]) && Number.isFinite(p[3])) {
+        w = p[2];
+        h = p[3];
+      }
+    }
+    const scale = 4;
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(w * scale);
+    canvas.height = Math.round(h * scale);
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    const blob = new Blob([svgText], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("svg-render-failed"));
+      img.src = url;
+    });
+    ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    const pngBlob = await new Promise<Blob>((resolve) =>
+      canvas.toBlob((b) => resolve(b as Blob), "image/png")
+    );
+    const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+    const loadPDFLib = async (): Promise<any> => {
+      const g = window as any;
+      if (g.PDFLib) return g.PDFLib;
+      await new Promise<void>((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src =
+          "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("pdf-lib-load-failed"));
+        document.head.appendChild(s);
+      });
+      return (window as any).PDFLib;
+    };
+    const PDFLib = await loadPDFLib();
+    const pdfDoc = await PDFLib.PDFDocument.create();
+    const page = pdfDoc.addPage([841.89, 595.28]);
+    const pngImage = await pdfDoc.embedPng(pngBytes);
+    const imgW = pngImage.width;
+    const imgH = pngImage.height;
+    const maxW = 841.89;
+    const maxH = 595.28;
+    const fit = Math.min(maxW / imgW, maxH / imgH);
+    const drawW = imgW * fit;
+    const drawH = imgH * fit;
+    const x = (maxW - drawW) / 2;
+    const y = (maxH - drawH) / 2;
+    page.drawImage(pngImage, { x, y, width: drawW, height: drawH });
+    return await pdfDoc.save();
+  };
 
   if (!isLoaded) {
     return null;
@@ -152,71 +222,7 @@ export default function AcademyFinalExamRoute({
                     onClick={async () => {
                       try {
                         setIsPngToPdfExporting(true);
-                        const svgResponse = await fetch(
-                          `/api/academy/certificate/${course.slug}?format=svg`,
-                          { credentials: "include" }
-                        );
-                        const svgText = await svgResponse.text();
-                        const vb = /viewBox="([^"]+)"/.exec(svgText)?.[1];
-                        let w = 419.25;
-                        let h = 297.75;
-                        if (vb) {
-                          const p = vb.split(/\s+/).map((v) => Number(v));
-                          if (p.length === 4 && Number.isFinite(p[2]) && Number.isFinite(p[3])) {
-                            w = p[2];
-                            h = p[3];
-                          }
-                        }
-                        const scale = 4;
-                        const canvas = document.createElement("canvas");
-                        canvas.width = Math.round(w * scale);
-                        canvas.height = Math.round(h * scale);
-                        const ctx = canvas.getContext("2d");
-                        const img = new Image();
-                        const blob = new Blob([svgText], {
-                          type: "image/svg+xml;charset=utf-8",
-                        });
-                        const url = URL.createObjectURL(blob);
-                        await new Promise<void>((resolve, reject) => {
-                          img.onload = () => resolve();
-                          img.onerror = () => reject(new Error("svg-render-failed"));
-                          img.src = url;
-                        });
-                        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        URL.revokeObjectURL(url);
-                        const pngBlob = await new Promise<Blob>((resolve) =>
-                          canvas.toBlob((b) => resolve(b as Blob), "image/png")
-                        );
-                        const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
-                        const loadPDFLib = async (): Promise<any> => {
-                          const g = window as any;
-                          if (g.PDFLib) return g.PDFLib;
-                          await new Promise<void>((resolve, reject) => {
-                            const s = document.createElement("script");
-                            s.src =
-                              "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
-                            s.async = true;
-                            s.onload = () => resolve();
-                            s.onerror = () => reject(new Error("pdf-lib-load-failed"));
-                            document.head.appendChild(s);
-                          });
-                          return (window as any).PDFLib;
-                        };
-                        const PDFLib = await loadPDFLib();
-                        const pdfDoc = await PDFLib.PDFDocument.create();
-                        const page = pdfDoc.addPage([841.89, 595.28]);
-                        const pngImage = await pdfDoc.embedPng(pngBytes);
-                        const imgW = pngImage.width;
-                        const imgH = pngImage.height;
-                        const maxW = 841.89;
-                        const maxH = 595.28;
-                        const fit = Math.min(maxW / imgW, maxH / imgH);
-                        const drawW = imgW * fit;
-                        const drawH = imgH * fit;
-                        const x = (maxW - drawW) / 2;
-                        const y = (maxH - drawH) / 2;
-                        page.drawImage(pngImage, { x, y, width: drawW, height: drawH });
-                        const pdfBytes = await pdfDoc.save();
+                        const pdfBytes = await generateCertificatePdf();
                         const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
                         const pdfUrl = URL.createObjectURL(pdfBlob);
                         const a = document.createElement("a");
@@ -226,6 +232,8 @@ export default function AcademyFinalExamRoute({
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(pdfUrl);
+                      } catch (error) {
+                        console.error("Failed to download certificate:", error);
                       } finally {
                         setIsPngToPdfExporting(false);
                       }
@@ -233,6 +241,47 @@ export default function AcademyFinalExamRoute({
                     className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isPngToPdfExporting ? "Preparing..." : "Download certificate (PDF)"}
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isEmailing || emailStatus === "sent"}
+                    onClick={async () => {
+                      try {
+                        setIsEmailing(true);
+                        setEmailStatus("sending");
+                        const pdfBytes = await generateCertificatePdf();
+                        
+                        // Convert Uint8Array to base64 safely
+                        let binary = "";
+                        const bytes = new Uint8Array(pdfBytes);
+                        const len = bytes.byteLength;
+                        for (let i = 0; i < len; i++) {
+                          binary += String.fromCharCode(bytes[i]);
+                        }
+                        const base64 = window.btoa(binary);
+
+                        const response = await fetch(`/api/academy/certificate/${course.slug}`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ pdfBase64: base64 }),
+                        });
+
+                        if (!response.ok) throw new Error("Failed to send email");
+                        setEmailStatus("sent");
+                      } catch (error) {
+                        console.error("Failed to email certificate:", error);
+                        setEmailStatus("failed");
+                      } finally {
+                        setIsEmailing(false);
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Mail className="h-4 w-4" />
+                    {emailStatus === "sending" ? "Sending..." : 
+                     emailStatus === "sent" ? "Email sent!" : 
+                     emailStatus === "failed" ? "Try again" : "Email certificate"}
                   </button>
                 </div>
               </div>

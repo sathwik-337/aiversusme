@@ -131,3 +131,31 @@ export const academyCertificates = pgTable(
     ).on(table.certificate_number),
   })
 );
+
+export const academyCourses = pgTable("academy_courses", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  slug: text("slug").unique().notNull(),
+  title: text("title").notNull(),
+  tagline: text("tagline"),
+  summary: text("summary"),
+  description: text("description"),
+  duration: text("duration"),
+  level: text("level"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const academyModules = pgTable("academy_modules", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  course_id: uuid("course_id")
+    .notNull()
+    .references(() => academyCourses.id, { onDelete: "cascade" }),
+  module_id: text("module_id").notNull(), // e.g. "01"
+  title: text("title").notNull(),
+  description: text("description"),
+  notes_url: text("notes_url"),
+  quiz: jsonb("quiz").default([]).notNull(), // Added quiz field as JSONB to store questions and options
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+

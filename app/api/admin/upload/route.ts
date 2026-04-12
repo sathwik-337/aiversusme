@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
+
+export const runtime = "nodejs";
+
+function isAuthorized(req: NextRequest) {
+  const auth = req.headers.get("x-admin-auth") || req.headers.get("authorization");
+  const expected = "Basic " + Buffer.from("admin:admin").toString("base64");
+  return auth === expected;
+}
+
+export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Ensure directory exists
+    const uploadDir = path.join(process.cwd(), "public", "academy", "notes");
+    await fs.mkdir(uploadDir, { recursive: true });
+
+    // Save file
+    const filePath = path.join(uploadDir, file.name);
+    await fs.writeFile(filePath, buffer);
+
+    const publicUrl = `/academy/notes/${file.name}`;
+    return NextResponse.json({ ok: true, url: publicUrl });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+  }
+}

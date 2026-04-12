@@ -63,6 +63,7 @@ export async function GET(
       grade: certificate.grade,
       percentage: certificate.percentage,
       completionDate: certificate.completed_at,
+      courseSlug,
     };
     const format = req.nextUrl.searchParams.get("format");
 
@@ -139,6 +140,7 @@ export async function POST(
         grade: certificate.grade,
         percentage: certificate.percentage,
         completionDate: certificate.completed_at,
+        courseSlug,
       },
       {
         attachmentPdf: pdfBase64 ? Buffer.from(pdfBase64, "base64") : undefined,

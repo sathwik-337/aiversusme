@@ -1,10 +1,26 @@
 import type { AcademyCourse } from "@/app/data/academy";
-import { academyMiniCourse } from "@/app/data/academy-mini-course";
+import { aiBeginnersCourse } from "@/app/data/academy-ai-beginners";
+import { aiEngineersCourse } from "@/app/data/academy-ai-engineers";
+import { aiAdvancedCourse } from "@/app/data/academy-ai-advanced";
 
 export const academyCourseCatalog: AcademyCourse[] = [
   {
-    ...academyMiniCourse,
+    ...aiBeginnersCourse,
     cardImageSrc: "/academy/ai-basics-card.svg",
-    cardImageAlt: "AI for Beginners course artwork",
+    cardImageAlt: "AI FOR BEGINNERS course artwork",
+  },
+  {
+    ...aiEngineersCourse,
+    cardImageSrc: "/academy/ai-for-engineers-card.svg",
+    cardImageAlt: "AI for Engineers course artwork",
+  },
+  {
+    ...aiAdvancedCourse,
+    cardImageSrc: "/academy/ai-advanced-card.svg",
+    cardImageAlt: "AI for Advanced Learners course artwork",
   },
 ];
+
+export function getAcademyCourseBySlug(slug: string): AcademyCourse | undefined {
+  return academyCourseCatalog.find((course) => course.slug === slug);
+}

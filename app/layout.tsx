@@ -9,6 +9,7 @@ import ChatbotProvider from "@/components/chatbot-provider";
 import UserSync from "@/components/user-sync";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
@@ -91,6 +92,17 @@ export default async function RootLayout({
           <main className="flex-grow">{children}</main>
           <Footer />
           <ChatbotProvider />
+          <Toaster 
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "#18181b",
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "16px",
+              },
+            }}
+          />
         </ClerkProvider>
       </body>
     </html>

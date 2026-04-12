@@ -20,6 +20,7 @@ export async function GET(
         grade: academyCertificates.grade,
         percentage: academyCertificates.percentage,
         completed_at: academyCertificates.completed_at,
+        course_slug: academyCertificates.course_slug,
       })
       .from(academyCertificates)
       .where(eq(academyCertificates.certificate_number, certificateNumber))
@@ -36,6 +37,7 @@ export async function GET(
       grade: row.grade,
       percentage: row.percentage,
       completionDate: row.completed_at,
+      courseSlug: row.course_slug,
     });
 
     return new NextResponse(pdf, {

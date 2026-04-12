@@ -1,36 +1,51 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
-import {
-  ArrowLeft,
-  Clock3,
-  FileCheck2,
-  GraduationCap,
-  Lock,
-} from "lucide-react";
-import { academyMiniCourse } from "@/app/data/academy-mini-course";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Clock3, FileCheck2, GraduationCap, Lock } from "lucide-react";
+import { getAcademyCourseBySlug, academyCourseCatalog } from "@/app/data/academy-catalog";
 import AcademyCourseOutline from "@/components/academy-course-outline";
 
-export const metadata: Metadata = {
-  title: "AI for Beginners",
-  description:
-    "A beginner mini-course covering AI basics, real-world applications, AI tools, practical work use, and a locked final exam flow.",
-  openGraph: {
-    title: "AI for Beginners",
-    description:
-      "A beginner mini-course for non-engineers with videos, quizzes, module locks, and a final exam.",
-    url: "/academy/ai-for-non-engineers",
-    type: "article",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI for Beginners",
-    description:
-      "A beginner mini-course for non-engineers with videos, quizzes, module locks, and a final exam.",
-  },
-};
+export async function generateStaticParams() {
+  return academyCourseCatalog.map((course) => ({
+    courseSlug: course.slug,
+  }));
+}
 
-export default function AiForNonEngineersPage() {
+export async function generateMetadata(props: {
+  params: Promise<{ courseSlug: string }>;
+}): Promise<Metadata> {
+  const { courseSlug } = await props.params;
+  const course = getAcademyCourseBySlug(courseSlug);
+
+  if (!course) return {};
+
+  return {
+    title: course.title,
+    description: course.summary,
+    openGraph: {
+      title: course.title,
+      description: course.summary,
+      url: `/academy/${courseSlug}`,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: course.title,
+      description: course.summary,
+    },
+  };
+}
+
+export default async function AcademyCoursePage(props: {
+  params: Promise<{ courseSlug: string }>;
+}) {
+  const { courseSlug } = await props.params;
+  const course = getAcademyCourseBySlug(courseSlug);
+
+  if (!course) {
+    notFound();
+  }
+
   return (
     <div className="bg-[#050505] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
@@ -47,23 +62,25 @@ export default function AiForNonEngineersPage() {
           <div className="mt-8 grid gap-10 xl:grid-cols-[1.1fr_0.9fr] xl:items-start">
             <div className="max-w-3xl">
               <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-1 text-sm font-medium text-amber-100">
-                Mini course
+                {course.level}
               </span>
               <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
-                {academyMiniCourse.title}
+                {course.title}
               </h1>
               <p className="mt-6 text-xl leading-8 text-zinc-300">
-                {academyMiniCourse.tagline}
+                {course.tagline}
               </p>
               <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400">
-                {academyMiniCourse.summary}
+                {course.summary}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3 text-sm text-zinc-200">
-                <span className="rounded-full bg-white/5 px-4 py-2">{academyMiniCourse.duration}</span>
-                <span className="rounded-full bg-white/5 px-4 py-2">{academyMiniCourse.level}</span>
-                <span className="rounded-full bg-white/5 px-4 py-2">{academyMiniCourse.pace}</span>
-                <span className="rounded-full bg-white/5 px-4 py-2">No coding</span>
+                <span className="rounded-full bg-white/5 px-4 py-2">{course.duration}</span>
+                <span className="rounded-full bg-white/5 px-4 py-2">{course.level}</span>
+                <span className="rounded-full bg-white/5 px-4 py-2">{course.pace}</span>
+                <span className="rounded-full bg-white/5 px-4 py-2">
+                  {course.isCoding ? "Technical/Coding" : "No coding required"}
+                </span>
               </div>
             </div>
 
@@ -73,16 +90,16 @@ export default function AiForNonEngineersPage() {
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <Clock3 className="h-5 w-5 text-emerald-300" />
                   <p className="mt-3 text-lg font-semibold text-white">
-                    {academyMiniCourse.duration}
+                    {course.duration}
                   </p>
                   <p className="mt-2 text-sm text-zinc-400">Total learning time</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <GraduationCap className="h-5 w-5 text-sky-300" />
                   <p className="mt-3 text-lg font-semibold text-white">
-                    {academyMiniCourse.modules.length} modules
+                    {course.modules.length} modules
                   </p>
-                  <p className="mt-2 text-sm text-zinc-400">Each with 2 videos</p>
+                  <p className="mt-2 text-sm text-zinc-400">Step-by-step learning</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <Lock className="h-5 w-5 text-amber-300" />
@@ -91,8 +108,8 @@ export default function AiForNonEngineersPage() {
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <FileCheck2 className="h-5 w-5 text-rose-300" />
-                  <p className="mt-3 text-lg font-semibold text-white">10-question exam</p>
-                  <p className="mt-2 text-sm text-zinc-400">Final test after all modules</p>
+                  <p className="mt-3 text-lg font-semibold text-white">Final exam</p>
+                  <p className="mt-2 text-sm text-zinc-400">Certificate of completion</p>
                 </div>
               </div>
             </div>
@@ -100,9 +117,7 @@ export default function AiForNonEngineersPage() {
         </div>
       </section>
 
-      <Suspense fallback={<div className="py-20 text-center text-zinc-500">Loading course outline...</div>}>
-        <AcademyCourseOutline course={academyMiniCourse} />
-      </Suspense>
+      <AcademyCourseOutline course={course} />
     </div>
   );
 }

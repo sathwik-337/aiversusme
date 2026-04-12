@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
-import crypto from "crypto";
+import { generateCertificateNumber, formatCertificateDate } from "./certificates-shared";
+
+export { generateCertificateNumber, formatCertificateDate };
 
 type CertificateRenderData = {
   certificateNumber: string;
@@ -9,10 +11,46 @@ type CertificateRenderData = {
   completionDate: Date;
   grade: string;
   percentage: number;
+  courseSlug?: string;
 };
 
 type CertificateEmailData = CertificateRenderData & {
   recipientEmail: string;
+};
+
+const COURSE_TEMPLATE_MAP: Record<string, string> = {
+  "ai-for-advanced-learners": "1.png",
+  "ai-for-engineers": "2.png",
+  "ai-for-beginners": "3.png",
+};
+
+const COURSE_COORDINATES: Record<
+  string,
+  {
+    name: { x: number; y: number; size: number };
+    date: { x: number; y: number; size: number };
+    grade: { x: number; y: number; size: number };
+    number: { x: number; y: number; size: number };
+  }
+> = {
+  "ai-for-advanced-learners": {
+    name: { x: 209.625, y: 140, size: 24 },
+    date: { x: 338, y: 197, size: 7.4 },
+    grade: { x: 155, y: 210, size: 7.6 },
+    number: { x: 70, y: 250, size: 8.4 },
+  },
+  "ai-for-engineers": {
+    name: { x: 205, y: 120, size: 24 },
+    date: { x: 275, y: 175, size: 7.4 },
+    grade: { x: 95, y: 186, size: 7.6 },
+    number: { x: 80, y: 260, size: 8.4 },
+  },
+  "ai-for-beginners": {
+    name: { x: 205, y: 125, size: 24 },
+    date: { x: 275, y: 185, size: 7.4 },
+    grade: { x: 95, y: 195 , size: 7.6 },
+    number: { x: 80, y: 260, size: 8.4 },
+  },
 };
 
 function escapeXml(value: string) {
@@ -26,19 +64,6 @@ function escapeXml(value: string) {
 
 function escapePdfText(value: string) {
   return value.replaceAll("\\", "\\\\").replaceAll("(", "\\(").replaceAll(")", "\\)");
-}
-
-export function generateCertificateNumber() {
-  const suffix = crypto.randomBytes(4).toString("hex").toUpperCase().slice(0, 6);
-  return `AIVSME${suffix}`;
-}
-
-export function formatCertificateDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
 }
 
 async function loadCertificateTemplate() {
@@ -65,14 +90,49 @@ function buildAibegOverlay(data: CertificateRenderData) {
 
   return `
   <g id="aivsme-certificate-fields">
-    <text x="209.625" y="145" text-anchor="middle" dominant-baseline="middle" fill="#4a3110" font-size="24" font-family="Georgia, serif" font-weight="700">${escapeXml(data.recipientName)}</text>
-    <text x="173" y="190.5" text-anchor="start" dominant-baseline="middle" fill="#3c2b17" font-size="7.4" font-family="Georgia, serif" font-weight="700">${escapeXml(completionDate)}</text>
-    <text x="319" y="190.5" text-anchor="start" dominant-baseline="middle" fill="#3c2b17" font-size="7.6" font-family="Georgia, serif" font-weight="700">${escapeXml(gradeText)}</text>
-    <text x="60" y="250" text-anchor="start" dominant-baseline="middle" fill="#3c2b17" font-size="8.4" font-family="Arial, sans-serif" font-weight="700">${escapeXml(data.certificateNumber)}</text>
+    <text x="209.625" y="145" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="24" font-family="Georgia, serif" font-weight="700">${escapeXml(data.recipientName)}</text>
+    <text x="173" y="190.5" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="7.4" font-family="Georgia, serif" font-weight="700">${escapeXml(completionDate)}</text>
+    <text x="319" y="190.5" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="7.6" font-family="Georgia, serif" font-weight="700">${escapeXml(gradeText)}</text>
+    <text x="60" y="250" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="8.4" font-family="Arial, sans-serif" font-weight="700">${escapeXml(data.certificateNumber)}</text>
   </g>`;
 }
 
 export async function renderCourseCertificate(data: CertificateRenderData) {
+  const templateImage = data.courseSlug ? COURSE_TEMPLATE_MAP[data.courseSlug] : null;
+
+  if (templateImage) {
+    const gradeText = `${data.grade} (${data.percentage}%)`;
+    const completionDate = formatCertificateDate(data.completionDate);
+    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || {
+      name: { x: 209.625, y: 145, size: 24 },
+      date: { x: 173, y: 190.5, size: 7.4 },
+      grade: { x: 319, y: 190.5, size: 7.6 },
+      number: { x: 60, y: 250, size: 8.4 },
+    };
+
+    // Read the image and convert to base64 for embedding in SVG
+    let base64Image = "";
+    try {
+      const imagePath = path.join(process.cwd(), "public", "academy", templateImage);
+      const imageBuffer = await fs.readFile(imagePath);
+      base64Image = `data:image/png;base64,${imageBuffer.toString("base64")}`;
+    } catch (error) {
+      console.error(`Failed to load certificate template image: ${templateImage}`, error);
+    }
+
+    // Return a fresh SVG that uses the course-specific PNG as a background
+    return `
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="419.25" height="297.75" viewBox="0 0 419.25 297.75">
+  ${base64Image ? `<image xlink:href="${base64Image}" x="0" y="0" width="419.25" height="297.75" preserveAspectRatio="xMidYMid slice" />` : ""}
+  <g id="aivsme-certificate-fields">
+    <text x="${coords.name.x}" y="${coords.name.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coords.name.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(data.recipientName)}</text>
+    <text x="${coords.date.x}" y="${coords.date.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.date.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(completionDate)}</text>
+    <text x="${coords.grade.x}" y="${coords.grade.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.grade.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(gradeText)}</text>
+    <text x="${coords.number.x}" y="${coords.number.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.number.size}" font-family="Arial, sans-serif" font-weight="700">${escapeXml(data.certificateNumber)}</text>
+  </g>
+</svg>`.trim();
+  }
+
   const template = await loadCertificateTemplate();
 
   if (template.kind === "aibeg") {
@@ -166,25 +226,18 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
     "0.89 0.84 0.68 rg",
     `${mapX(302)} ${mapY(28)} ${mapW(92)} ${mapW(72)} re f`,
     `${mapX(18)} ${mapY(36)} ${mapW(56)} ${mapW(42)} re f`,
-    "0.45 0.34 0.13 rg",
+    "0.00 0.00 0.00 rg",
     `BT /F2 ${(15 * scale).toFixed(2)} Tf ${mapX(163)} ${mapY(32)} Td (AI VS ME) Tj ET`,
-    "0.10 0.10 0.10 rg",
     `BT /F3 ${(20 * scale).toFixed(2)} Tf ${mapX(118)} ${mapY(54)} Td (Certificate of Completion) Tj ET`,
-    "0.38 0.38 0.38 rg",
     `BT /F1 ${(9.2 * scale).toFixed(2)} Tf ${mapX(166)} ${mapY(76)} Td (This certifies that) Tj ET`,
-    "0.18 0.13 0.07 rg",
     `BT /F3 ${(18 * scale).toFixed(2)} Tf ${mapX(120)} ${mapY(120)} Td (${escapePdfText(
       data.recipientName
     )}) Tj ET`,
-    "0.38 0.38 0.38 rg",
     `BT /F1 ${(8.5 * scale).toFixed(2)} Tf ${mapX(125)} ${mapY(145)} Td (has successfully completed the course) Tj ET`,
-    "0.18 0.13 0.07 rg",
     `BT /F2 ${(10.5 * scale).toFixed(2)} Tf ${mapX(116)} ${mapY(166)} Td (${escapePdfText(
       data.courseTitle
     )}) Tj ET`,
-    "0.38 0.38 0.38 rg",
     `BT /F1 ${(8.2 * scale).toFixed(2)} Tf ${mapX(155)} ${mapY(188)} Td (with a final grade of) Tj ET`,
-    "0.55 0.42 0.13 rg",
     `BT /F3 ${(10.5 * scale).toFixed(2)} Tf ${mapX(160)} ${mapY(206)} Td (${escapePdfText(
       gradeText
     )}) Tj ET`,
@@ -193,11 +246,10 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
     `${mapX(76)} ${mapY(231)} m ${mapX(165)} ${mapY(231)} l S`,
     `${mapX(210)} ${mapY(231)} m ${mapX(302)} ${mapY(231)} l S`,
     `${mapX(318)} ${mapY(231)} m ${mapX(390)} ${mapY(231)} l S`,
-    "0.38 0.38 0.38 rg",
+    "0.00 0.00 0.00 rg",
     `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(60)} ${mapY(250)} Td (Certificate No.) Tj ET`,
     `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(219)} ${mapY(246)} Td (Completion Date) Tj ET`,
     `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(336)} ${mapY(246)} Td (Grade) Tj ET`,
-    "0.18 0.13 0.07 rg",
     `BT /F2 ${(6.1 * scale).toFixed(2)} Tf ${mapX(60)} ${mapY(235)} Td (${escapePdfText(
       data.certificateNumber
     )}) Tj ET`,
