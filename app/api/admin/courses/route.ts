@@ -66,6 +66,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
+interface ModuleDraft {
+  module_id: string;
+  title: string;
+  description?: string;
+  notes_url?: string;
+  quiz?: any[];
+}
+
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -91,13 +99,13 @@ export async function POST(req: NextRequest) {
       // Insert modules if any
       if (modules && Array.isArray(modules) && modules.length > 0) {
         // Validate modules before inserting
-        for (const m of modules) {
+        for (const m of modules as ModuleDraft[]) {
           if (!m.module_id || !m.title) {
             throw new Error(`Module ID and Title are required for all modules`);
           }
         }
 
-        const modulesToInsert = modules.map((m: any) => ({
+        const modulesToInsert = (modules as ModuleDraft[]).map((m) => ({
           course_id: newCourse.id,
           module_id: m.module_id,
           title: m.title,
@@ -144,13 +152,13 @@ export async function PUT(req: NextRequest) {
 
       if (modules && Array.isArray(modules) && modules.length > 0) {
         // Validate modules before inserting
-        for (const m of modules) {
+        for (const m of modules as ModuleDraft[]) {
           if (!m.module_id || !m.title) {
             throw new Error(`Module ID and Title are required for all modules`);
           }
         }
 
-        const modulesToInsert = modules.map((m: any) => ({
+        const modulesToInsert = (modules as ModuleDraft[]).map((m) => ({
           course_id: id,
           module_id: m.module_id,
           title: m.title,

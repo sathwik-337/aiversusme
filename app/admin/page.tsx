@@ -48,7 +48,7 @@ type AdminCourse = {
   slug: string;
   description: string | null;
   isStatic?: boolean;
-  modules: any[];
+  modules: CourseModuleDraft[];
 };
 
 function toBasic(user: string, pass: string) {
@@ -970,7 +970,7 @@ export default function AdminPage() {
                                   type="button"
                                   onClick={() => {
                                     console.log("Quiz details:", m.quiz);
-                                    toast.info("Quiz preview logged to console");
+                                    toast("Quiz preview logged to console");
                                   }}
                                   className="text-[10px] text-blue-400 hover:text-blue-300 font-bold transition-colors"
                                 >
