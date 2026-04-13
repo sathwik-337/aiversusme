@@ -7,7 +7,7 @@ import { getCertificateFileName, renderCourseCertificatePdf } from "@/lib/certif
 export const runtime = "nodejs";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   context: { params: Promise<{ certificateNumber: string }> }
 ) {
   try {
@@ -40,11 +40,16 @@ export async function GET(
       courseSlug: row.course_slug,
     });
 
+    const download =
+      req.nextUrl.searchParams.get("download") === "1" ||
+      req.nextUrl.searchParams.get("download") === "true";
+    const disposition = download ? "attachment" : "inline";
+
     return new NextResponse(pdf, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="${getCertificateFileName(
+        "Content-Disposition": `${disposition}; filename="${getCertificateFileName(
           row.certificate_number
         )}"`,
         "Cache-Control": "public, max-age=86400, immutable",

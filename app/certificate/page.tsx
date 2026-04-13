@@ -86,7 +86,8 @@ export default async function CertificatePage({
         </div>
         <div className="mt-6">
           <a
-            href={`/api/certificates/${row.certificate_number}`}
+            href={`/api/certificates/${row.certificate_number}?download=1`}
+            download={`${row.certificate_number}.pdf`}
             className="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-black"
           >
             Download PDF

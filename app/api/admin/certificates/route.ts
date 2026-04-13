@@ -2,15 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { academyCertificates } from "@/lib/db/schema";
+import { isAuthorized } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
-
-function isAuthorized(req: NextRequest) {
-  const auth = req.headers.get("x-admin-auth") || req.headers.get("authorization");
-  // Expect "Basic YWRtaW46YWRtaW4=" (admin:admin)
-  const expected = "Basic " + Buffer.from("admin:admin").toString("base64");
-  return auth === expected;
-}
 
 export async function GET(req: NextRequest) {
   if (!isAuthorized(req)) {

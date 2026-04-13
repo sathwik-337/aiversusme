@@ -36,8 +36,12 @@ export async function POST(req: NextRequest) {
           <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
             <h2 style="color: #333;">Password Reset Request</h2>
             <p>You received a request to reset the admin password for AI VS ME.</p>
-            <p>Current credentials are hardcoded in the source code as <strong>admin:admin</strong>.</p>
-            <p>If you need to change them, please update the <code>isAuthorized</code> function in <code>app/api/admin/certificates/route.ts</code>.</p>
+            <p>Current credentials are:</p>
+            <ul style="color: #333; line-height: 1.6;">
+              <li><strong>Admin:</strong> admin@aivsme / Aivsme@Admin#2026</li>
+              <li><strong>Developer:</strong> dev@aivsme / Aivsme@Dev#2026</li>
+            </ul>
+            <p>If you need to change them, please update the <code>lib/admin-auth.ts</code> file.</p>
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
             <p style="font-size: 12px; color: #666;">This is an automated security notification.</p>
           </div>

@@ -314,11 +314,36 @@ export default function AdminPage() {
         },
         body: JSON.stringify(genData)
       });
-      if (!res.ok) throw new Error("Failed to generate");
-      toast.success("Certificate generated successfully!", { id: tid });
+      const payload: unknown = await res.json().catch(() => null);
+      const payloadRecord =
+        payload && typeof payload === "object" ? (payload as Record<string, unknown>) : {};
+      if (!res.ok) {
+        const message =
+          typeof payloadRecord.error === "string" && payloadRecord.error
+            ? payloadRecord.error
+            : "Failed to generate certificate";
+        throw new Error(message);
+      }
+      const generatedNumber =
+        typeof payloadRecord.certificateNumber === "string" && payloadRecord.certificateNumber
+          ? payloadRecord.certificateNumber
+          : genData.certificateNumber;
+      const downloadUrl =
+        typeof payloadRecord.downloadUrl === "string" && payloadRecord.downloadUrl
+          ? payloadRecord.downloadUrl
+          : `/api/certificates/${generatedNumber}?download=1`;
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${generatedNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Certificate generated and downloaded!", { id: tid });
       setGenData(prev => ({ ...prev, certificateNumber: generateCertificateNumber() }));
     } catch (err) {
-      toast.error("Generation failed", { id: tid });
+      toast.error(err instanceof Error ? err.message : "Generation failed", { id: tid });
     }
   }
 
@@ -543,6 +568,14 @@ export default function AdminPage() {
                                   </>
                                 )}
                               </span>
+                              <a
+                                href={`/api/certificates/${c.certificate_number}?download=1`}
+                                download={`${c.certificate_number}.pdf`}
+                                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-zinc-200 transition hover:bg-white/10 border border-white/10"
+                              >
+                                <FileText size={12} />
+                                PDF
+                              </a>
                             </div>
                           </td>
                         </tr>
@@ -742,21 +775,6 @@ export default function AdminPage() {
                       }}
                     >
                       {genData.certificateNumber}
-                    </div>
-
-                    <div 
-                      className="absolute font-sans font-bold text-red-600/60 -translate-y-1/2 uppercase tracking-widest"
-                      style={{ 
-                        left: "50%", 
-                        top: "15%", 
-                        fontSize: "10px",
-                        transform: "translate(-50%, -50%) rotate(-5deg)",
-                        border: "2px solid rgba(220, 38, 38, 0.4)",
-                        padding: "4px 12px",
-                        borderRadius: "4px"
-                      }}
-                    >
-                      Valid for 1 Year from Issue
                     </div>
                   </div>
                 </div>

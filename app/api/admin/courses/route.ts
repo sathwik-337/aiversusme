@@ -4,14 +4,9 @@ import { academyCourses, academyModules } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { academyCourseCatalog } from "@/app/data/academy-catalog";
 import { generateAutomatedQuiz } from "@/lib/quiz-generator";
+import { isAuthorized } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
-
-function isAuthorized(req: NextRequest) {
-  const auth = req.headers.get("x-admin-auth") || req.headers.get("authorization");
-  const expected = "Basic " + Buffer.from("admin:admin").toString("base64");
-  return auth === expected;
-}
 
 export async function GET(req: NextRequest) {
   if (!isAuthorized(req)) {

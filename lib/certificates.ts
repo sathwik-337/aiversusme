@@ -168,21 +168,26 @@ export function getCertificateSvgFileName(certificateNumber: string) {
   return `${certificateNumber}.svg`;
 }
 
-function buildPdfDocument(objects: string[]) {
-  const parts: string[] = [];
+type PdfObject = string | Buffer;
+
+function buildPdfDocument(objects: PdfObject[]) {
+  const parts: Buffer[] = [];
   let byteLen = 0;
   const offsets: number[] = [];
 
-  const append = (chunk: string) => {
-    parts.push(chunk);
-    byteLen += Buffer.byteLength(chunk, "utf8");
+  const append = (chunk: PdfObject) => {
+    const buf = typeof chunk === "string" ? Buffer.from(chunk, "utf8") : chunk;
+    parts.push(buf);
+    byteLen += buf.length;
   };
 
   append("%PDF-1.4\n");
 
   objects.forEach((object, index) => {
     offsets[index + 1] = byteLen;
-    append(`${index + 1} 0 obj\n${object}\nendobj\n`);
+    append(`${index + 1} 0 obj\n`);
+    append(object);
+    append("\nendobj\n");
   });
 
   const xrefOffset = byteLen;
@@ -194,12 +199,10 @@ function buildPdfDocument(objects: string[]) {
   }
 
   append(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`);
-  return Buffer.from(parts.join(""), "utf8");
+  return Buffer.concat(parts);
 }
 
 export async function renderCourseCertificatePdf(data: CertificateRenderData) {
-  // Fallback internal renderer (no external deps). This keeps builds green
-  // and returns a consistent PDF layout derived from template coordinates.
   const pageWidth = 841.89;
   const pageHeight = 595.28;
   const templateWidth = 419.25;
@@ -210,59 +213,91 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
   const completionDate = formatCertificateDate(data.completionDate);
   const gradeText = `${data.grade} (${data.percentage}%)`;
 
-  const mapX = (value: number) => (offsetX + value * scale).toFixed(2);
-  const mapY = (value: number) => (pageHeight - (offsetY + value * scale)).toFixed(2);
-  const mapW = (value: number) => (value * scale).toFixed(2);
+  const templateImage = data.courseSlug ? COURSE_TEMPLATE_MAP[data.courseSlug] : null;
 
+  const mapX = (value: number) => offsetX + value * scale;
+  const mapY = (value: number) => pageHeight - (offsetY + value * scale);
+
+  const fmt = (value: number) => value.toFixed(2);
+
+  const estimateWidth = (text: string, fontSize: number, kind: "serif" | "sans") => {
+    const factor = kind === "serif" ? 0.52 : 0.5;
+    return text.length * fontSize * factor;
+  };
+
+  if (templateImage) {
+    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || {
+      name: { x: 209.625, y: 145, size: 24 },
+      date: { x: 173, y: 190.5, size: 7.4 },
+      grade: { x: 319, y: 190.5, size: 7.6 },
+      number: { x: 60, y: 250, size: 8.4 },
+    };
+
+    const pngPath = path.join(process.cwd(), "public", "academy", templateImage);
+    const png = await loadPngForPdf(pngPath);
+
+    const displayWidth = templateWidth * scale;
+    const displayHeight = templateHeight * scale;
+
+    const nameSize = coords.name.size * 0.9 * scale;
+    const dateSize = coords.date.size * 0.9 * scale;
+    const gradeSize = coords.grade.size * 0.9 * scale;
+    const numberSize = coords.number.size * 0.9 * scale;
+
+    const nameText = escapePdfText(data.recipientName);
+    const nameCenterX = mapX(coords.name.x);
+    const nameStartX = nameCenterX - estimateWidth(nameText, nameSize, "serif") / 2;
+
+    const contentLines = [
+      `q ${fmt(displayWidth)} 0 0 ${fmt(displayHeight)} ${fmt(offsetX)} ${fmt(offsetY)} cm /Im1 Do Q`,
+      "0.00 0.00 0.00 rg",
+      `BT /F3 ${fmt(nameSize)} Tf ${fmt(nameStartX)} ${fmt(mapY(coords.name.y))} Td (${nameText}) Tj ET`,
+      `BT /F3 ${fmt(dateSize)} Tf ${fmt(mapX(coords.date.x))} ${fmt(mapY(coords.date.y))} Td (${escapePdfText(
+        completionDate
+      )}) Tj ET`,
+      `BT /F3 ${fmt(gradeSize)} Tf ${fmt(mapX(coords.grade.x))} ${fmt(mapY(coords.grade.y))} Td (${escapePdfText(
+        gradeText
+      )}) Tj ET`,
+      `BT /F2 ${fmt(numberSize)} Tf ${fmt(mapX(coords.number.x))} ${fmt(mapY(coords.number.y))} Td (${escapePdfText(
+        data.certificateNumber
+      )}) Tj ET`,
+    ];
+
+    const contentStream = contentLines.join("\n");
+
+    const imageObject = Buffer.concat([
+      Buffer.from(
+        `<< /Type /XObject /Subtype /Image /Width ${png.width} /Height ${png.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /DecodeParms << /Predictor 15 /Colors 3 /BitsPerComponent 8 /Columns ${png.width} >> /Length ${png.data.length} >>\nstream\n`,
+        "utf8"
+      ),
+      png.data,
+      Buffer.from("\nendstream", "utf8"),
+    ]);
+
+    const objects: PdfObject[] = [
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> /XObject << /Im1 8 0 R >> >> /Contents 4 0 R >>`,
+      `<< /Length ${Buffer.byteLength(contentStream, "utf8")} >>\nstream\n${contentStream}\nendstream`,
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>",
+      imageObject,
+    ];
+
+    return buildPdfDocument(objects);
+  }
+
+  const titleSize = 20 * scale;
   const contentLines = [
     "0.98 0.96 0.90 rg",
     `0 0 ${pageWidth} ${pageHeight} re f`,
-    "0.63 0.51 0.22 RG",
-    `${(1.6 * scale).toFixed(2)} w`,
-    `${mapX(12)} ${mapY(285)} ${mapW(395)} ${mapW(273)} re S`,
-    "0.82 0.74 0.49 RG",
-    `${(0.8 * scale).toFixed(2)} w`,
-    `${mapX(19)} ${mapY(278)} ${mapW(381)} ${mapW(259)} re S`,
-    "0.89 0.84 0.68 rg",
-    `${mapX(302)} ${mapY(28)} ${mapW(92)} ${mapW(72)} re f`,
-    `${mapX(18)} ${mapY(36)} ${mapW(56)} ${mapW(42)} re f`,
     "0.00 0.00 0.00 rg",
-    `BT /F2 ${(15 * scale).toFixed(2)} Tf ${mapX(163)} ${mapY(32)} Td (AI VS ME) Tj ET`,
-    `BT /F3 ${(20 * scale).toFixed(2)} Tf ${mapX(118)} ${mapY(54)} Td (Certificate of Completion) Tj ET`,
-    `BT /F1 ${(9.2 * scale).toFixed(2)} Tf ${mapX(166)} ${mapY(76)} Td (This certifies that) Tj ET`,
-    `BT /F3 ${(18 * scale).toFixed(2)} Tf ${mapX(120)} ${mapY(120)} Td (${escapePdfText(
-      data.recipientName
-    )}) Tj ET`,
-    `BT /F1 ${(8.5 * scale).toFixed(2)} Tf ${mapX(125)} ${mapY(145)} Td (has successfully completed the course) Tj ET`,
-    `BT /F2 ${(10.5 * scale).toFixed(2)} Tf ${mapX(116)} ${mapY(166)} Td (${escapePdfText(
-      data.courseTitle
-    )}) Tj ET`,
-    `BT /F1 ${(8.2 * scale).toFixed(2)} Tf ${mapX(155)} ${mapY(188)} Td (with a final grade of) Tj ET`,
-    `BT /F3 ${(10.5 * scale).toFixed(2)} Tf ${mapX(160)} ${mapY(206)} Td (${escapePdfText(
-      gradeText
-    )}) Tj ET`,
-    "0.63 0.51 0.22 RG",
-    `${(0.6 * scale).toFixed(2)} w`,
-    `${mapX(76)} ${mapY(231)} m ${mapX(165)} ${mapY(231)} l S`,
-    `${mapX(210)} ${mapY(231)} m ${mapX(302)} ${mapY(231)} l S`,
-    `${mapX(318)} ${mapY(231)} m ${mapX(390)} ${mapY(231)} l S`,
-    "0.00 0.00 0.00 rg",
-    `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(60)} ${mapY(250)} Td (Certificate No.) Tj ET`,
-    `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(219)} ${mapY(246)} Td (Completion Date) Tj ET`,
-    `BT /F1 ${(5.4 * scale).toFixed(2)} Tf ${mapX(336)} ${mapY(246)} Td (Grade) Tj ET`,
-    `BT /F2 ${(6.1 * scale).toFixed(2)} Tf ${mapX(60)} ${mapY(235)} Td (${escapePdfText(
-      data.certificateNumber
-    )}) Tj ET`,
-    `BT /F2 ${(5.9 * scale).toFixed(2)} Tf ${mapX(219)} ${mapY(228)} Td (${escapePdfText(
-      completionDate
-    )}) Tj ET`,
-    `BT /F2 ${(6.2 * scale).toFixed(2)} Tf ${mapX(336)} ${mapY(228)} Td (${escapePdfText(
-      gradeText
-    )}) Tj ET`,
+    `BT /F3 ${fmt(titleSize)} Tf ${fmt(mapX(118))} ${fmt(mapY(54))} Td (Certificate of Completion) Tj ET`,
   ];
 
   const contentStream = contentLines.join("\n");
-  const objects = [
+  const objects: PdfObject[] = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
     `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 4 0 R >>`,
@@ -273,6 +308,57 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
   ];
 
   return buildPdfDocument(objects);
+}
+
+async function loadPngForPdf(filePath: string) {
+  const buf = await fs.readFile(filePath);
+  if (buf.length < 8 || buf.slice(0, 8).toString("hex") !== "89504e470d0a1a0a") {
+    throw new Error("Invalid PNG");
+  }
+
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let bitDepth = 0;
+  let colorType = 0;
+  const idatParts: Buffer[] = [];
+
+  while (offset + 12 <= buf.length) {
+    const length = buf.readUInt32BE(offset);
+    offset += 4;
+    const type = buf.slice(offset, offset + 4).toString("ascii");
+    offset += 4;
+    const data = buf.slice(offset, offset + length);
+    offset += length;
+    offset += 4;
+
+    if (type === "IHDR") {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      bitDepth = data[8];
+      colorType = data[9];
+    }
+
+    if (type === "IDAT") {
+      idatParts.push(data);
+    }
+
+    if (type === "IEND") break;
+  }
+
+  if (!width || !height || !idatParts.length) {
+    throw new Error("Unsupported PNG");
+  }
+
+  if (bitDepth !== 8 || colorType !== 2) {
+    throw new Error("Unsupported PNG color type");
+  }
+
+  return {
+    width,
+    height,
+    data: Buffer.concat(idatParts),
+  };
 }
 
 export async function sendCertificateEmail(

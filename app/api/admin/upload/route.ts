@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
+import { isAuthorized } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
-
-function isAuthorized(req: NextRequest) {
-  const auth = req.headers.get("x-admin-auth") || req.headers.get("authorization");
-  const expected = "Basic " + Buffer.from("admin:admin").toString("base64");
-  return auth === expected;
-}
 
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {

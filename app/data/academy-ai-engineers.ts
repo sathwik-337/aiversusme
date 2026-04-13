@@ -39,7 +39,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Modern AI ecosystem overview",
       ],
       notes: "A comprehensive 5-page guide covering the history of AI from Turing to Transformers, the paradigm shift from Symbolic to Statistical AI, and an overview of the modern engineering stack including MLOps.",
-      notesDownloadUrl: "/academy/notes/engineers-m01.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE1.pdf",
       quiz: [
         {
           id: "e1-q1",
@@ -114,7 +114,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Statistical significance and hypothesis testing",
       ],
       notes: "A deep dive into the mathematical tools required for AI. Focuses on linear algebra for data representation, calculus for model optimization, and statistics for performance evaluation.",
-      notesDownloadUrl: "/academy/notes/engineers-m02.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE2.pdf",
       quiz: [
         {
           id: "e2-q1",
@@ -189,7 +189,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Visualization with Matplotlib and Seaborn",
       ],
       notes: "This module covers Python programming essentials for AI, focusing on NumPy for numerical computation and Pandas for data manipulation. You'll also learn to visualize data insights using Matplotlib and Seaborn.",
-      notesDownloadUrl: "/academy/notes/engineers-m03.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE3.pdf",
       quiz: [
         {
           id: "e3-q1",
@@ -264,7 +264,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Feature selection and dimensionality reduction (PCA, t-SNE)",
       ],
       notes: "Learn the critical steps of data preparation, from handling missing values to feature engineering and dimensionality reduction techniques like PCA. Quality data is the backbone of any AI model.",
-      notesDownloadUrl: "/academy/notes/engineers-m04.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE4.pdf",
       quiz: [
         {
           id: "e4-q1",
@@ -339,7 +339,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "K-Means and Hierarchical Clustering",
       ],
       notes: "A comprehensive guide to core ML algorithms, including supervised learning for regression and classification, and unsupervised learning for clustering.",
-      notesDownloadUrl: "/academy/notes/engineers-m05.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE5.pdf",
       quiz: [
         {
           id: "e5-q1",
@@ -414,7 +414,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Activation functions, loss functions, and optimizers",
       ],
       notes: "Understand the architectures of neural networks, from basic ANNs to CNNs for images and RNNs for sequential data, along with their key components like activation and loss functions.",
-      notesDownloadUrl: "/academy/notes/engineers-m06.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE6.pdf",
       quiz: [
         {
           id: "e6-q1",
@@ -489,7 +489,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Introduction to Large Language Models (LLMs)",
       ],
       notes: "Explore text processing techniques, the power of word embeddings, and the revolutionary Transformer architecture that drives modern NLP and LLMs.",
-      notesDownloadUrl: "/academy/notes/engineers-m07.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE7.pdf",
       quiz: [
         {
           id: "e7-q1",
@@ -564,7 +564,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Transfer learning in Computer Vision",
       ],
       notes: "Learn about image processing, object detection frameworks like YOLO, and how transfer learning allows for efficient training of advanced vision models.",
-      notesDownloadUrl: "/academy/notes/engineers-m08.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE8.pdf",
       quiz: [
         {
           id: "e8-q1",
@@ -639,7 +639,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Regularization techniques (L1, L2, Dropout)",
       ],
       notes: "Focus on training robust models by understanding the bias-variance tradeoff, employing cross-validation, and using the right metrics for evaluation.",
-      notesDownloadUrl: "/academy/notes/engineers-m09.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE9.pdf",
       quiz: [
         {
           id: "e9-q1",
@@ -714,7 +714,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Distributed training strategies",
       ],
       notes: "Get practical experience with the two leading AI frameworks, TensorFlow and PyTorch, and learn how to debug and scale your models effectively.",
-      notesDownloadUrl: "/academy/notes/engineers-m10.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE10.pdf",
       quiz: [
         {
           id: "e10-q1",
@@ -789,7 +789,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Prompt engineering for developers",
       ],
       notes: "Dive into the world of generative AI, covering fine-tuning of LLMs, GANs, and diffusion models for high-quality content generation.",
-      notesDownloadUrl: "/academy/notes/engineers-m11.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE11.pdf",
       quiz: [
         {
           id: "e11-q1",
@@ -864,7 +864,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Edge AI: Quantization and model optimization",
       ],
       notes: "Learn to transition models from development to production using APIs, containerization, and cloud platforms, while also exploring optimization for edge deployment.",
-      notesDownloadUrl: "/academy/notes/engineers-m12.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE12.pdf",
       quiz: [
         {
           id: "e12-q1",
@@ -939,7 +939,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Securing AI pipelines",
       ],
       notes: "Examine how AI is used for threat and anomaly detection in cybersecurity, as well as the unique security challenges posed by adversarial attacks.",
-      notesDownloadUrl: "/academy/notes/engineers-m13.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE13.pdf",
       quiz: [
         {
           id: "e13-q1",
@@ -1014,7 +1014,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "AI governance and responsible AI practices",
       ],
       notes: "Understand the ethical, legal, and governance aspects of AI, including bias mitigation, model explainability, and the legal framework of the Indian IT Act.",
-      notesDownloadUrl: "/academy/notes/engineers-m14.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE14.pdf",
       quiz: [
         {
           id: "e14-q1",
@@ -1089,7 +1089,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Presentation and documentation",
       ],
       notes: "Apply your learning to build an end-to-end AI solution. This module guides you through project scoping, development, testing, and final documentation.",
-      notesDownloadUrl: "/academy/notes/engineers-m15.md",
+      notesDownloadUrl: "/academy/notes/aiforengineers/AIE15.pdf",
       quiz: [
         {
           id: "e15-q1",

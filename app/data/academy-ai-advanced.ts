@@ -40,7 +40,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Scaling with Mixture-of-Experts (MoE) architectures",
       ],
       notes: "A deep dive into advanced AI architectures. This 5-page guide covers the Transformer revolution, self-attention mechanisms, diffusion models, and Mixture-of-Experts (MoE) architectures.",
-      notesDownloadUrl: "/academy/notes/advanced-m01.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA1.pdf",
       quiz: [
         {
           id: "a1-q1",
@@ -115,7 +115,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Stochastic processes in machine learning",
       ],
       notes: "A rigorous mathematical exploration of optimization in deep learning. Covers advanced calculus for backpropagation and information theory concepts like KL Divergence, essential for training robust AI models.",
-      notesDownloadUrl: "/academy/notes/advanced-m02.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA2.pdf",
       quiz: [
         {
           id: "a2-q1",
@@ -190,7 +190,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Pre-training vs. Instruction Tuning",
       ],
       notes: "Dive deep into the inner workings of Large Language Models. This module covers everything from tokenization strategies and embeddings to the nuances of pre-training and instruction tuning.",
-      notesDownloadUrl: "/academy/notes/advanced-m03.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA3.pdf",
       quiz: [
         {
           id: "a3-q1",
@@ -265,7 +265,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Programmatic prompt chaining and templates",
       ],
       notes: "Master advanced prompting techniques like Chain-of-Thought and Tree-of-Thoughts to unlock complex reasoning capabilities in LLMs. Learn to build programmatic prompt chains for automated workflows.",
-      notesDownloadUrl: "/academy/notes/advanced-m04.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA4.pdf",
       quiz: [
         {
           id: "a4-q1",
@@ -340,7 +340,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Evaluation of RAG systems (RAGAS, TruLens)",
       ],
       notes: "Learn to build RAG systems that connect LLMs to external data. This module covers vector databases, indexing strategies, and modern evaluation frameworks for RAG accuracy.",
-      notesDownloadUrl: "/academy/notes/advanced-m05.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA5.pdf",
       quiz: [
         {
           id: "a5-q1",
@@ -415,7 +415,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Domain-specific adaptation (Medical, Legal, Finance)",
       ],
       notes: "Explore efficient ways to fine-tune models using techniques like LoRA and QLoRA. Learn how to curate datasets for domain-specific adaptation in fields like medicine and finance.",
-      notesDownloadUrl: "/academy/notes/advanced-m06.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA6.pdf",
       quiz: [
         {
           id: "a6-q1",
@@ -490,7 +490,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Short-term and long-term memory systems for AI",
       ],
       notes: "Design autonomous AI agents capable of planning, using tools, and maintaining memory. This module covers leading agent frameworks and task decomposition strategies.",
-      notesDownloadUrl: "/academy/notes/advanced-m07.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA7.pdf",
       quiz: [
         {
           id: "a7-q1",
@@ -565,7 +565,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Building multimodal interfaces",
       ],
       notes: "Learn to build AI systems that can process and integrate multiple types of data, including text, images, and audio, using models like CLIP and LLaVA.",
-      notesDownloadUrl: "/academy/notes/advanced-m08.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA8.pdf",
       quiz: [
         {
           id: "a8-q1",
@@ -640,7 +640,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "RLHF: Aligning LLMs with human preferences",
       ],
       notes: "Understand the principles of Reinforcement Learning, from MDPs and Q-Learning to the RLHF technique used to align LLMs with human values.",
-      notesDownloadUrl: "/academy/notes/advanced-m09.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA9.pdf",
       quiz: [
         {
           id: "a9-q1",
@@ -715,7 +715,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Defensive strategies and robust AI design",
       ],
       notes: "Examine the security landscape of AI, focusing on adversarial attacks, prompt injection, and strategies for building robust and secure AI systems.",
-      notesDownloadUrl: "/academy/notes/advanced-m10.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA10.pdf",
       quiz: [
         {
           id: "a10-q1",
@@ -790,7 +790,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Bias detection through explainability",
       ],
       notes: "Learn how to make AI decisions interpretable using techniques like SHAP and LIME. This module emphasizes the importance of transparency and bias detection in AI.",
-      notesDownloadUrl: "/academy/notes/advanced-m11.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA11.pdf",
       quiz: [
         {
           id: "a11-q1",
@@ -865,7 +865,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Scaling inference with Kubernetes and serverless",
       ],
       notes: "Master the practices of MLOps for scaling AI solutions. This module covers CI/CD for ML, model monitoring, and deploying at scale using Kubernetes.",
-      notesDownloadUrl: "/academy/notes/advanced-m12.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA12.pdf",
       quiz: [
         {
           id: "a12-q1",
@@ -940,7 +940,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Inference on edge devices and IoT",
       ],
       notes: "Optimize models for edge devices using quantization, pruning, and knowledge distillation. Learn to deploy AI on mobile and IoT platforms efficiently.",
-      notesDownloadUrl: "/academy/notes/advanced-m13.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA13.pdf",
       quiz: [
         {
           id: "a13-q1",
@@ -1015,7 +1015,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Ethical frameworks for deployment",
       ],
       notes: "Navigate the complex world of AI ethics and regulation. This module covers global AI laws, the Indian IT Act, and privacy-preserving techniques like Federated Learning.",
-      notesDownloadUrl: "/academy/notes/advanced-m14.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA14.pdf",
       quiz: [
         {
           id: "a14-q1",
@@ -1090,7 +1090,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Final presentation and deployment roadmap",
       ],
       notes: "Execute an industry-grade AI project, focusing on production-ready development, scalability, and performance optimization for a real-world use case.",
-      notesDownloadUrl: "/academy/notes/advanced-m15.md",
+      notesDownloadUrl: "/academy/notes/aiforadvance/AIA15.pdf",
       quiz: [
         {
           id: "a15-q1",

@@ -38,7 +38,7 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Real-world applications today",
       ],
       notes: "This module provides a foundational understanding of Artificial Intelligence. You will learn about its origins, debunk common myths, and see how AI is already being used in our daily lives.",
-      notesDownloadUrl: "/academy/notes/beginners-m01.md",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm1.pdf",
       quiz: [
         {
           id: "b1-q1",
@@ -77,7 +77,7 @@ export const aiBeginnersCourse: AcademyCourse = {
         "The current state of AI development",
       ],
       notes: "In this module, we categorize AI based on its capabilities and intelligence levels. You'll learn to distinguish between the specialized Narrow AI we use today and the theoretical concepts of General and Super AI.",
-      notesDownloadUrl: "/academy/notes/beginners-m02.md",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm2.pdf",
       quiz: [
         {
           id: "b2-q1",
@@ -115,6 +115,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "How banking uses AI for security",
         "Revolutionizing healthcare with AI",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm3.pdf",
       quiz: [
         {
           id: "b3-q1",
@@ -152,6 +154,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Unsupervised Learning: Finding patterns",
         "Reinforcement Learning: Learning through trial and error",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm4.pdf",
       quiz: [
         {
           id: "b4-q1",
@@ -189,6 +193,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Why datasets matter",
         "Data collection and cleaning",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm5.pdf",
       quiz: [
         {
           id: "b5-q1",
@@ -226,6 +232,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "From simple networks to Deep Learning",
         "Visualizing the learning process",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm6.pdf",
       quiz: [
         {
           id: "b6-q1",
@@ -263,6 +271,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Creating visuals with Canva AI",
         "Other essential tools for beginners",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm7.pdf",
       quiz: [
         {
           id: "b7-q1",
@@ -300,6 +310,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Iterating for better outputs",
         "Common prompting techniques",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm8.pdf",
       quiz: [
         {
           id: "b8-q1",
@@ -337,6 +349,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Introduction to AI video tools",
         "Content creation workflows",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm9.pdf",
       quiz: [
         {
           id: "b9-q1",
@@ -374,6 +388,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Using AI as a learning companion",
         "Personalized productivity hacks",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm10.pdf",
       quiz: [
         {
           id: "b10-q1",
@@ -411,6 +427,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "The dangers of overdependence",
         "Verifying AI-generated information",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm11.pdf",
       quiz: [
         {
           id: "b11-q1",
@@ -448,6 +466,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Principles of responsible AI usage",
         "The human element in AI ethics",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm12.pdf",
       quiz: [
         {
           id: "b12-q1",
@@ -485,6 +505,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "The spread of misinformation",
         "Staying safe in an AI world",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm13.pdf",
       quiz: [
         {
           id: "b13-q1",
@@ -522,6 +544,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Societal impacts of widespread AI",
         "Preparing for what comes next",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm14.pdf",
       quiz: [
         {
           id: "b14-q1",
@@ -559,6 +583,8 @@ export const aiBeginnersCourse: AcademyCourse = {
         "Presenting your results",
         "Final course review",
       ],
+      notes: "Review the key concepts and foundational ideas covered in this module to solidify your understanding of Artificial Intelligence.",
+      notesDownloadUrl: "/academy/notes/aiforbeginners/aibm15.pdf",
       quiz: [
         {
           id: "b15-q1",
