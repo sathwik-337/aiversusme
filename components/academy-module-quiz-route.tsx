@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Lock } from "lucide-react";
 import type { AcademyCourse, AcademyQuizQuestion } from "@/app/data/academy";
