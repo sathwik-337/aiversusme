@@ -3,6 +3,7 @@
 import React from "react";
 import { useAuth, SignUpButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   CheckCircle2,
   Users,
@@ -57,14 +58,27 @@ function FeaturesTop() {
       <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
 
         {/* LEFT SIDE */}
-        <div className="flex flex-col space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col space-y-10"
+        >
           <h2 className="text-3xl md:text-5xl font-bold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/70 max-w-md">
             Why people rely on us to stay ahead of AI
           </h2>
 
           <div className="flex flex-col space-y-8">
             {steps.map((step, idx) => (
-              <div key={idx} className="group flex items-start gap-4 transition-transform duration-300 hover:translate-x-2 cursor-default">
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 + idx * 0.1, duration: 0.5 }}
+                className="group flex items-start gap-4 transition-transform duration-300 hover:translate-x-2 cursor-default"
+              >
                 <div className={`mt-1 bg-white/5 border border-white/10 p-2.5 rounded-lg ${step.color} transition-all duration-300 ${step.glowHover}`}>
                   <step.icon className="w-5 h-5" />
                 </div>
@@ -76,13 +90,19 @@ function FeaturesTop() {
                     {step.description}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* RIGHT SIDE */}
-        <div className="relative flex justify-center lg:justify-end items-center mt-10 lg:mt-0 animate-in fade-in slide-in-from-right-8 duration-700">
+        <motion.div 
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative flex justify-center lg:justify-end items-center mt-10 lg:mt-0"
+        >
           <div className="absolute w-[90%] h-[90%] bg-white/[0.03] rounded-[4rem] -rotate-6 z-0 right-4 lg:right-6 blur-2xl" />
 
           <div className="relative z-10 w-full max-w-md aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] group">
@@ -95,27 +115,45 @@ function FeaturesTop() {
           </div>
 
           {/* Floating Badges */}
-          <div className="absolute top-10 -left-6 md:-left-12 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-5 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(96,165,250,0.2)] group cursor-default shadow-xl shadow-black/40">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, type: "spring" }}
+            className="absolute top-10 -left-6 md:-left-12 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-5 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(96,165,250,0.2)] group cursor-default shadow-xl shadow-black/40"
+          >
             <div className="text-blue-400 p-1.5 rounded-full bg-blue-500/10 shadow-[0_0_10px_rgba(96,165,250,0.3)] group-hover:shadow-[0_0_15px_rgba(96,165,250,0.5)] transition-shadow duration-300">
               <ThumbsUp className="w-4 h-4" />
             </div>
             <span className="text-sm font-medium text-white/90">User Friendly</span>
-          </div>
+          </motion.div>
 
-          <div className="absolute bottom-1/3 -right-4 md:-right-8 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-5 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(192,132,252,0.2)] group cursor-default shadow-xl shadow-black/40 delay-150">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, type: "spring" }}
+            className="absolute bottom-1/3 -right-4 md:-right-8 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-5 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(192,132,252,0.2)] group cursor-default shadow-xl shadow-black/40"
+          >
             <div className="text-purple-400 p-1.5 rounded-full bg-purple-500/10 shadow-[0_0_10px_rgba(192,132,252,0.3)] group-hover:shadow-[0_0_15px_rgba(192,132,252,0.5)] transition-shadow duration-300">
               <Unlock className="w-4 h-4" />
             </div>
             <span className="text-sm font-medium text-white/90">Free Accessable</span>
-          </div>
+          </motion.div>
 
-          <div className="absolute -bottom-6 left-1/4 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-6 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] group cursor-default shadow-xl shadow-black/40 delay-300">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7, type: "spring" }}
+            className="absolute -bottom-6 left-1/4 z-20 bg-white/10 backdrop-blur-md rounded-full py-2.5 px-6 border border-white/10 flex items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] group cursor-default shadow-xl shadow-black/40"
+          >
             <div className="text-cyan-400 p-1.5 rounded-full bg-cyan-500/10 shadow-[0_0_10px_rgba(34,211,238,0.3)] group-hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-shadow duration-300">
               <Zap className="w-4 h-4" />
             </div>
             <span className="text-sm font-medium text-white/90">10x time faster</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

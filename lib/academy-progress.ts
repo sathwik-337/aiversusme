@@ -1,7 +1,36 @@
+import type { AcademyCourse, AcademyQuizQuestion } from "@/app/data/academy";
+
 export type AcademyQuizScore = {
   score: number;
   total: number;
 };
+
+export function generateFinalExam(course: AcademyCourse): AcademyQuizQuestion[] {
+  const finalExam: AcademyQuizQuestion[] = [];
+
+  course.modules.forEach((module) => {
+    if (module.quiz && module.quiz.length > 0) {
+      // Shuffle module quiz questions
+      const shuffled = [...module.quiz].sort(() => Math.random() - 0.5);
+      // Pick 2 random questions (or fewer if module has less than 2)
+      const selected = shuffled.slice(0, 2);
+      
+      selected.forEach((q, index) => {
+        finalExam.push({
+          ...q,
+          id: `final-${module.id}-${q.id}-${index}`,
+        });
+      });
+    }
+  });
+
+  // If the course has a fixed final exam defined and it's longer than what we generated,
+  // or if we somehow didn't get enough questions (though for 15 modules we should get 30),
+  // we could potentially fallback or merge. 
+  // But the user was specific: "2 randomly from each module".
+  
+  return finalExam;
+}
 
 export type AcademyCertificate = {
   certificateNumber: string;

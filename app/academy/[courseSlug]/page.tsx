@@ -47,10 +47,10 @@ export default async function AcademyCoursePage(props: {
   }
 
   return (
-    <div className="bg-[#050505] text-white">
-      <section className="relative overflow-hidden border-b border-white/10">
+    <div className="bg-[#050505] text-white min-h-screen">
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.18),_transparent_30%),radial-gradient(circle_at_85%_15%,_rgba(16,185,129,0.14),_transparent_28%),linear-gradient(180deg,_rgba(255,255,255,0.03),_transparent_42%)]" />
-        <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-36">
+        <div className="relative mx-auto max-w-7xl px-6 pb-0 pt-36">
           <Link
             href="/academy"
             className="inline-flex items-center text-sm font-medium text-zinc-300 transition hover:text-white"
@@ -59,7 +59,7 @@ export default async function AcademyCoursePage(props: {
             Back to e-learning
           </Link>
 
-          <div className="mt-8 grid gap-10 xl:grid-cols-[1.1fr_0.9fr] xl:items-start">
+          <div className="mt-8 grid gap-8 xl:grid-cols-[1.1fr_0.9fr] xl:items-start">
             <div className="max-w-3xl">
               <span className="inline-flex items-center rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-1 text-sm font-medium text-amber-100">
                 {course.level}
@@ -97,9 +97,19 @@ export default async function AcademyCoursePage(props: {
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <GraduationCap className="h-5 w-5 text-sky-300" />
                   <p className="mt-3 text-lg font-semibold text-white">
-                    {course.modules.length} modules
+                    {course.slug === "ai-for-beginners"
+                      ? "Foundational Modules"
+                      : course.slug === "ai-for-advanced-learners"
+                        ? "Deep Dive Modules"
+                        : `${course.modules.length} modules`}
                   </p>
-                  <p className="mt-2 text-sm text-zinc-400">Step-by-step learning</p>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    {course.slug === "ai-for-beginners"
+                      ? "Core concepts for beginners"
+                      : course.slug === "ai-for-advanced-learners"
+                        ? "Advanced topics and research"
+                        : "Step-by-step learning"}
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <Lock className="h-5 w-5 text-amber-300" />

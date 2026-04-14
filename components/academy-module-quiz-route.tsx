@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Lock } from "lucide-react";
-import type { AcademyCourse } from "@/app/data/academy";
+import type { AcademyCourse, AcademyQuizQuestion } from "@/app/data/academy";
 import AcademyModuleQuiz from "@/components/academy-module-quiz";
 import {
   completeModuleQuiz,
@@ -16,6 +16,7 @@ import {
   hydrateAcademyProgress,
   subscribeAcademyProgress,
 } from "@/lib/academy-progress";
+import { generateAutomatedQuiz } from "@/lib/quiz-generator";
 
 type AcademyModuleQuizRouteProps = {
   course: AcademyCourse;
@@ -46,6 +47,17 @@ export default function AcademyModuleQuizRoute({
     score: number;
     total: number;
   } | null>(null);
+
+  const activeQuiz = useMemo(() => {
+    if (!currentModule) return [];
+    const baseQuiz = currentModule.quiz ?? [];
+    if (baseQuiz.length >= 5) return baseQuiz.slice(0, 5);
+    
+    // Supplement with automated questions if less than 5
+    const automated = generateAutomatedQuiz(course.title, currentModule.title);
+    const combined = [...baseQuiz, ...automated].slice(0, 5);
+    return combined;
+  }, [course.title, currentModule]);
   const completionResult = localCompletionResult ?? savedScore ?? null;
   const completionPercentage = completionResult
     ? getAcademyScorePercentage(completionResult)
@@ -130,7 +142,7 @@ export default function AcademyModuleQuizRoute({
         </p>
         <h1 className="mt-3 text-3xl font-semibold">{currentModule.title}</h1>
         <p className="mt-4 text-sm leading-7 text-zinc-300">
-          Answer all {currentModule.quiz?.length ?? 0} questions. When you submit, the
+          Answer all 5 questions. When you submit, the
           score and percentage appear here. You need at least {requiredPercentage}% to
           unlock the next module.
         </p>
@@ -154,7 +166,7 @@ export default function AcademyModuleQuizRoute({
 
         <AcademyModuleQuiz
           assessmentId={`module-route-${currentModule.id}`}
-          questions={currentModule.quiz ?? []}
+          questions={activeQuiz}
           description={`Get at least ${requiredPercentage}% to unlock the next module.`}
           onComplete={({ score, totalQuestions, answers }) => {
             const nextScore = {

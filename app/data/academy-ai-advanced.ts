@@ -6,7 +6,7 @@ export const aiAdvancedCourse: AcademyCourse = {
   tagline: "Push the boundaries of AI with cutting-edge architectures and research-grade systems.",
   summary:
     "A 15-module deep dive into advanced AI. Master state-of-the-art architectures like Transformers and Diffusion models, build production-ready RAG pipelines, fine-tune LLMs, and deploy autonomous AI agents at scale.",
-  duration: "15 Modules",
+  duration: "15 weeks",
   pace: "Self-paced / Advanced",
   level: "Expert",
   format: "Advanced workshops, research paper discussions, and industry-grade projects",

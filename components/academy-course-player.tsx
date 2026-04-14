@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useEffect, useMemo, useState } from "react";
 import {
   ChevronDown,
   CheckCircle2,
@@ -10,9 +11,11 @@ import {
   Trophy,
   Video,
 } from "lucide-react";
-import type { AcademyCourse } from "@/app/data/academy";
+import type { AcademyCourse, AcademyQuizQuestion } from "@/app/data/academy";
 import { cn } from "@/lib/utils";
 import AcademyModuleQuiz from "@/components/academy-module-quiz";
+import { generateFinalExam } from "@/lib/academy-progress";
+import { generateAutomatedQuiz } from "@/lib/quiz-generator";
 
 type AcademyCoursePlayerProps = {
   course: AcademyCourse;
@@ -56,16 +59,26 @@ function getEmbedUrl(sourceUrl?: string) {
 }
 
 function ActiveModulePanel({
+  courseTitle,
   activeModule,
   activeModuleIndex,
   onComplete,
-}: ActiveModulePanelProps) {
+}: ActiveModulePanelProps & { courseTitle: string }) {
   const [lessonsExpanded, setLessonsExpanded] = useState(false);
   const [quizExpanded, setQuizExpanded] = useState(false);
   const [expandedVideos, setExpandedVideos] = useState<Record<string, boolean>>({});
 
   const activeVideos = activeModule.videos ?? [];
-  const activeQuiz = activeModule.quiz ?? [];
+  const baseQuiz = activeModule.quiz ?? [];
+  
+  const activeQuiz = useMemo(() => {
+    if (baseQuiz.length >= 5) return baseQuiz.slice(0, 5);
+    
+    // Supplement with automated questions if less than 5
+    const automated = generateAutomatedQuiz(courseTitle, activeModule.title);
+    const combined = [...baseQuiz, ...automated].slice(0, 5);
+    return combined;
+  }, [baseQuiz, courseTitle, activeModule.title]);
 
   const toggleVideo = (videoTitle: string) => {
     setExpandedVideos((current) => ({
@@ -235,13 +248,24 @@ function ActiveModulePanel({
 export default function AcademyCoursePlayer({
   course,
 }: AcademyCoursePlayerProps) {
+  const { user } = useUser();
+  const isSpecialUser = user?.primaryEmailAddress?.emailAddress === "sathwikkamath31@gmail.com";
+
   const [completedModuleIds, setCompletedModuleIds] = useState<string[]>([]);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [finalExamCompleted, setFinalExamCompleted] = useState(false);
   const [finalExamExpanded, setFinalExamExpanded] = useState(false);
 
-  const unlockedModuleCount = completedModuleIds.length + 1;
-  const allModulesComplete = completedModuleIds.length === course.modules.length;
+  const [generatedQuestions, setGeneratedQuestions] = useState<AcademyQuizQuestion[]>([]);
+
+  useEffect(() => {
+    if (course.modules && course.modules.length > 0) {
+      setGeneratedQuestions(generateFinalExam(course));
+    }
+  }, [course]);
+
+  const unlockedModuleCount = isSpecialUser ? course.modules.length : completedModuleIds.length + 1;
+  const allModulesComplete = isSpecialUser || completedModuleIds.length === course.modules.length;
 
   const activeModule = useMemo(
     () => course.modules[activeModuleIndex],
@@ -277,7 +301,7 @@ export default function AcademyCoursePlayer({
             Complete each module quiz to unlock the next module
           </h2>
           <p className="mt-3 text-sm leading-7 text-zinc-400">
-            Learners must finish all 4 module quizzes before the 10-question final exam opens.
+            Learners must finish all module quizzes before the {course.modules.length * 2}-question final exam opens.
           </p>
 
           <div className="mt-6 space-y-3">
@@ -338,7 +362,7 @@ export default function AcademyCoursePlayer({
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
                   Final exam
                 </p>
-                <p className="mt-2 text-lg font-semibold text-white">10 questions</p>
+                <p className="mt-2 text-lg font-semibold text-white">{course.modules.length * 2} questions</p>
               </div>
               {allModulesComplete ? (
                 <Trophy className="h-5 w-5 text-amber-300" />
@@ -348,8 +372,8 @@ export default function AcademyCoursePlayer({
             </div>
             <p className="mt-3 text-sm text-zinc-300">
               {allModulesComplete
-                ? "Unlocked. The learner can now take the final exam."
-                : "Locked until every module quiz has been answered."}
+                ? "All module quizzes are completed. Open the final exam below."
+                : "The final exam stays locked until every module quiz is completed."}
             </p>
           </div>
         </aside>
@@ -357,6 +381,7 @@ export default function AcademyCoursePlayer({
         <div className="space-y-8">
           <ActiveModulePanel
             key={activeModule.id}
+            courseTitle={course.title}
             activeModule={activeModule}
             activeModuleIndex={activeModuleIndex}
             onComplete={handleModuleComplete}
@@ -367,7 +392,8 @@ export default function AcademyCoursePlayer({
               "rounded-[32px] border p-8",
               allModulesComplete
                 ? "border-emerald-300/25 bg-emerald-300/10"
-                : "border-white/10 bg-zinc-950"
+                : "border-white/10 bg-zinc-950",
+              !allModulesComplete && "opacity-50"
             )}
           >
             <div className="flex items-center justify-between gap-4">
@@ -376,21 +402,21 @@ export default function AcademyCoursePlayer({
                   Final exam
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold text-white">
-                  10-question course exam
+                  {course.modules.length * 2}-question course exam
                 </h3>
               </div>
-              <FileCheck2
+              <Trophy
                 className={cn(
                   "h-6 w-6",
-                  allModulesComplete ? "text-emerald-300" : "text-zinc-500"
+                  allModulesComplete ? "text-amber-300" : "text-zinc-500"
                 )}
               />
             </div>
 
             <p className="mt-4 text-sm leading-7 text-zinc-300">
               {allModulesComplete
-                ? "All module quizzes are complete. The learner can now take the final exam."
-                : "The final exam stays locked until every module quiz has been answered."}
+                ? "All module quizzes are passed. Open the final exam only when ready."
+                : "The final exam unlocks only after you pass every module quiz."}
             </p>
 
             {allModulesComplete ? (
@@ -402,10 +428,10 @@ export default function AcademyCoursePlayer({
                 >
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.22em] text-zinc-400">
-                      Expand final exam
+                      Final exam
                     </p>
                     <p className="mt-2 text-sm text-zinc-200">
-                      Open the full 10-question exam only when ready.
+                      Open the full {course.modules.length * 2}-question exam only when ready.
                     </p>
                   </div>
                   <ChevronDown
@@ -419,9 +445,9 @@ export default function AcademyCoursePlayer({
                 {finalExamExpanded ? (
                   <AcademyModuleQuiz
                     assessmentId="final-exam"
-                    questions={course.finalExam ?? []}
+                    questions={generatedQuestions}
                     title="Final exam"
-                    description="Answer all 10 questions to complete the mini course."
+                    description={`Answer all ${generatedQuestions.length} questions to complete the course.`}
                     submitLabel="Submit final exam"
                     onComplete={() => setFinalExamCompleted(true)}
                   />
@@ -434,11 +460,11 @@ export default function AcademyCoursePlayer({
                 <div className="flex items-center gap-3">
                   <Trophy className="h-5 w-5 text-amber-300" />
                   <p className="text-lg font-semibold text-white">
-                    Mini course completed
+                    Course completed
                   </p>
                 </div>
                 <p className="mt-3 text-sm leading-7 text-zinc-300">
-                  The learner has completed all 4 module quizzes and the final exam.
+                  The learner has completed all module quizzes and the final exam.
                 </p>
               </div>
             ) : null}

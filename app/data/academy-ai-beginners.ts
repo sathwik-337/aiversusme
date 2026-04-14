@@ -6,7 +6,7 @@ export const aiBeginnersCourse: AcademyCourse = {
   tagline: "A comprehensive foundation course to master Artificial Intelligence from scratch.",
   summary:
     "This 15-module course provides a deep dive into the world of AI. You'll move from basic concepts and history to hands-on experience with modern tools, prompt engineering, and understanding the ethical implications of AI in our society.",
-  duration: "15 Modules",
+  duration: "15 weeks",
   pace: "Self-paced",
   level: "Beginner",
   format: "Video lessons, interactive quizzes, and a hands-on capstone project",
