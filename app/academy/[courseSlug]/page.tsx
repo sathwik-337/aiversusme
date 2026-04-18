@@ -92,9 +92,9 @@ export default async function AcademyCoursePage(props: {
               </h1>
               <div className="mt-4 flex items-center gap-4">
                 <span className="text-3xl font-bold text-emerald-400">
-                  {course.price > 0 ? `₹${course.price}` : "FREE"}
+                  {(course.price ?? 0) > 0 ? `₹${course.price}` : "FREE"}
                 </span>
-                {course.price > 0 && (
+                {(course.price ?? 0) > 0 && (
                   <span className="text-sm text-zinc-500 line-through">₹1999</span>
                 )}
               </div>

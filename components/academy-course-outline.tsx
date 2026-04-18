@@ -270,7 +270,7 @@ function AcademyCourseOutlineContent({
 
           {!isEnrolled ? (
             <div className="mt-8 space-y-4">
-              {course.price > 0 && !appliedCoupon && (
+              {(course.price ?? 0) > 0 && !appliedCoupon && (
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -328,9 +328,10 @@ function AcademyCourseOutlineContent({
                 type="button"
                 disabled={isProcessingPayment}
                 onClick={() => {
-                  if (course.price > 0 && !appliedCoupon) {
+                  const price = course.price ?? 0;
+                  if (price > 0 && !appliedCoupon) {
                     void handlePayment();
-                  } else if (course.price > 0 && appliedCoupon) {
+                  } else if (price > 0 && appliedCoupon) {
                     void handlePayment();
                   } else {
                     void enrollInAcademyCourse(userId, course.slug);
@@ -343,12 +344,12 @@ function AcademyCourseOutlineContent({
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Processing...
                   </>
-                ) : course.price > 0 ? (
+                ) : (course.price ?? 0) > 0 ? (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
                     {appliedCoupon
-                      ? `Enroll for ₹${Math.max(0, course.price * (1 - appliedCoupon.discountPercentage / 100))}`
-                      : `Enroll for ₹${course.price}`}
+                      ? `Enroll for ₹${Math.max(0, (course.price ?? 0) * (1 - appliedCoupon.discountPercentage / 100))}`
+                      : `Enroll for ₹${course.price ?? 0}`}
                   </>
                 ) : (
                   "Enroll for free"
