@@ -103,7 +103,7 @@ export default function AcademyContent({ allCourses }: AcademyContentProps) {
                     {course.isCoding ? "Technical/Coding" : "No coding required"}
                   </span>
                   <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-semibold text-emerald-400">
-                    {course.price && course.price > 0 ? `₹${course.price}` : "FREE"}
+                    {course.price > 0 ? `₹${course.price}` : "FREE"}
                   </span>
                 </div>
 

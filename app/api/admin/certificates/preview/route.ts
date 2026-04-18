@@ -18,12 +18,14 @@ export async function POST(req: NextRequest) {
     // can handle coordinate overrides or we'll manually build the SVG.
 
     const gradeText = `${data.grade} (${data.percentage}%)`;
-    const completionDate = "April 18, 2026"; // Sample date
+    const completionDate = data.completedAt 
+      ? new Date(data.completedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+      : "April 18, 2026";
 
     // This mimics the logic in lib/certificates.ts but with live overrides
     const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="419.25" height="297.75" viewBox="0 0 419.25 297.75">
-  <image xlink:href="/certificate.png" x="0" y="0" width="419.25" height="297.75" preserveAspectRatio="none" />
+  <image xlink:href="${data.templateImage || '/certificate.png'}" x="0" y="0" width="419.25" height="297.75" preserveAspectRatio="none" />
   <g id="aivsme-certificate-fields">
     <text x="${coordinates.name.x}" y="${coordinates.name.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coordinates.name.size}" font-family="Georgia, serif" font-weight="700">${data.recipientName}</text>
     <text x="${coordinates.title.x}" y="${coordinates.title.y}" text-anchor="middle" dominant-baseline="middle" fill="#4B0082" font-size="${coordinates.title.size}" font-family="Georgia, serif" font-weight="700">"${data.courseTitle}"</text>

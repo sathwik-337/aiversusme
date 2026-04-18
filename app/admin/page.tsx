@@ -69,7 +69,7 @@ export type AdminCoupon = {
   created_at: string;
 };
 
-export type Section = "certificates" | "users" | "coupons" | "generator" | "courses" | "editor" | "analytics";
+export type Section = "certificates" | "users" | "coupons" | "editor" | "analytics";
 
 export type CourseModuleDraft = {
   module_id: string;
@@ -92,6 +92,45 @@ function toBasic(user: string, pass: string) {
   return "Basic " + btoa(`${user}:${pass}`);
 }
 
+const COURSE_TEMPLATES: Record<string, { image: string, coords: any }> = {
+  "ai-for-advanced-learners": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "50%", y: "47.1%", size: 24 },
+      date: { x: "80.6%", y: "66.1%", size: 7.4 },
+      grade: { x: "37%", y: "70.5%", size: 7.6 },
+      number: { x: "16.7%", y: "84%", size: 8.4 },
+    }
+  },
+  "ai-for-engineers": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  },
+  "ai-for-beginners": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "42%", size: 24 },
+      date: { x: "65.6%", y: "62.1%", size: 7.4 },
+      grade: { x: "22.7%", y: "65.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  },
+  "ai-for-hr": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  }
+};
+
 export default function AdminPage() {
   const [authHeader, setAuthHeader] = useState<string | null>(null);
   const [username, setUsername] = useState("");
@@ -107,6 +146,33 @@ export default function AdminPage() {
   const [forgotLoading, setForgotLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+
+  // Generator state
+  const [genData, setGenData] = useState({
+    recipientName: "",
+    recipientEmail: "",
+    courseTitle: "",
+    courseSlug: "",
+    grade: "A",
+    percentage: "95",
+    completedAt: new Date().toISOString().split('T')[0],
+    certificateNumber: ""
+  });
+  const [generateForAll, setGenerateForAll] = useState(false);
+
+  // Course management state
+  const [courseList, setCourseList] = useState<AdminCourse[]>([]);
+
+  // Editor state
+  const [editorCoords, setEditorCoords] = useState({
+     name: { x: 208.625, y: 120, size: 12 },
+     title: { x: 209.625, y: 149, size: 14 },
+     date: { x: 159, y: 203, size: 5.5 },
+     grade: { x: 224.625, y: 203, size: 6 },
+     number: { x: 320, y: 203, size: 5.5 },
+   });
+  const [editorSvg, setEditorSvg] = useState<string | null>(null);
+  const [editorLoading, setEditorLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -132,6 +198,8 @@ export default function AdminPage() {
       setLoading(false);
     }
   }
+
+  const activeTemplate = COURSE_TEMPLATES[genData.courseSlug] || COURSE_TEMPLATES["ai-for-engineers"];
 
   // Coupon management state
   const [couponDraft, setCouponDraft] = useState({
@@ -243,20 +311,6 @@ export default function AdminPage() {
     }
   }
 
-  // Course management state
-  const [courseList, setCourseList] = useState<AdminCourse[]>([]);
-
-  // Editor state
-  const [editorCoords, setEditorCoords] = useState({
-     name: { x: 208.625, y: 120, size: 12 },
-     title: { x: 209.625, y: 149, size: 14 },
-     date: { x: 159, y: 203, size: 5.5 },
-     grade: { x: 224.625, y: 203, size: 6 },
-     number: { x: 320, y: 203, size: 5.5 },
-   });
-  const [editorSvg, setEditorSvg] = useState<string | null>(null);
-  const [editorLoading, setEditorLoading] = useState(false);
-
   async function updateEditorPreview() {
     if (!authHeader) return;
     setEditorLoading(true);
@@ -270,11 +324,13 @@ export default function AdminPage() {
         body: JSON.stringify({
           coordinates: editorCoords,
           data: {
-            recipientName: "Sathwik Kamath",
-            courseTitle: "AI FOR BEGINNERS",
-            certificateNumber: "AIVSMEFDB235",
-            grade: "A+",
-            percentage: 100,
+            recipientName: genData.recipientName || "Recipient Name",
+            courseTitle: genData.courseTitle || "COURSE TITLE",
+            certificateNumber: genData.certificateNumber || "AIVSMEXXXXXX",
+            grade: genData.grade || "A",
+            percentage: parseInt(genData.percentage) || 100,
+            completedAt: genData.completedAt,
+            templateImage: activeTemplate.image
           }
         }),
       });
@@ -291,7 +347,7 @@ export default function AdminPage() {
     if (activeSection === "editor" && authHeader) {
       updateEditorPreview();
     }
-  }, [editorCoords, activeSection, authHeader]);
+  }, [editorCoords, activeSection, authHeader, genData]);
 
   const moveField = (field: keyof typeof editorCoords, axis: 'x' | 'y' | 'size', delta: number) => {
     setEditorCoords(prev => ({
@@ -302,75 +358,18 @@ export default function AdminPage() {
       }
     }));
   };
-  const [courseDraft, setCourseDraft] = useState({
-    id: "",
-    title: "",
-    slug: "",
-    description: "",
-  });
-  const [moduleDrafts, setModuleDrafts] = useState<CourseModuleDraft[]>([]);
-
-  const handleEditCourse = (course: AdminCourse) => {
-    setCourseDraft({
-      id: course.id,
-      title: course.title,
-      slug: course.slug,
-      description: course.description || "",
-    });
-    setModuleDrafts(course.modules.map(m => ({
-      module_id: m.module_id,
-      title: m.title,
-      description: m.description || "",
-      notes_url: m.notes_url || "",
-      quiz: m.quiz || [],
-    })));
-    // Scroll to top of form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleDeleteCourse = async (id: string) => {
-    if (!authHeader || !confirm("Are you sure you want to delete this course?")) return;
-    const tid = toast.loading("Deleting course...");
-    try {
-      const res = await fetch(`/api/admin/courses?id=${id}`, {
-        method: "DELETE",
-        headers: { "x-admin-auth": authHeader },
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      toast.success("Course deleted", { id: tid });
-      loadCourses();
-    } catch (err) {
-      toast.error("Failed to delete", { id: tid });
-    }
-  };
-
-  const addModuleRow = () => {
-    setModuleDrafts([...moduleDrafts, { module_id: "", title: "", description: "", notes_url: "" }]);
-  };
-
-  const updateModuleRow = (index: number, field: keyof CourseModuleDraft, value: string) => {
-    const updated = [...moduleDrafts];
-    updated[index] = { ...updated[index], [field]: value };
-    setModuleDrafts(updated);
-  };
-
-  const removeModuleRow = (index: number) => {
-    setModuleDrafts(moduleDrafts.filter((_, i) => i !== index));
-  };
 
   // Generator state
-  const [genData, setGenData] = useState({
-    recipientName: "",
-    recipientEmail: "",
-    courseTitle: "AI for Engineers",
-    courseSlug: "ai-for-engineers",
-    grade: "A",
-    percentage: "95",
-    completedAt: new Date().toISOString().split('T')[0],
-    certificateNumber: ""
-  });
 
-  const activeTemplate = COURSE_TEMPLATES[genData.courseSlug] || COURSE_TEMPLATES["ai-for-engineers"];
+  useEffect(() => {
+    if (courseList.length > 0 && !genData.courseTitle) {
+      setGenData(prev => ({
+        ...prev,
+        courseTitle: courseList[0].title,
+        courseSlug: courseList[0].slug
+      }));
+    }
+  }, [courseList]);
 
   useEffect(() => {
     if (!genData.certificateNumber) {
@@ -503,49 +502,11 @@ export default function AdminPage() {
     }
   }
 
-  async function handleAddCourse(e: React.FormEvent) {
-    e.preventDefault();
-    if (!authHeader) return;
-    
-    if (!courseDraft.title || !courseDraft.slug) {
-      toast.error("Title and Slug are required");
-      return;
-    }
-
-    const tid = toast.loading(courseDraft.id ? "Updating course..." : "Adding course...");
-    try {
-      const res = await fetch("/api/admin/courses", {
-        method: courseDraft.id ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-auth": authHeader,
-        },
-        body: JSON.stringify({
-          ...courseDraft,
-          modules: moduleDrafts,
-        }),
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || "Failed to save course");
-      }
-      
-      toast.success(courseDraft.id ? "Course updated!" : "Course added!", { id: tid });
-      setCourseDraft({ id: "", title: "", slug: "", description: "" });
-      setModuleDrafts([]);
-      loadCourses();
-    } catch (err) {
-      console.error("Save course error:", err);
-      toast.error(err instanceof Error ? err.message : "Failed to save course", { id: tid });
-    }
-  }
-
   useEffect(() => {
     if (authHeader) {
+      loadCourses();
       if (activeSection === "certificates") loadCertificates();
       if (activeSection === "users") loadUsers();
-      if (activeSection === "courses") loadCourses();
       if (activeSection === "coupons") loadCoupons();
       if (activeSection === "analytics") loadAnalytics();
     }
@@ -580,6 +541,48 @@ export default function AdminPage() {
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
     if (!authHeader) return;
+
+    if (generateForAll) {
+      const tid = toast.loading("Generating certificates for all courses...");
+      try {
+        const courses = courseList.length > 0 ? courseList : [
+          { title: "AI for Beginners", slug: "ai-for-beginners" },
+          { title: "AI for Engineers", slug: "ai-for-engineers" },
+          { title: "AI for Advanced Learners", slug: "ai-for-advanced-learners" },
+          { title: "AI for HR", slug: "ai-for-hr" }
+        ];
+
+        for (const course of courses) {
+          const res = await fetch("/api/admin/generate-certificate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-auth": authHeader
+            },
+            body: JSON.stringify({
+              ...genData,
+              courseTitle: course.title,
+              courseSlug: course.slug,
+              certificateNumber: generateCertificateNumber()
+            })
+          });
+
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            if (res.status === 409) {
+              console.warn(`Certificate already exists for ${course.title}`);
+              continue;
+            }
+            throw new Error(err.error || `Failed to generate for ${course.title}`);
+          }
+        }
+        toast.success("Certificates generated for all courses!", { id: tid });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Generation failed", { id: tid });
+      }
+      return;
+    }
+
     const tid = toast.loading("Generating certificate...");
     try {
       const res = await fetch("/api/admin/generate-certificate", {
@@ -720,28 +723,16 @@ export default function AdminPage() {
               onClick={() => setActiveSection("users")}
             />
             <SidebarItem 
-              icon={<PlusCircle size={20} />} 
+              icon={<Award size={20} />} 
               label="Generator" 
-              active={activeSection === "generator"} 
-              onClick={() => setActiveSection("generator")}
+              active={activeSection === "editor"} 
+              onClick={() => setActiveSection("editor")}
             />
             <SidebarItem 
               icon={<Ticket size={20} />} 
               label="Coupons" 
               active={activeSection === "coupons"} 
               onClick={() => setActiveSection("coupons")}
-            />
-            <SidebarItem 
-              icon={<BookOpen size={20} />} 
-              label="Courses" 
-              active={activeSection === "courses"} 
-              onClick={() => setActiveSection("courses")}
-            />
-            <SidebarItem 
-              icon={<Settings size={20} />} 
-              label="Cert Editor" 
-              active={activeSection === "editor"} 
-              onClick={() => setActiveSection("editor")}
             />
           </nav>
         </div>
@@ -1101,171 +1092,6 @@ export default function AdminPage() {
             </div>
           )}
 
-          {activeSection === "generator" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <h1 className="text-3xl font-bold">Certificate Generator</h1>
-                <form onSubmit={handleGenerate} className="bg-zinc-950 border border-white/10 rounded-[32px] p-8 space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Full Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        placeholder="John Doe"
-                        value={genData.recipientName}
-                        onChange={e => setGenData({...genData, recipientName: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Email Address</label>
-                      <input 
-                        type="email" 
-                        required
-                        placeholder="john@example.com"
-                        value={genData.recipientEmail}
-                        onChange={e => setGenData({...genData, recipientEmail: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Course Title</label>
-                    <select 
-                      value={genData.courseTitle}
-                      onChange={e => {
-                        const title = e.target.value;
-                        const slug = title.toLowerCase().replace(/ /g, '-');
-                        setGenData({...genData, courseTitle: title, courseSlug: slug});
-                      }}
-                      className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20 appearance-none"
-                    >
-                      <option value="AI for Engineers">AI for Engineers</option>
-                      <option value="AI for Beginners">AI for Beginners</option>
-                      <option value="AI for Advanced Learners">AI for Advanced Learners</option>
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Grade</label>
-                      <input 
-                        type="text" 
-                        value={genData.grade}
-                        onChange={e => setGenData({...genData, grade: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Percentage</label>
-                      <input 
-                        type="number" 
-                        value={genData.percentage}
-                        onChange={e => setGenData({...genData, percentage: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Date</label>
-                      <input 
-                        type="date" 
-                        value={genData.completedAt}
-                        onChange={e => setGenData({...genData, completedAt: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Certificate Number (Auto)</label>
-                    <input 
-                      type="text" 
-                      readOnly
-                      value={genData.certificateNumber}
-                      className="w-full bg-zinc-900/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-500 outline-none"
-                    />
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
-                  >
-                    <Award size={20} />
-                    Issue Certificate
-                  </button>
-                </form>
-              </div>
-
-              <div className="space-y-6">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <Eye size={20} /> Live Preview
-                </h2>
-                <div className="bg-zinc-900/50 border border-white/10 rounded-[32px] aspect-[1.414/1] relative overflow-hidden flex items-center justify-center">
-                  <div className="relative w-full h-full">
-                    {/* Background Template */}
-                    <img 
-                      src={activeTemplate.image} 
-                      alt="Certificate Template" 
-                      className="w-full h-full object-contain"
-                    />
-                    
-                    {/* Dynamic Overlays */}
-                    <div 
-                      className="absolute font-serif font-bold italic text-black text-center -translate-x-1/2 -translate-y-1/2"
-                      style={{ 
-                        left: activeTemplate.coords.name.x, 
-                        top: activeTemplate.coords.name.y, 
-                        fontSize: `${activeTemplate.coords.name.size * 0.9}px`,
-                        width: '80%'
-                      }}
-                    >
-                      {genData.recipientName || "Recipient Name"}
-                    </div>
-
-                    <div 
-                      className="absolute font-serif font-bold text-black -translate-y-1/2"
-                      style={{ 
-                        left: activeTemplate.coords.date.x, 
-                        top: activeTemplate.coords.date.y, 
-                        fontSize: `${activeTemplate.coords.date.size * 0.9}px` 
-                      }}
-                    >
-                      {new Date(genData.completedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </div>
-
-                    <div 
-                      className="absolute font-serif font-bold text-black -translate-y-1/2"
-                      style={{ 
-                        left: activeTemplate.coords.grade.x, 
-                        top: activeTemplate.coords.grade.y, 
-                        fontSize: `${activeTemplate.coords.grade.size * 0.9}px` 
-                      }}
-                    >
-                      {genData.grade} ({genData.percentage}%)
-                    </div>
-
-                    <div 
-                      className="absolute font-mono font-bold text-black -translate-y-1/2"
-                      style={{ 
-                        left: activeTemplate.coords.number.x, 
-                        top: activeTemplate.coords.number.y, 
-                        fontSize: `${activeTemplate.coords.number.size * 0.9}px` 
-                      }}
-                    >
-                      {genData.certificateNumber}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex gap-3 text-blue-400">
-                  <LayoutDashboard size={20} />
-                  <p className="text-xs leading-relaxed">The generator creates a permanent record in the database. The recipient will be able to download their PDF/SVG certificate using the ID provided.</p>
-                </div>
-              </div>
-            </div>
-          )}
-
           {activeSection === "coupons" && (
             <div className="space-y-8">
               <div className="flex items-center justify-between">
@@ -1530,7 +1356,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h1 className="text-3xl font-bold">Certificate Editor</h1>
+                  <h1 className="text-3xl font-bold">Certificate Generator</h1>
                   <button 
                     onClick={() => {
                       const code = `default: {\n    name: { x: ${editorCoords.name.x}, y: ${editorCoords.name.y}, size: ${editorCoords.name.size} },\n    title: { x: ${editorCoords.title.x}, y: ${editorCoords.title.y}, size: ${editorCoords.title.size} },\n    date: { x: ${editorCoords.date.x}, y: ${editorCoords.date.y}, size: ${editorCoords.date.size} },\n    grade: { x: ${editorCoords.grade.x}, y: ${editorCoords.grade.y}, size: ${editorCoords.grade.size} },\n    number: { x: ${editorCoords.number.x}, y: ${editorCoords.number.y}, size: ${editorCoords.number.size} },\n  },`;
@@ -1543,63 +1369,173 @@ export default function AdminPage() {
                   </button>
                 </div>
 
-                <div className="bg-zinc-950 border border-white/10 rounded-[32px] p-8 space-y-8">
-                  {(Object.keys(editorCoords) as Array<keyof typeof editorCoords>).map((field) => (
-                    <div key={field} className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-400">{field} Field</h3>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-zinc-500">X: {editorCoords[field].x}</span>
-                          <span className="text-[10px] font-mono text-zinc-500">Y: {editorCoords[field].y}</span>
-                          <span className="text-[10px] font-mono text-zinc-500">S: {editorCoords[field].size}</span>
-                        </div>
+                <div className="bg-zinc-950 border border-white/10 rounded-[32px] p-8 space-y-6">
+                  <form onSubmit={handleGenerate} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Full Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          placeholder="John Doe"
+                          value={genData.recipientName}
+                          onChange={e => setGenData({...genData, recipientName: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
+                        />
                       </div>
-                      
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Position X</label>
-                          <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
-                            <button onClick={() => moveField(field, 'x', -1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveLeft size={16} /></button>
-                            <input 
-                              type="number" 
-                              value={editorCoords[field].x} 
-                              onChange={(e) => moveField(field, 'x', parseFloat(e.target.value) - editorCoords[field].x)}
-                              className="w-full bg-transparent text-center text-xs font-mono outline-none"
-                            />
-                            <button onClick={() => moveField(field, 'x', 1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveRight size={16} /></button>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Position Y</label>
-                          <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
-                            <button onClick={() => moveField(field, 'y', -1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveUp size={16} /></button>
-                            <input 
-                              type="number" 
-                              value={editorCoords[field].y} 
-                              onChange={(e) => moveField(field, 'y', parseFloat(e.target.value) - editorCoords[field].y)}
-                              className="w-full bg-transparent text-center text-xs font-mono outline-none"
-                            />
-                            <button onClick={() => moveField(field, 'y', 1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveDown size={16} /></button>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Font Size</label>
-                          <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
-                            <button onClick={() => moveField(field, 'size', -0.5)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><ZoomOut size={16} /></button>
-                            <input 
-                              type="number" 
-                              value={editorCoords[field].size} 
-                              onChange={(e) => moveField(field, 'size', parseFloat(e.target.value) - editorCoords[field].size)}
-                              className="w-full bg-transparent text-center text-xs font-mono outline-none"
-                            />
-                            <button onClick={() => moveField(field, 'size', 0.5)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><ZoomIn size={16} /></button>
-                          </div>
-                        </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Email Address</label>
+                        <input 
+                          type="email" 
+                          required
+                          placeholder="john@example.com"
+                          value={genData.recipientEmail}
+                          onChange={e => setGenData({...genData, recipientEmail: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
+                        />
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Course Title</label>
+                        <select 
+                          value={genData.courseTitle}
+                          disabled={generateForAll}
+                          onChange={e => {
+                            const title = e.target.value;
+                            const slug = title.toLowerCase().replace(/ /g, '-');
+                            setGenData({...genData, courseTitle: title, courseSlug: slug});
+                          }}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20 appearance-none disabled:opacity-50"
+                        >
+                          {courseList.length > 0 ? (
+                            courseList.map(course => (
+                              <option key={course.id} value={course.title}>{course.title}</option>
+                            ))
+                          ) : (
+                            <>
+                              <option value="AI for Engineers">AI for Engineers</option>
+                              <option value="AI for Beginners">AI for Beginners</option>
+                              <option value="AI for Advanced Learners">AI for Advanced Learners</option>
+                              <option value="AI for HR">AI for HR</option>
+                            </>
+                          )}
+                        </select>
+                      </div>
+                      <div className="flex items-end h-full pb-3">
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                          <div 
+                            onClick={() => setGenerateForAll(!generateForAll)}
+                            className={`w-10 h-6 rounded-full transition-all relative ${generateForAll ? 'bg-emerald-500' : 'bg-zinc-800 border border-white/10'}`}
+                          >
+                            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all ${generateForAll ? 'translate-x-4' : 'translate-x-0'}`} />
+                          </div>
+                          <span className="text-xs font-bold text-zinc-400 group-hover:text-white transition-colors">ALL COURSES</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Grade</label>
+                        <input 
+                          type="text" 
+                          value={genData.grade}
+                          onChange={e => setGenData({...genData, grade: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Percentage</label>
+                        <input 
+                          type="number" 
+                          value={genData.percentage}
+                          onChange={e => setGenData({...genData, percentage: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Date</label>
+                        <input 
+                          type="date" 
+                          value={genData.completedAt}
+                          onChange={e => setGenData({...genData, completedAt: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
+                        />
+                      </div>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Award size={20} />
+                      {generateForAll ? "Generate All Certificates" : "Issue Certificate"}
+                    </button>
+                  </form>
+
+                  <div className="pt-8 border-t border-white/5 space-y-8">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                      <Settings size={20} /> Template Editor
+                    </h2>
+                    {(Object.keys(editorCoords) as Array<keyof typeof editorCoords>).map((field) => (
+                      <div key={field} className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-400">{field} Field</h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono text-zinc-500">X: {editorCoords[field].x}</span>
+                            <span className="text-[10px] font-mono text-zinc-500">Y: {editorCoords[field].y}</span>
+                            <span className="text-[10px] font-mono text-zinc-500">S: {editorCoords[field].size}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Position X</label>
+                            <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
+                              <button onClick={() => moveField(field, 'x', -1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveLeft size={16} /></button>
+                              <input 
+                                type="number" 
+                                value={editorCoords[field].x} 
+                                onChange={(e) => moveField(field, 'x', parseFloat(e.target.value) - editorCoords[field].x)}
+                                className="w-full bg-transparent text-center text-xs font-mono outline-none"
+                              />
+                              <button onClick={() => moveField(field, 'x', 1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveRight size={16} /></button>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Position Y</label>
+                            <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
+                              <button onClick={() => moveField(field, 'y', -1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveUp size={16} /></button>
+                              <input 
+                                type="number" 
+                                value={editorCoords[field].y} 
+                                onChange={(e) => moveField(field, 'y', parseFloat(e.target.value) - editorCoords[field].y)}
+                                className="w-full bg-transparent text-center text-xs font-mono outline-none"
+                              />
+                              <button onClick={() => moveField(field, 'y', 1)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><MoveDown size={16} /></button>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-bold text-zinc-600 uppercase ml-1">Font Size</label>
+                            <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-white/5">
+                              <button onClick={() => moveField(field, 'size', -0.5)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><ZoomOut size={16} /></button>
+                              <input 
+                                type="number" 
+                                value={editorCoords[field].size} 
+                                onChange={(e) => moveField(field, 'size', parseFloat(e.target.value) - editorCoords[field].size)}
+                                className="w-full bg-transparent text-center text-xs font-mono outline-none"
+                              />
+                              <button onClick={() => moveField(field, 'size', 0.5)} className="p-2 hover:bg-white/5 rounded-lg text-zinc-400"><ZoomIn size={16} /></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -1638,262 +1574,6 @@ export default function AdminPage() {
             </div>
           )}
 
-          {activeSection === "courses" && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold">Course Management</h1>
-                  <p className="text-zinc-400 mt-1">Create courses and add multiple modules with PDF notes</p>
-                </div>
-              </div>
-
-              <form onSubmit={handleAddCourse} className="space-y-8">
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                  {/* Course Details */}
-                  <div className="bg-zinc-950 border border-white/10 rounded-[32px] p-8 space-y-6">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                      <Edit3 size={20} /> Course Details
-                    </h2>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Title</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={courseDraft.title}
-                          onChange={e => setCourseDraft({...courseDraft, title: e.target.value})}
-                          placeholder="AI for Advanced Learners"
-                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Slug</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={courseDraft.slug}
-                          onChange={e => setCourseDraft({...courseDraft, slug: e.target.value})}
-                          placeholder="ai-for-advanced-learners"
-                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Description</label>
-                        <textarea 
-                          rows={4}
-                          value={courseDraft.description}
-                          onChange={e => setCourseDraft({...courseDraft, description: e.target.value})}
-                          placeholder="Technical deep-dive into AI..."
-                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20 resize-none"
-                        />
-                      </div>
-                      <button 
-                        type="submit"
-                        className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
-                      >
-                        <Save size={20} />
-                        {courseDraft.id ? "Update Course" : "Publish Course"}
-                      </button>
-                      {courseDraft.id && (
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setCourseDraft({ id: "", title: "", slug: "", description: "" });
-                            setModuleDrafts([]);
-                          }}
-                          className="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl border border-white/10 hover:bg-zinc-800 transition-all"
-                        >
-                          Cancel Editing
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Modules Section */}
-                  <div className="xl:col-span-2 bg-zinc-950 border border-white/10 rounded-[32px] p-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-xl font-bold flex items-center gap-2">
-                        <FolderPlus size={20} /> Modules
-                      </h2>
-                      <button 
-                        type="button"
-                        onClick={addModuleRow}
-                        className="text-xs bg-white/5 border border-white/10 hover:bg-white/10 px-4 py-2 rounded-lg font-bold transition-all"
-                      >
-                        + Add Module
-                      </button>
-                    </div>
-
-                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
-                      {moduleDrafts.length === 0 ? (
-                        <div className="h-32 border-2 border-dashed border-white/5 rounded-2xl flex items-center justify-center text-zinc-600 italic">
-                          No modules added yet. Click "+ Add Module" to start.
-                        </div>
-                      ) : (
-                        moduleDrafts.map((m, idx) => (
-                          <div key={idx} className="p-6 bg-zinc-900/50 border border-white/5 rounded-2xl space-y-4 relative group">
-                            <button 
-                              type="button"
-                              onClick={() => removeModuleRow(idx)}
-                              className="absolute top-4 right-4 text-zinc-600 hover:text-red-400 transition-colors"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-zinc-500">ID</label>
-                                <input 
-                                  type="text" 
-                                  placeholder="01"
-                                  value={m.module_id}
-                                  onChange={e => updateModuleRow(idx, "module_id", e.target.value)}
-                                  className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs outline-none focus:border-white/20"
-                                />
-                              </div>
-                              <div className="md:col-span-2 space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-zinc-500">Title</label>
-                                <input 
-                                  type="text" 
-                                  placeholder="Introduction to..."
-                                  value={m.title}
-                                  onChange={e => updateModuleRow(idx, "title", e.target.value)}
-                                  className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs outline-none focus:border-white/20"
-                                />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-zinc-500">Description</label>
-                                <input 
-                                  type="text" 
-                                  placeholder="Brief overview..."
-                                  value={m.description}
-                                  onChange={e => updateModuleRow(idx, "description", e.target.value)}
-                                  className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs outline-none focus:border-white/20"
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-zinc-500">Notes URL (PDF)</label>
-                                <div className="flex gap-2">
-                                  <input 
-                                    type="text" 
-                                    placeholder="/academy/notes/m01.pdf"
-                                    value={m.notes_url}
-                                    onChange={e => updateModuleRow(idx, "notes_url", e.target.value)}
-                                    className="flex-1 bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-xs outline-none focus:border-white/20"
-                                  />
-                                  <div className="relative">
-                                    <input
-                                      type="file"
-                                      accept=".pdf"
-                                      onChange={async (e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file && authHeader) {
-                                          const tid = toast.loading(`Uploading ${file.name}...`);
-                                          try {
-                                            const formData = new FormData();
-                                            formData.append("file", file);
-                                            const res = await fetch("/api/admin/upload", {
-                                              method: "POST",
-                                              headers: { "x-admin-auth": authHeader },
-                                              body: formData,
-                                            });
-                                            if (!res.ok) throw new Error("Upload failed");
-                                            const data = await res.json();
-                                            updateModuleRow(idx, "notes_url", data.url);
-                                            toast.success("File uploaded successfully", { id: tid });
-                                          } catch (err) {
-                                            toast.error("Failed to upload file", { id: tid });
-                                          }
-                                        }
-                                      }}
-                                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                    />
-                                    <button type="button" className="bg-zinc-800 p-2 rounded-lg hover:bg-zinc-700 transition-colors h-full flex items-center justify-center">
-                                      <FileText size={16} />
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Quiz Status */}
-                            <div className="pt-2 flex items-center justify-between border-t border-white/5">
-                              <div className="flex items-center gap-2">
-                                <div className={`h-2 w-2 rounded-full ${m.quiz && m.quiz.length > 0 ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
-                                <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                                  {m.quiz && m.quiz.length > 0 ? `${m.quiz.length} Quiz Questions Auto-Generated` : 'Quiz will be auto-generated on save'}
-                                </span>
-                              </div>
-                              {m.quiz && m.quiz.length > 0 && (
-                                <button 
-                                  type="button"
-                                  onClick={() => {
-                                    console.log("Quiz details:", m.quiz);
-                                    toast("Quiz preview logged to console");
-                                  }}
-                                  className="text-[10px] text-blue-400 hover:text-blue-300 font-bold transition-colors"
-                                >
-                                  PREVIEW QUIZ
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </form>
-
-              {/* Course Inventory */}
-              <div className="bg-zinc-950 border border-white/10 rounded-[32px] p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold">Existing Courses</h2>
-                  <button onClick={loadCourses} className="p-2 hover:bg-white/5 rounded-lg border border-white/10">
-                    <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  {courseList.length === 0 ? (
-                    <div className="py-12 text-center text-zinc-600 italic">No courses found in database.</div>
-                  ) : (
-                    courseList.map((c: AdminCourse) => (
-                      <div key={c.id} className="flex items-center justify-between p-4 bg-zinc-900/50 border border-white/5 rounded-2xl hover:border-white/10 transition-all">
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
-                            <BookOpen size={20} />
-                          </div>
-                          <div>
-                            <div className="font-bold">{c.title}</div>
-                            <div className="text-xs text-zinc-500">
-                              Slug: {c.slug} • {c.modules?.length || 0} Modules
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={() => handleEditCourse(c)}
-                            disabled={!!c.isStatic}
-                            className="p-2 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                          >
-                            <Edit3 size={18} />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteCourse(c.id)}
-                            disabled={!!c.isStatic}
-                            className="p-2 hover:bg-red-500/10 rounded-lg text-zinc-500 hover:text-red-400 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </main>
     </div>
@@ -1933,42 +1613,3 @@ function StatCard({ icon, label, value, trend }: { icon: React.ReactNode, label:
     </div>
   );
 }
-
-const COURSE_TEMPLATES: Record<string, { image: string, coords: any }> = {
-  "ai-for-advanced-learners": {
-    image: "/academy/1.png",
-    coords: {
-      name: { x: "50%", y: "47.1%", size: 24 },
-      date: { x: "80.6%", y: "66.1%", size: 7.4 },
-      grade: { x: "37%", y: "70.5%", size: 7.6 },
-      number: { x: "16.7%", y: "84%", size: 8.4 },
-    }
-  },
-  "ai-for-engineers": {
-    image: "/academy/2.png",
-    coords: {
-      name: { x: "48.9%", y: "40.4%", size: 24 },
-      date: { x: "65.6%", y: "58.8%", size: 7.4 },
-      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
-      number: { x: "19.1%", y: "87.3%", size: 8.4 },
-    }
-  },
-  "ai-for-beginners": {
-    image: "/academy/3.png",
-    coords: {
-      name: { x: "48.9%", y: "42%", size: 24 },
-      date: { x: "65.6%", y: "62.1%", size: 7.4 },
-      grade: { x: "22.7%", y: "65.5%", size: 7.6 },
-      number: { x: "19.1%", y: "87.3%", size: 8.4 },
-    }
-  },
-  "ai-for-hr": {
-    image: "/academy/2.png",
-    coords: {
-      name: { x: "48.9%", y: "40.4%", size: 24 },
-      date: { x: "65.6%", y: "58.8%", size: 7.4 },
-      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
-      number: { x: "19.1%", y: "87.3%", size: 8.4 },
-    }
-  }
-};
