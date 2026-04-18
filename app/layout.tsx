@@ -65,6 +65,10 @@ export default async function RootLayout({
     >
       <head>
         <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
+        <Script
           id="schema-org"
           type="application/ld+json"
           dangerouslySetInnerHTML={{

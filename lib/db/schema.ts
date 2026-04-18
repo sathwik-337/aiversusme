@@ -67,6 +67,7 @@ export const users = pgTable(
     last_name: text("last_name"),
     full_name: text("full_name"),
     image_url: text("image_url"),
+    credits: integer("credits").default(0).notNull(), // Added credits field
     created_at: timestamp("created_at").defaultNow().notNull(),
     updated_at: timestamp("updated_at").defaultNow().notNull(),
   },
@@ -155,6 +156,33 @@ export const academyModules = pgTable("academy_modules", {
   description: text("description"),
   notes_url: text("notes_url"),
   quiz: jsonb("quiz").default([]).notNull(), // Added quiz field as JSONB to store questions and options
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const academyOrders = pgTable("academy_orders", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  user_id: text("user_id").notNull(),
+  course_slug: text("course_slug").notNull(),
+  razorpay_order_id: text("razorpay_order_id").unique().notNull(),
+  razorpay_payment_id: text("razorpay_payment_id"),
+  razorpay_signature: text("razorpay_signature"),
+  amount: integer("amount").notNull(), // Amount in paise
+  currency: text("currency").notNull().default("INR"),
+  status: text("status").notNull().default("pending"), // pending, paid, failed
+  coupon_code: text("coupon_code"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const academyCoupons = pgTable("academy_coupons", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  code: text("code").unique().notNull(),
+  course_slug: text("course_slug"), // null means applicable to all courses
+  discount_percentage: integer("discount_percentage").notNull(), // 0 to 100
+  is_active: integer("is_active").notNull().default(1), // 1 for active, 0 for inactive
+  usage_limit: integer("usage_limit").default(-1), // -1 for unlimited
+  usage_count: integer("usage_count").default(0).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import {
   academyAssessmentResults,
   academyCertificates,
+  academyOrders,
   users,
 } from "@/lib/db/schema";
 import {
@@ -16,9 +17,7 @@ import {
   generateCertificateNumber,
   sendCertificateEmail,
 } from "@/lib/certificates";
-import { aiBeginnersCourse } from "@/app/data/academy-ai-beginners";
-import { aiEngineersCourse } from "@/app/data/academy-ai-engineers";
-import { aiAdvancedCourse } from "@/app/data/academy-ai-advanced";
+import { academyCourseCatalog } from "@/app/data/academy-catalog";
 
 type AssessmentType = "module_quiz" | "final_exam" | "enrollment";
 const ENROLLMENT_MODULE_ID = "__enrollment__";
@@ -37,14 +36,9 @@ type CertificateRow = {
 } | null;
 
 function getCourseTitle(courseSlug: string) {
-  if (aiBeginnersCourse.slug === courseSlug) {
-    return aiBeginnersCourse.title;
-  }
-  if (aiEngineersCourse.slug === courseSlug) {
-    return aiEngineersCourse.title;
-  }
-  if (aiAdvancedCourse.slug === courseSlug) {
-    return aiAdvancedCourse.title;
+  const course = academyCourseCatalog.find((c) => c.slug === courseSlug);
+  if (course) {
+    return course.title;
   }
 
   return courseSlug
@@ -228,6 +222,29 @@ export async function POST(
     }
 
     const isEnrollment = assessmentType === "enrollment";
+
+    // Check if course is paid and if user has a successful order
+    const course = academyCourseCatalog.find((c) => c.slug === courseSlug);
+    if (course && course.price && course.price > 0) {
+      const [paidOrder] = await db
+        .select()
+        .from(academyOrders)
+        .where(
+          and(
+            eq(academyOrders.user_id, userId),
+            eq(academyOrders.course_slug, courseSlug),
+            eq(academyOrders.status, "paid")
+          )
+        )
+        .limit(1);
+
+      if (!paidOrder) {
+        return NextResponse.json(
+          { error: "Payment required for this course" },
+          { status: 402 }
+        );
+      }
+    }
 
     if (isEnrollment) {
       if (moduleId !== ENROLLMENT_MODULE_ID || score !== 0 || totalQuestions !== 0) {

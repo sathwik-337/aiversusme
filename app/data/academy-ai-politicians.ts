@@ -1,0 +1,161 @@
+import type { AcademyCourse } from "@/app/data/academy";
+
+export const aiPoliticiansCourse: AcademyCourse = {
+  slug: "ai-for-politicians",
+  title: "AI FOR POLITICIANS IN INDIA",
+  tagline: "Empowering public leaders with AI to revolutionize governance and campaigns in India.",
+  summary:
+    "A comprehensive 20-module course designed for politicians, public leaders, and policy makers. Master the application of AI in voter analytics, citizen engagement, and data-driven governance while navigating the unique socio-political landscape of India.",
+  duration: "20 weeks",
+  pace: "Self-paced",
+  level: "Intermediate",
+  format: "Video lessons, case studies, and a hands-on campaign strategy project",
+  audience: [
+    "Members of Parliament and Legislative Assemblies",
+    "Political Aspirants and Party Workers",
+    "Policy Makers and Public Administrators",
+    "Political Consultants and Strategists",
+    "Governance Enthusiasts and Students",
+  ],
+  outcomes: [
+    "Leverage voter data analytics for effective constituency mapping",
+    "Utilize AI for public opinion mining and real-time sentiment analysis",
+    "Implement conversational AI for large-scale citizen engagement",
+    "Understand the impact of misinformation and deepfakes on democracy",
+    "Navigate India's legal frameworks including the DPDP and IT Acts",
+    "Develop an AI-enabled campaign or governance strategy",
+  ],
+  isCoding: false,
+  price: 0,
+  currency: "INR",
+  modules: [
+    {
+      id: "01",
+      title: "Foundations of AI for Public Leadership",
+      description: "Core concepts of AI and its strategic importance for modern leadership.",
+      lessons: ["What is AI?", "AI vs. Traditional Tech", "Global Trends in Political AI"],
+      notesDownloadUrl: "/academy/notes/ai-for-politicians/ai-for-politicians-full.pdf",
+      quiz: [
+        { id: "po1-q1", question: "Why is AI becoming a 'strategic asset' for modern public leaders?", options: [{ id: "a", text: "To replace the need for physical campaigning" }, { id: "b", text: "To process massive amounts of public data and sentiment to make more informed, responsive decisions" }, { id: "c", text: "To win elections without voter support" }, { id: "d", text: "To automate all government services" }], correctOptionId: "b", explanation: "AI allows leaders to 'hear' millions of voices simultaneously and identify local issues at a granular level." },
+        { id: "po1-q2", question: "In the context of 'Public Leadership', what is the role of Data Analytics?", options: [{ id: "a", text: "To only track election spend" }, { id: "b", text: "To understand constituency needs, track scheme delivery, and allocate resources efficiently" }, { id: "c", text: "To make political promises" }, { id: "d", text: "To monitor political opponents' personal lives" }], correctOptionId: "b", explanation: "Data-driven leadership uses evidence to improve governance outcomes and ensure citizens' needs are met." },
+        { id: "po1-q3", question: "How does 'Micro-targeting' differ from traditional political messaging?", options: [{ id: "a", text: "It is much louder" }, { id: "b", text: "It delivers specific, relevant messages to smaller subgroups of voters based on their unique concerns and demographics" }, { id: "c", text: "It is only used on television" }, { id: "d", text: "It is only used during the final day of an election" }], correctOptionId: "b", explanation: "Instead of one message for everyone, AI allows a leader to talk about agriculture to farmers and jobs to youth simultaneously." },
+        { id: "po1-q4", question: "What is the primary risk of 'Deepfakes' in a democracy?", options: [{ id: "a", text: "They make politicians look too young" }, { id: "b", text: "They can create highly realistic but false audio/video that misleads the public and damages trust" }, { id: "c", text: "They are too expensive to create" }, { id: "d", text: "They are only used for entertainment" }], correctOptionId: "b", explanation: "Deepfakes can be used to fabricate speeches or incidents that never happened, leading to misinformation and civil unrest." },
+        { id: "po1-q5", question: "How can AI improve 'Grievance Redressal' for a politician's office?", options: [{ id: "a", text: "By ignoring citizen complaints" }, { id: "b", text: "By automatically categorizing, prioritizing, and routing citizen issues to the right department for faster resolution" }, { id: "c", text: "By telling citizens to wait longer" }, { id: "d", text: "By deleting all negative feedback" }], correctOptionId: "b", explanation: "AI-powered helpdesks can handle thousands of daily queries, ensuring no citizen's voice is lost in the bureaucracy." }
+      ]
+    },
+    {
+      id: "02",
+      title: "India’s AI Ecosystem and Government Initiatives",
+      description: "Understanding India's specific AI landscape and policy push.",
+      lessons: ["IndiaAI Mission", "Digital India Framework", "State-level AI initiatives"],
+    },
+    {
+      id: "03",
+      title: "Data-Driven Governance and Public Data Systems",
+      description: "Using public data for better administration.",
+      lessons: ["Open Data Portals", "Data-driven decision making", "Infrastructure analytics"],
+    },
+    {
+      id: "04",
+      title: "Voter Data Analytics and Constituency Mapping",
+      description: "Deep dive into demographic and voter data analysis.",
+      lessons: ["Voter profiling", "Geospatial mapping", "Predicting voter turnout"],
+    },
+    {
+      id: "05",
+      title: "AI for Public Opinion Mining and Sentiment Analysis",
+      description: "Tracking the pulse of the public in real-time.",
+      lessons: ["Sentiment analysis tools", "Tracking regional issues", "Keyword trends"],
+    },
+    {
+      id: "06",
+      title: "Social Media Intelligence and Narrative Tracking",
+      description: "Managing and monitoring digital narratives.",
+      lessons: ["Platform analytics", "Influencer tracking", "Narrative building"],
+    },
+    {
+      id: "07",
+      title: "AI in Election Campaign Strategy and Optimization",
+      description: "Optimizing resources and reach during elections.",
+      lessons: ["Campaign ROI", "Resource allocation", "Dynamic scheduling"],
+    },
+    {
+      id: "08",
+      title: "Micro-targeting, Behavioral Insights, and Ethics",
+      description: "The science of personalized political messaging.",
+      lessons: ["Psychographic profiling", "Nudge theory", "Ethical boundaries"],
+    },
+    {
+      id: "09",
+      title: "AI-assisted Speech Writing and Messaging Strategy",
+      description: "Using GenAI for impactful communication.",
+      lessons: ["GenAI for drafting", "Multi-lingual translation", "Style matching"],
+    },
+    {
+      id: "10",
+      title: "Conversational AI for Citizen Engagement (Chatbots & WhatsApp)",
+      description: "Scaling one-on-one communication with voters.",
+      lessons: ["WhatsApp automation", "Voice bots", "Handling grievances via bots"],
+    },
+    {
+      id: "11",
+      title: "AI for Policy Research, Benchmarking, and Drafting",
+      description: "Enhancing the quality of legislation and policy.",
+      lessons: ["Comparative research", "Data-backed drafting", "Policy simulation"],
+    },
+    {
+      id: "12",
+      title: "AI in Welfare Delivery and Scheme Optimization",
+      description: "Ensuring schemes reach the right beneficiaries.",
+      lessons: ["Direct Benefit Transfer (DBT) analytics", "Targeting leaks", "Predictive welfare"],
+    },
+    {
+      id: "13",
+      title: "Smart Governance: AI in Urban and Rural Administration",
+      description: "AI applications across local government levels.",
+      lessons: ["Smart Cities", "Rural health tracking", "Agriculture AI"],
+    },
+    {
+      id: "14",
+      title: "AI for Grievance Redressal and Citizen Feedback Systems",
+      description: "Closing the loop with the electorate.",
+      lessons: ["Feedback loops", "Automated ticket routing", "Service level monitoring"],
+    },
+    {
+      id: "15",
+      title: "AI in Law Enforcement, Surveillance, and Public Safety",
+      description: "Security and safety applications of AI.",
+      lessons: ["Predictive policing", "Crowd management", "Facial recognition ethics"],
+    },
+    {
+      id: "16",
+      title: "Misinformation, Deepfakes, and Information Warfare",
+      description: "Identifying and countering digital threats.",
+      lessons: ["Deepfake detection", "Fact-checking automation", "Botnet identification"],
+    },
+    {
+      id: "17",
+      title: "Cybersecurity for Political Offices and Digital Assets",
+      description: "Protecting sensitive political data.",
+      lessons: ["Secure communication", "Device hardening", "Identity management"],
+    },
+    {
+      id: "18",
+      title: "Legal Framework in India (IT Act, DPDP Act, Election Guidelines)",
+      description: "Compliance for digital political activity.",
+      lessons: ["DPDP 2023 overview", "ECI social media guidelines", "IT rules"],
+    },
+    {
+      id: "19",
+      title: "Ethical AI in Democracy (Transparency, Bias, Accountability)",
+      description: "Principles for responsible AI use in politics.",
+      lessons: ["Algorithmic bias", "Explainability", "Democratic accountability"],
+    },
+    {
+      id: "20",
+      title: "Capstone – AI-enabled Campaign or Governance Strategy",
+      description: "Final project applying course concepts.",
+      lessons: ["Roadmap development", "Stakeholder presentation", "Impact assessment"],
+    },
+  ],
+};

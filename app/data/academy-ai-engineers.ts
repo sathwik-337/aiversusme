@@ -27,6 +27,8 @@ export const aiEngineersCourse: AcademyCourse = {
     "Address security, ethics, and governance in AI deployment",
     "Build and deploy a complete capstone AI project",
   ],
+  price: 499,
+  currency: "INR",
   modules: [
     {
       id: "01",
@@ -39,7 +41,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Modern AI ecosystem overview",
       ],
       notes: "A comprehensive 5-page guide covering the history of AI from Turing to Transformers, the paradigm shift from Symbolic to Statistical AI, and an overview of the modern engineering stack including MLOps.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE1.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m01.pdf",
       quiz: [
         {
           id: "e1-q1",
@@ -114,7 +116,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Statistical significance and hypothesis testing",
       ],
       notes: "A deep dive into the mathematical tools required for AI. Focuses on linear algebra for data representation, calculus for model optimization, and statistics for performance evaluation.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE2.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m02.pdf",
       quiz: [
         {
           id: "e2-q1",
@@ -189,7 +191,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Visualization with Matplotlib and Seaborn",
       ],
       notes: "This module covers Python programming essentials for AI, focusing on NumPy for numerical computation and Pandas for data manipulation. You'll also learn to visualize data insights using Matplotlib and Seaborn.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE3.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m03.pdf",
       quiz: [
         {
           id: "e3-q1",
@@ -264,7 +266,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Feature selection and dimensionality reduction (PCA, t-SNE)",
       ],
       notes: "Learn the critical steps of data preparation, from handling missing values to feature engineering and dimensionality reduction techniques like PCA. Quality data is the backbone of any AI model.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE4.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m04.pdf",
       quiz: [
         {
           id: "e4-q1",
@@ -339,7 +341,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "K-Means and Hierarchical Clustering",
       ],
       notes: "A comprehensive guide to core ML algorithms, including supervised learning for regression and classification, and unsupervised learning for clustering.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE5.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m05.pdf",
       quiz: [
         {
           id: "e5-q1",
@@ -414,7 +416,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Activation functions, loss functions, and optimizers",
       ],
       notes: "Understand the architectures of neural networks, from basic ANNs to CNNs for images and RNNs for sequential data, along with their key components like activation and loss functions.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE6.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m06.pdf",
       quiz: [
         {
           id: "e6-q1",
@@ -489,7 +491,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Introduction to Large Language Models (LLMs)",
       ],
       notes: "Explore text processing techniques, the power of word embeddings, and the revolutionary Transformer architecture that drives modern NLP and LLMs.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE7.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m07.pdf",
       quiz: [
         {
           id: "e7-q1",
@@ -564,7 +566,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Transfer learning in Computer Vision",
       ],
       notes: "Learn about image processing, object detection frameworks like YOLO, and how transfer learning allows for efficient training of advanced vision models.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE8.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m08.pdf",
       quiz: [
         {
           id: "e8-q1",
@@ -639,7 +641,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Regularization techniques (L1, L2, Dropout)",
       ],
       notes: "Focus on training robust models by understanding the bias-variance tradeoff, employing cross-validation, and using the right metrics for evaluation.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE9.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m09.pdf",
       quiz: [
         {
           id: "e9-q1",
@@ -714,7 +716,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Distributed training strategies",
       ],
       notes: "Get practical experience with the two leading AI frameworks, TensorFlow and PyTorch, and learn how to debug and scale your models effectively.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE10.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m10.pdf",
       quiz: [
         {
           id: "e10-q1",
@@ -789,7 +791,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Prompt engineering for developers",
       ],
       notes: "Dive into the world of generative AI, covering fine-tuning of LLMs, GANs, and diffusion models for high-quality content generation.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE11.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m11.pdf",
       quiz: [
         {
           id: "e11-q1",
@@ -864,7 +866,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Edge AI: Quantization and model optimization",
       ],
       notes: "Learn to transition models from development to production using APIs, containerization, and cloud platforms, while also exploring optimization for edge deployment.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE12.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m12.pdf",
       quiz: [
         {
           id: "e12-q1",
@@ -939,7 +941,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Securing AI pipelines",
       ],
       notes: "Examine how AI is used for threat and anomaly detection in cybersecurity, as well as the unique security challenges posed by adversarial attacks.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE13.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m13.pdf",
       quiz: [
         {
           id: "e13-q1",
@@ -1014,7 +1016,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "AI governance and responsible AI practices",
       ],
       notes: "Understand the ethical, legal, and governance aspects of AI, including bias mitigation, model explainability, and the legal framework of the Indian IT Act.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE14.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m14.pdf",
       quiz: [
         {
           id: "e14-q1",
@@ -1089,7 +1091,7 @@ export const aiEngineersCourse: AcademyCourse = {
         "Presentation and documentation",
       ],
       notes: "Apply your learning to build an end-to-end AI solution. This module guides you through project scoping, development, testing, and final documentation.",
-      notesDownloadUrl: "/academy/notes/aiforengineers/AIE15.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-engineers/ai-for-engineers-m15.pdf",
       quiz: [
         {
           id: "e15-q1",
@@ -1156,7 +1158,67 @@ export const aiEngineersCourse: AcademyCourse = {
   ],
   finalExam: [
     {
-      id: "e-final-q1",
+      id: "eng-final-q1",
+      question: "In Machine Learning, what does the 'Vanishing Gradient' problem specifically refer to during deep neural network training?",
+      options: [
+        { id: "a", text: "When the model's weights become too large and overflow" },
+        { id: "b", text: "When gradients become extremely small during backpropagation, preventing the early layers from effectively learning" },
+        { id: "c", text: "When the dataset is too small for the model to converge" },
+        { id: "d", text: "When the learning rate is set too high, causing the loss to oscillate" },
+      ],
+      correctOptionId: "b",
+      explanation: "As gradients are multiplied through layers, they can shrink exponentially, making it hard to train very deep networks without techniques like Residual connections or better activation functions.",
+    },
+    {
+      id: "eng-final-q2",
+      question: "What is the primary technical distinction between 'L1' (Lasso) and 'L2' (Ridge) regularization?",
+      options: [
+        { id: "a", text: "L1 is faster to compute than L2" },
+        { id: "b", text: "L1 can drive some weights to exactly zero (feature selection), while L2 shrinks weights towards zero but rarely hits it" },
+        { id: "c", text: "L1 is for classification, and L2 is for regression" },
+        { id: "d", text: "L2 requires more memory than L1" },
+      ],
+      correctOptionId: "b",
+      explanation: "L1 regularization uses the absolute value of weights, which promotes sparsity. L2 uses the square of weights, which penalizes large weights more heavily.",
+    },
+    {
+      id: "eng-final-q3",
+      question: "How does 'Stochastic Gradient Descent' (SGD) differ from 'Batch Gradient Descent'?",
+      options: [
+        { id: "a", text: "SGD is always more accurate than Batch GD" },
+        { id: "b", text: "SGD updates weights after each individual training example, while Batch GD updates after seeing the entire dataset" },
+        { id: "c", text: "SGD only works for linear models" },
+        { id: "d", text: "Batch GD is faster on large datasets" },
+      ],
+      correctOptionId: "b",
+      explanation: "SGD is much faster for large datasets and can help escape local minima due to its 'noisy' updates, whereas Batch GD is more stable but computationally expensive.",
+    },
+    {
+      id: "eng-final-q4",
+      question: "In NLP, what is the 'Attention' mechanism designed to solve compared to traditional RNNs?",
+      options: [
+        { id: "a", text: "It allows models to run on multiple CPUs" },
+        { id: "b", text: "It allows the model to dynamically focus on relevant parts of the input sequence regardless of their distance from the current token" },
+        { id: "c", text: "It removes the need for any training data" },
+        { id: "d", text: "It makes the model only process one word at a time" },
+      ],
+      correctOptionId: "b",
+      explanation: "RNNs struggle with long-range dependencies because they process sequentially. Attention allows for global 'lookups' across the entire sequence simultaneously.",
+    },
+    {
+      id: "eng-final-q5",
+      question: "What is the 'Bias-Variance Tradeoff' in machine learning model evaluation?",
+      options: [
+        { id: "a", text: "The balance between a model's complexity and its ability to generalize to unseen data" },
+        { id: "b", text: "The difference between the training time and the inference time" },
+        { id: "c", text: "The choice between using a CPU or a GPU" },
+        { id: "d", text: "The trade-off between the number of layers and the number of neurons" },
+      ],
+      correctOptionId: "a",
+      explanation: "High bias leads to underfitting (too simple), while high variance leads to overfitting (too complex). Finding the sweet spot is the core challenge of model tuning.",
+    },
+    {
+      id: "eng-final-q6",
       question: "Which field of mathematics is most critical for representing neural network weights and data inputs?",
       options: [
         { id: "a", text: "Geometry" },
@@ -1168,20 +1230,8 @@ export const aiEngineersCourse: AcademyCourse = {
       explanation: "Linear algebra handles the vectors and matrices that power all modern AI computations.",
     },
     {
-      id: "e-final-q2",
-      question: "What is the primary function of the 'Attention' mechanism in Transformers?",
-      options: [
-        { id: "a", text: "To speed up data loading" },
-        { id: "b", text: "To allow the model to focus on relevant parts of the entire input sequence" },
-        { id: "c", text: "To reduce the number of parameters" },
-        { id: "d", text: "To encrypt the output" },
-      ],
-      correctOptionId: "b",
-      explanation: "Attention allows models to capture long-range dependencies by weighing the importance of different tokens.",
-    },
-    {
-      id: "e-final-q3",
-      question: "In MLOps, what does 'Model Drift' refer to?",
+      id: "eng-final-q7",
+      question: "What is 'Model Drift' in the context of MLOps?",
       options: [
         { id: "a", text: "The model becoming physically smaller" },
         { id: "b", text: "The decline in model performance over time due to changes in real-world data" },
@@ -1192,80 +1242,32 @@ export const aiEngineersCourse: AcademyCourse = {
       explanation: "Drift happens when the data the model sees in production starts to differ from its training data.",
     },
     {
-      id: "e-final-q4",
-      question: "Which algorithm is used for unsupervised grouping of data points into similar clusters?",
+      id: "eng-final-q8",
+      question: "In Generative AI, what is the primary role of a 'Discriminator' in a GAN?",
       options: [
-        { id: "a", text: "Logistic Regression" },
-        { id: "b", text: "K-Means" },
-        { id: "c", text: "Random Forest" },
-        { id: "d", text: "SVM" },
+        { id: "a", text: "To generate new images from noise" },
+        { id: "b", text: "To distinguish between real data and the synthetic data generated by the Generator" },
+        { id: "c", text: "To compress the model for mobile deployment" },
+        { id: "d", text: "To translate text into different languages" },
       ],
       correctOptionId: "b",
-      explanation: "K-Means is a classic unsupervised learning algorithm for clustering.",
+      explanation: "The Discriminator acts as a critic, pushing the Generator to create increasingly realistic outputs to 'fool' it.",
     },
     {
-      id: "e-final-q5",
-      question: "What is the role of 'Backpropagation' in neural network training?",
-      options: [
-        { id: "a", text: "To generate random weights" },
-        { id: "b", text: "To calculate gradients and update weights to minimize loss" },
-        { id: "c", text: "To visualize the data" },
-        { id: "d", text: "To summarize the input" },
-      ],
-      correctOptionId: "b",
-      explanation: "Backpropagation is the mathematical process for calculating how each weight contributed to the error.",
-    },
-    {
-      id: "e-final-q6",
-      question: "Which technique helps prevent a model from overfitting to the training data?",
-      options: [
-        { id: "a", text: "Increasing the number of parameters" },
-        { id: "b", text: "Regularization (like Dropout or L2)" },
-        { id: "c", text: "Removing the test set" },
-        { id: "d", text: "Using biased data" },
-      ],
-      correctOptionId: "b",
-      explanation: "Regularization adds constraints to the model to ensure it learns generalizable patterns.",
-    },
-    {
-      id: "e-final-q7",
-      question: "What is 'Transfer Learning'?",
-      options: [
-        { id: "a", text: "Teaching a model to learn from a different teacher" },
-        { id: "b", text: "Taking a model pre-trained on a large task and fine-tuning it for a specific task" },
-        { id: "c", text: "Transferring code from Python to C++" },
-        { id: "d", text: "Learning while moving" },
-      ],
-      correctOptionId: "b",
-      explanation: "Transfer learning is a highly efficient way to build powerful models with less data.",
-    },
-    {
-      id: "e-final-q8",
-      question: "In Generative AI, what is a GAN composed of?",
-      options: [
-        { id: "a", text: "Two encoders" },
-        { id: "b", text: "A Generator and a Discriminator" },
-        { id: "c", text: "A single large decoder" },
-        { id: "d", text: "A decision tree and a linear model" },
-      ],
-      correctOptionId: "b",
-      explanation: "GANs use two networks competing against each other to generate realistic data.",
-    },
-    {
-      id: "e-final-q9",
-      question: "Which Python library is the foundation for almost all numerical and matrix operations in AI?",
+      id: "eng-final-q9",
+      question: "Which Python library provides the high-performance multi-dimensional array objects used by almost all AI frameworks?",
       options: [
         { id: "a", text: "Pandas" },
         { id: "b", text: "NumPy" },
         { id: "c", text: "Seaborn" },
-        { id: "d", text: "Request" },
+        { id: "d", text: "Matplotlib" },
       ],
       correctOptionId: "b",
-      explanation: "NumPy provides the high-performance array objects used by all other libraries like PyTorch and TensorFlow.",
+      explanation: "NumPy is the foundational library for numerical computing in Python, offering efficient storage and operations for large matrices.",
     },
     {
-      id: "e-final-q10",
-      question: "What is the primary legal framework for data protection in India discussed in this course?",
+      id: "eng-final-q10",
+      question: "What is the primary legal framework for data protection and cyber law in India discussed in this course?",
       options: [
         { id: "a", text: "GDPR" },
         { id: "b", text: "The Information Technology Act 2000" },

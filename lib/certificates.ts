@@ -19,37 +19,27 @@ type CertificateEmailData = CertificateRenderData & {
 };
 
 const COURSE_TEMPLATE_MAP: Record<string, string> = {
-  "ai-for-advanced-learners": "1.png",
-  "ai-for-engineers": "2.png",
-  "ai-for-beginners": "3.png",
+  "ai-for-advanced-learners": "certificate.png",
+  "ai-for-engineers": "certificate.png",
+  "ai-for-beginners": "certificate.png",
 };
 
 const COURSE_COORDINATES: Record<
   string,
   {
     name: { x: number; y: number; size: number };
+    title: { x: number; y: number; size: number };
     date: { x: number; y: number; size: number };
     grade: { x: number; y: number; size: number };
     number: { x: number; y: number; size: number };
   }
 > = {
-  "ai-for-advanced-learners": {
-    name: { x: 209.625, y: 140, size: 24 },
-    date: { x: 338, y: 197, size: 7.4 },
-    grade: { x: 155, y: 210, size: 7.6 },
-    number: { x: 70, y: 250, size: 8.4 },
-  },
-  "ai-for-engineers": {
-    name: { x: 205, y: 120, size: 24 },
-    date: { x: 275, y: 175, size: 7.4 },
-    grade: { x: 95, y: 186, size: 7.6 },
-    number: { x: 80, y: 260, size: 8.4 },
-  },
-  "ai-for-beginners": {
-    name: { x: 205, y: 125, size: 24 },
-    date: { x: 275, y: 185, size: 7.4 },
-    grade: { x: 95, y: 195 , size: 7.6 },
-    number: { x: 80, y: 260, size: 8.4 },
+  default: {
+    name: { x: 208.625, y: 120, size: 12 },
+    title: { x: 209.625, y: 149, size: 14 },
+    date: { x: 159, y: 203, size: 5.5 },
+    grade: { x: 224.625, y: 203, size: 6 },
+    number: { x: 320, y: 203, size: 5.5 },
   },
 };
 
@@ -98,37 +88,38 @@ function buildAibegOverlay(data: CertificateRenderData) {
 }
 
 export async function renderCourseCertificate(data: CertificateRenderData) {
-  const templateImage = data.courseSlug ? COURSE_TEMPLATE_MAP[data.courseSlug] : null;
+  const templateImage = data.courseSlug ? (COURSE_TEMPLATE_MAP[data.courseSlug] || "certificate.png") : "certificate.png";
 
   if (templateImage) {
     const gradeText = `${data.grade} (${data.percentage}%)`;
     const completionDate = formatCertificateDate(data.completionDate);
-    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || {
-      name: { x: 209.625, y: 145, size: 24 },
-      date: { x: 173, y: 190.5, size: 7.4 },
-      grade: { x: 319, y: 190.5, size: 7.6 },
-      number: { x: 60, y: 250, size: 8.4 },
-    };
+    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || COURSE_COORDINATES.default;
 
     // Read the image and convert to base64 for embedding in SVG
     let base64Image = "";
     try {
-      const imagePath = path.join(process.cwd(), "public", "academy", templateImage);
+      const isRootPublic = templateImage === "certificate.png" || templateImage === "certificate.jpeg";
+      const imagePath = isRootPublic 
+        ? path.join(process.cwd(), "public", templateImage)
+        : path.join(process.cwd(), "public", "academy", templateImage);
+      
       const imageBuffer = await fs.readFile(imagePath);
-      base64Image = `data:image/png;base64,${imageBuffer.toString("base64")}`;
+      const mimeType = templateImage.endsWith(".png") ? "image/png" : "image/jpeg";
+      base64Image = `data:${mimeType};base64,${imageBuffer.toString("base64")}`;
     } catch (error) {
       console.error(`Failed to load certificate template image: ${templateImage}`, error);
     }
 
-    // Return a fresh SVG that uses the course-specific PNG as a background
+    // Return a fresh SVG that uses the course-specific background
     return `
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="419.25" height="297.75" viewBox="0 0 419.25 297.75">
-  ${base64Image ? `<image xlink:href="${base64Image}" x="0" y="0" width="419.25" height="297.75" preserveAspectRatio="xMidYMid slice" />` : ""}
+  ${base64Image ? `<image xlink:href="${base64Image}" x="0" y="0" width="419.25" height="297.75" preserveAspectRatio="none" />` : ""}
   <g id="aivsme-certificate-fields">
     <text x="${coords.name.x}" y="${coords.name.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coords.name.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(data.recipientName)}</text>
-    <text x="${coords.date.x}" y="${coords.date.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.date.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(completionDate)}</text>
-    <text x="${coords.grade.x}" y="${coords.grade.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.grade.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(gradeText)}</text>
-    <text x="${coords.number.x}" y="${coords.number.y}" text-anchor="start" dominant-baseline="middle" fill="#000000" font-size="${coords.number.size}" font-family="Arial, sans-serif" font-weight="700">${escapeXml(data.certificateNumber)}</text>
+    <text x="${coords.title.x}" y="${coords.title.y}" text-anchor="middle" dominant-baseline="middle" fill="#4B0082" font-size="${coords.title.size}" font-family="Georgia, serif" font-weight="700">"${escapeXml(data.courseTitle)}"</text>
+    <text x="${coords.date.x}" y="${coords.date.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coords.date.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(completionDate)}</text>
+    <text x="${coords.grade.x}" y="${coords.grade.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coords.grade.size}" font-family="Georgia, serif" font-weight="700">${escapeXml(gradeText)}</text>
+    <text x="${coords.number.x}" y="${coords.number.y}" text-anchor="middle" dominant-baseline="middle" fill="#000000" font-size="${coords.number.size}" font-family="Arial, sans-serif" font-weight="700">${escapeXml(data.certificateNumber)}</text>
   </g>
 </svg>`.trim();
   }
@@ -207,13 +198,19 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
   const pageHeight = 595.28;
   const templateWidth = 419.25;
   const templateHeight = 297.75;
-  const scale = Math.min(pageWidth / templateWidth, pageHeight / templateHeight);
-  const offsetX = (pageWidth - templateWidth * scale) / 2;
-  const offsetY = (pageHeight - templateHeight * scale) / 2;
+  
+  // Use a fixed scale of 2 to match the exact proportions of the template to A4 Landscape
+  const scale = 2;
+  const displayWidth = templateWidth * scale;
+  const displayHeight = templateHeight * scale;
+  
+  const offsetX = (pageWidth - displayWidth) / 2;
+  const offsetY = (pageHeight - displayHeight) / 2;
+  
   const completionDate = formatCertificateDate(data.completionDate);
   const gradeText = `${data.grade} (${data.percentage}%)`;
 
-  const templateImage = data.courseSlug ? COURSE_TEMPLATE_MAP[data.courseSlug] : null;
+  const templateImage = data.courseSlug ? (COURSE_TEMPLATE_MAP[data.courseSlug] || "certificate.png") : "certificate.png";
 
   const mapX = (value: number) => offsetX + value * scale;
   const mapY = (value: number) => pageHeight - (offsetY + value * scale);
@@ -226,51 +223,66 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
   };
 
   if (templateImage) {
-    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || {
-      name: { x: 209.625, y: 145, size: 24 },
-      date: { x: 173, y: 190.5, size: 7.4 },
-      grade: { x: 319, y: 190.5, size: 7.6 },
-      number: { x: 60, y: 250, size: 8.4 },
-    };
+    const coords = (data.courseSlug && COURSE_COORDINATES[data.courseSlug]) || COURSE_COORDINATES.default;
 
-    const pngPath = path.join(process.cwd(), "public", "academy", templateImage);
-    const png = await loadPngForPdf(pngPath);
-
-    const displayWidth = templateWidth * scale;
-    const displayHeight = templateHeight * scale;
-
-    const nameSize = coords.name.size * 0.9 * scale;
-    const dateSize = coords.date.size * 0.9 * scale;
-    const gradeSize = coords.grade.size * 0.9 * scale;
-    const numberSize = coords.number.size * 0.9 * scale;
+    const isRootPublic = templateImage === "certificate.png" || templateImage === "certificate.jpeg";
+    const imagePath = isRootPublic 
+      ? path.join(process.cwd(), "public", templateImage)
+      : path.join(process.cwd(), "public", "academy", templateImage);
+      
+    const imgData = await loadTemplateImageForPdf(imagePath);
 
     const nameText = escapePdfText(data.recipientName);
+    const nameSize = coords.name.size * scale;
     const nameCenterX = mapX(coords.name.x);
     const nameStartX = nameCenterX - estimateWidth(nameText, nameSize, "serif") / 2;
+    // Adjust Y for baseline in PDF (roughly subtract 1/3 of size to center vertically)
+    const nameY = mapY(coords.name.y + (coords.name.size / 3));
+
+    const courseTitleText = `"${escapePdfText(data.courseTitle)}"`;
+    const titleSize = coords.title.size * scale;
+    const titleCenterX = mapX(coords.title.x);
+    const titleStartX = titleCenterX - estimateWidth(courseTitleText, titleSize, "serif") / 2;
+    const titleY = mapY(coords.title.y + (coords.title.size / 3));
+
+    const dateText = escapePdfText(completionDate);
+    const dateSize = coords.date.size * scale;
+    const dateCenterX = mapX(coords.date.x);
+    const dateStartX = dateCenterX - estimateWidth(dateText, dateSize, "serif") / 2;
+    const dateY = mapY(coords.date.y + (coords.date.size / 3));
+
+    const gradeTextPdf = escapePdfText(gradeText);
+    const gradeSize = coords.grade.size * scale;
+    const gradeCenterX = mapX(coords.grade.x);
+    const gradeStartX = gradeCenterX - estimateWidth(gradeTextPdf, gradeSize, "serif") / 2;
+    const gradeY = mapY(coords.grade.y + (coords.grade.size / 3));
+
+    const numberText = escapePdfText(data.certificateNumber);
+    const numberSize = coords.number.size * scale;
+    const numberCenterX = mapX(coords.number.x);
+    const numberStartX = numberCenterX - estimateWidth(numberText, numberSize, "sans") / 2;
+    const numberY = mapY(coords.number.y + (coords.number.size / 3));
 
     const contentLines = [
       `q ${fmt(displayWidth)} 0 0 ${fmt(displayHeight)} ${fmt(offsetX)} ${fmt(offsetY)} cm /Im1 Do Q`,
       "0.00 0.00 0.00 rg",
-      `BT /F3 ${fmt(nameSize)} Tf ${fmt(nameStartX)} ${fmt(mapY(coords.name.y))} Td (${nameText}) Tj ET`,
-      `BT /F3 ${fmt(dateSize)} Tf ${fmt(mapX(coords.date.x))} ${fmt(mapY(coords.date.y))} Td (${escapePdfText(
-        completionDate
-      )}) Tj ET`,
-      `BT /F3 ${fmt(gradeSize)} Tf ${fmt(mapX(coords.grade.x))} ${fmt(mapY(coords.grade.y))} Td (${escapePdfText(
-        gradeText
-      )}) Tj ET`,
-      `BT /F2 ${fmt(numberSize)} Tf ${fmt(mapX(coords.number.x))} ${fmt(mapY(coords.number.y))} Td (${escapePdfText(
-        data.certificateNumber
-      )}) Tj ET`,
+      `BT /F3 ${fmt(nameSize)} Tf ${fmt(nameStartX)} ${fmt(nameY)} Td (${nameText}) Tj ET`,
+      "0.29 0.00 0.51 rg", // Indigo/Purple for course title
+      `BT /F3 ${fmt(titleSize)} Tf ${fmt(titleStartX)} ${fmt(titleY)} Td (${courseTitleText}) Tj ET`,
+      "0.00 0.00 0.00 rg",
+      `BT /F3 ${fmt(dateSize)} Tf ${fmt(dateStartX)} ${fmt(dateY)} Td (${dateText}) Tj ET`,
+      `BT /F3 ${fmt(gradeSize)} Tf ${fmt(gradeStartX)} ${fmt(gradeY)} Td (${gradeTextPdf}) Tj ET`,
+      `BT /F2 ${fmt(numberSize)} Tf ${fmt(numberStartX)} ${fmt(numberY)} Td (${numberText}) Tj ET`,
     ];
 
     const contentStream = contentLines.join("\n");
 
     const imageObject = Buffer.concat([
       Buffer.from(
-        `<< /Type /XObject /Subtype /Image /Width ${png.width} /Height ${png.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /DecodeParms << /Predictor 15 /Colors 3 /BitsPerComponent 8 /Columns ${png.width} >> /Length ${png.data.length} >>\nstream\n`,
+        `<< /Type /XObject /Subtype /Image /Width ${imgData.width} /Height ${imgData.height} /ColorSpace ${imgData.colorSpace} /BitsPerComponent 8 ${imgData.filter ? `/Filter ${imgData.filter}` : ""} ${imgData.decodeParms ? `/DecodeParms ${imgData.decodeParms}` : ""} /Length ${imgData.data.length} >>\nstream\n`,
         "utf8"
       ),
-      png.data,
+      imgData.data,
       Buffer.from("\nendstream", "utf8"),
     ]);
 
@@ -310,55 +322,73 @@ export async function renderCourseCertificatePdf(data: CertificateRenderData) {
   return buildPdfDocument(objects);
 }
 
-async function loadPngForPdf(filePath: string) {
+async function loadTemplateImageForPdf(filePath: string) {
   const buf = await fs.readFile(filePath);
-  if (buf.length < 8 || buf.slice(0, 8).toString("hex") !== "89504e470d0a1a0a") {
-    throw new Error("Invalid PNG");
-  }
+  
+  // Check if PNG
+  if (buf.length >= 8 && buf.slice(0, 8).toString("hex") === "89504e470d0a1a0a") {
+    let offset = 8;
+    let width = 0;
+    let height = 0;
+    const idatParts: Buffer[] = [];
 
-  let offset = 8;
-  let width = 0;
-  let height = 0;
-  let bitDepth = 0;
-  let colorType = 0;
-  const idatParts: Buffer[] = [];
+    while (offset + 12 <= buf.length) {
+      const length = buf.readUInt32BE(offset);
+      offset += 4;
+      const type = buf.slice(offset, offset + 4).toString("ascii");
+      offset += 4;
+      const data = buf.slice(offset, offset + length);
+      offset += length;
+      offset += 4;
 
-  while (offset + 12 <= buf.length) {
-    const length = buf.readUInt32BE(offset);
-    offset += 4;
-    const type = buf.slice(offset, offset + 4).toString("ascii");
-    offset += 4;
-    const data = buf.slice(offset, offset + length);
-    offset += length;
-    offset += 4;
-
-    if (type === "IHDR") {
-      width = data.readUInt32BE(0);
-      height = data.readUInt32BE(4);
-      bitDepth = data[8];
-      colorType = data[9];
+      if (type === "IHDR") {
+        width = data.readUInt32BE(0);
+        height = data.readUInt32BE(4);
+      }
+      if (type === "IDAT") idatParts.push(data);
+      if (type === "IEND") break;
     }
 
-    if (type === "IDAT") {
-      idatParts.push(data);
+    return {
+      width,
+      height,
+      colorSpace: "/DeviceRGB",
+      filter: "/FlateDecode",
+      decodeParms: `<< /Predictor 15 /Colors 3 /BitsPerComponent 8 /Columns ${width} >>`,
+      data: Buffer.concat(idatParts),
+    };
+  }
+
+  // Check if JPEG
+  if (buf.length >= 2 && buf[0] === 0xFF && buf[1] === 0xD8) {
+    let offset = 2;
+    let width = 0;
+    let height = 0;
+
+    while (offset < buf.length) {
+      if (buf[offset] !== 0xFF) break;
+      const marker = buf[offset + 1];
+      if (marker === 0xD9 || marker === 0xDA) break;
+
+      const length = buf.readUInt16BE(offset + 2);
+      if (marker >= 0xC0 && marker <= 0xC3) {
+        height = buf.readUInt16BE(offset + 5);
+        width = buf.readUInt16BE(offset + 7);
+        break;
+      }
+      offset += 2 + length;
     }
 
-    if (type === "IEND") break;
+    return {
+      width,
+      height,
+      colorSpace: "/DeviceRGB",
+      filter: "/DCTDecode",
+      data: buf,
+    };
   }
 
-  if (!width || !height || !idatParts.length) {
-    throw new Error("Unsupported PNG");
-  }
-
-  if (bitDepth !== 8 || colorType !== 2) {
-    throw new Error("Unsupported PNG color type");
-  }
-
-  return {
-    width,
-    height,
-    data: Buffer.concat(idatParts),
-  };
+  throw new Error("Unsupported image format for certificate template");
 }
 
 export async function sendCertificateEmail(

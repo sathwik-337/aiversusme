@@ -50,6 +50,13 @@
       "when": 1774602256344,
       "tag": "0006_many_silver_centurion",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1776279763414,
+      "tag": "0007_warm_wallow",
+      "breakpoints": true
     }
   ]
 }

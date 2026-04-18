@@ -59,6 +59,8 @@ export type AcademyCourse = {
   finalExam?: AcademyQuizQuestion[];
   syllabus: AcademyWeek[];
   isCoding?: boolean;
+  price?: number; // Price in INR (0 for free)
+  currency?: string; // Default "INR"
 };
 
 export const academyCourse: AcademyCourse = {

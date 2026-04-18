@@ -2,14 +2,17 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, LayoutDashboard, User } from "lucide-react";
 import OpenCourseButton from "@/components/open-course-button";
+import { useAuth } from "@clerk/nextjs";
 
 interface AcademyContentProps {
   allCourses: any[];
 }
 
 export default function AcademyContent({ allCourses }: AcademyContentProps) {
+  const { isSignedIn, isLoaded } = useAuth();
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -37,9 +40,21 @@ export default function AcademyContent({ allCourses }: AcademyContentProps) {
           <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1 text-sm font-medium text-emerald-200">
             Course Catalog
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-5xl">
-            E-Learning courses
-          </h1>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mt-4">
+            <h1 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
+              E-Learning courses
+            </h1>
+            
+            {isLoaded && isSignedIn && (
+              <Link 
+                 href="/academy/dashboard" 
+                 className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10 hover:border-white/20"
+               >
+                 <User size={18} className="text-emerald-400" />
+                 My Dashboard
+               </Link>
+            )}
+          </div>
           <p className="mt-4 max-w-5xl text-base leading-7 text-zinc-300 md:text-lg">
             The AI Versus Me Academy is a forward-thinking learning platform designed to equip individuals with the skills needed to thrive in an AI-driven world. It focuses on bridging the gap between human potential and artificial intelligence by offering practical, future-ready training that emphasizes critical thinking, creativity, and real-world application. Through curated programs, the academy aims to empower students, professionals, and entrepreneurs to not just compete with AI, but to leverage it effectively, transforming them from passive users into confident creators and decision-makers in the evolving digital landscape.
           </p>
@@ -80,12 +95,15 @@ export default function AcademyContent({ allCourses }: AcademyContentProps) {
                 <h3 className="mt-4 text-xl font-semibold text-white md:text-2xl">{course.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">{course.tagline}</p>
 
-                <div className="mt-4 flex flex-wrap gap-2 text-sm text-zinc-300">
+                <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-zinc-300">
                   <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
                     {course.modules.length} modules
                   </span>
                   <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
                     {course.isCoding ? "Technical/Coding" : "No coding required"}
+                  </span>
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-semibold text-emerald-400">
+                    {course.price && course.price > 0 ? `₹${course.price}` : "FREE"}
                   </span>
                 </div>
 

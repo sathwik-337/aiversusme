@@ -1,5 +1,5 @@
-import { migrate } from "drizzle-orm/neon-http/migrator";
-import { db, sql } from "./index";
+import { migrate } from "drizzle-orm/neon-serverless/migrator";
+import { db, pool } from "./index";
 import * as dotenv from "dotenv";
 import { readFileSync } from "fs";
 
@@ -26,11 +26,13 @@ async function main() {
   // Apply the latest migrations manually
   try {
     const manualMigrations = [
-      "drizzle/0006_many_silver_centurion.sql",
-      "drizzle/0007_add_search_index.sql",
-      "drizzle/0008_academy_assessment_results.sql",
-      "drizzle/0009_users.sql",
-      "drizzle/0010_academy_certificates.sql",
+      // "drizzle/0006_many_silver_centurion.sql",
+      // "drizzle/0007_add_search_index.sql",
+      // "drizzle/0008_academy_assessment_results.sql",
+      // "drizzle/0009_users.sql",
+      // "drizzle/0010_academy_certificates.sql",
+      // "drizzle/0011_add_course_slug_to_coupons.sql",
+      "drizzle/0012_add_credits_to_users.sql",
     ];
 
     for (const migrationPath of manualMigrations) {
@@ -38,7 +40,7 @@ async function main() {
       const statements = splitSqlStatements(migrationSql);
 
       for (const statement of statements) {
-        await sql.query(statement);
+        await pool.query(statement);
       }
 
       console.log(`Applied ${migrationPath} successfully`);

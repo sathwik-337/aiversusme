@@ -1,9 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock3, FileCheck2, GraduationCap, Lock } from "lucide-react";
+import { ArrowLeft, Clock3, FileCheck2, GraduationCap, Lock, Download } from "lucide-react";
 import { getAcademyCourseBySlug, academyCourseCatalog } from "@/app/data/academy-catalog";
 import AcademyCourseOutline from "@/components/academy-course-outline";
+
+const COURSE_NOTES: Record<string, { type: 'single' | 'folder', path: string, filename?: string }> = {
+  "ai-for-advanced-learners": { type: 'folder', path: "/academy/notes/ai-for-advanced-learners/" },
+  "ai-for-beginners": { type: 'folder', path: "/academy/notes/ai-for-beginners/" },
+  "ai-for-doctors": { type: 'folder', path: "/academy/notes/ai-for-doctors/" },
+  "ai-for-engineers": { type: 'folder', path: "/academy/notes/ai-for-engineers/" },
+  "ai-for-hr": { type: 'folder', path: "/academy/notes/ai-for-hr/" },
+  "ai-for-cybersecurity": { 
+    type: 'single', 
+    path: "/academy/notes/ai-for-cybersecurity/ai-for-cybersecurity-full.pdf",
+    filename: "ai-for-cybersecurity-full.pdf"
+  },
+  "ai-for-everyday": { 
+    type: 'single', 
+    path: "/academy/notes/ai-for-everyday/ai-for-everyday-full.pdf",
+    filename: "ai-for-everyday-full.pdf"
+  },
+  "ai-for-politicians": { 
+    type: 'single', 
+    path: "/academy/notes/ai-for-politicians/ai-for-politicians-full.pdf",
+    filename: "ai-for-politicians-full.pdf"
+  },
+};
 
 export async function generateStaticParams() {
   return academyCourseCatalog.map((course) => ({
@@ -67,6 +90,14 @@ export default async function AcademyCoursePage(props: {
               <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
                 {course.title}
               </h1>
+              <div className="mt-4 flex items-center gap-4">
+                <span className="text-3xl font-bold text-emerald-400">
+                  {course.price && course.price > 0 ? `₹${course.price}` : "FREE"}
+                </span>
+                {course.price && course.price > 0 && (
+                  <span className="text-sm text-zinc-500 line-through">₹1999</span>
+                )}
+              </div>
               <p className="mt-6 text-xl leading-8 text-zinc-300">
                 {course.tagline}
               </p>
@@ -74,13 +105,34 @@ export default async function AcademyCoursePage(props: {
                 {course.summary}
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-zinc-200">
+              <div className="mt-8 flex flex-wrap gap-4 text-sm text-zinc-200">
                 <span className="rounded-full bg-white/5 px-4 py-2">{course.duration}</span>
                 <span className="rounded-full bg-white/5 px-4 py-2">{course.level}</span>
                 <span className="rounded-full bg-white/5 px-4 py-2">{course.pace}</span>
                 <span className="rounded-full bg-white/5 px-4 py-2">
                   {course.isCoding ? "Technical/Coding" : "No coding required"}
                 </span>
+                
+                {COURSE_NOTES[courseSlug]?.type === 'single' && (
+                  <a
+                    href={COURSE_NOTES[courseSlug].path}
+                    download={COURSE_NOTES[courseSlug].filename}
+                    className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 font-semibold text-emerald-300 transition hover:bg-emerald-500/20"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download Full Course Notes
+                  </a>
+                )}
+                
+                {COURSE_NOTES[courseSlug]?.type === 'folder' && (
+                  <a
+                    href="#course-outline"
+                    className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-4 py-2 font-semibold text-amber-300 transition hover:bg-amber-500/20"
+                  >
+                    <Download className="h-4 w-4" />
+                    Module Notes available below
+                  </a>
+                )}
               </div>
             </div>
 

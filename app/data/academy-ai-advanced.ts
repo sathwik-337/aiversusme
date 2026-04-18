@@ -28,6 +28,8 @@ export const aiAdvancedCourse: AcademyCourse = {
     "Implement MLOps pipelines for scaling and monitoring models",
     "Develop an industry-grade capstone project ready for production",
   ],
+  price: 999,
+  currency: "INR",
   modules: [
     {
       id: "01",
@@ -40,7 +42,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Scaling with Mixture-of-Experts (MoE) architectures",
       ],
       notes: "A deep dive into advanced AI architectures. This 5-page guide covers the Transformer revolution, self-attention mechanisms, diffusion models, and Mixture-of-Experts (MoE) architectures.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA1.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m01.pdf",
       quiz: [
         {
           id: "a1-q1",
@@ -115,7 +117,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Stochastic processes in machine learning",
       ],
       notes: "A rigorous mathematical exploration of optimization in deep learning. Covers advanced calculus for backpropagation and information theory concepts like KL Divergence, essential for training robust AI models.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA2.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m02.pdf",
       quiz: [
         {
           id: "a2-q1",
@@ -190,7 +192,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Pre-training vs. Instruction Tuning",
       ],
       notes: "Dive deep into the inner workings of Large Language Models. This module covers everything from tokenization strategies and embeddings to the nuances of pre-training and instruction tuning.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA3.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m03.pdf",
       quiz: [
         {
           id: "a3-q1",
@@ -265,7 +267,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Programmatic prompt chaining and templates",
       ],
       notes: "Master advanced prompting techniques like Chain-of-Thought and Tree-of-Thoughts to unlock complex reasoning capabilities in LLMs. Learn to build programmatic prompt chains for automated workflows.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA4.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m04.pdf",
       quiz: [
         {
           id: "a4-q1",
@@ -340,7 +342,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Evaluation of RAG systems (RAGAS, TruLens)",
       ],
       notes: "Learn to build RAG systems that connect LLMs to external data. This module covers vector databases, indexing strategies, and modern evaluation frameworks for RAG accuracy.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA5.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m05.pdf",
       quiz: [
         {
           id: "a5-q1",
@@ -415,7 +417,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Domain-specific adaptation (Medical, Legal, Finance)",
       ],
       notes: "Explore efficient ways to fine-tune models using techniques like LoRA and QLoRA. Learn how to curate datasets for domain-specific adaptation in fields like medicine and finance.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA6.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m06.pdf",
       quiz: [
         {
           id: "a6-q1",
@@ -490,7 +492,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Short-term and long-term memory systems for AI",
       ],
       notes: "Design autonomous AI agents capable of planning, using tools, and maintaining memory. This module covers leading agent frameworks and task decomposition strategies.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA7.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m07.pdf",
       quiz: [
         {
           id: "a7-q1",
@@ -565,7 +567,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Building multimodal interfaces",
       ],
       notes: "Learn to build AI systems that can process and integrate multiple types of data, including text, images, and audio, using models like CLIP and LLaVA.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA8.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m08.pdf",
       quiz: [
         {
           id: "a8-q1",
@@ -640,7 +642,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "RLHF: Aligning LLMs with human preferences",
       ],
       notes: "Understand the principles of Reinforcement Learning, from MDPs and Q-Learning to the RLHF technique used to align LLMs with human values.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA9.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m09.pdf",
       quiz: [
         {
           id: "a9-q1",
@@ -715,7 +717,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Defensive strategies and robust AI design",
       ],
       notes: "Examine the security landscape of AI, focusing on adversarial attacks, prompt injection, and strategies for building robust and secure AI systems.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA10.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m10.pdf",
       quiz: [
         {
           id: "a10-q1",
@@ -790,7 +792,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Bias detection through explainability",
       ],
       notes: "Learn how to make AI decisions interpretable using techniques like SHAP and LIME. This module emphasizes the importance of transparency and bias detection in AI.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA11.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m11.pdf",
       quiz: [
         {
           id: "a11-q1",
@@ -865,7 +867,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Scaling inference with Kubernetes and serverless",
       ],
       notes: "Master the practices of MLOps for scaling AI solutions. This module covers CI/CD for ML, model monitoring, and deploying at scale using Kubernetes.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA12.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m12.pdf",
       quiz: [
         {
           id: "a12-q1",
@@ -940,7 +942,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Inference on edge devices and IoT",
       ],
       notes: "Optimize models for edge devices using quantization, pruning, and knowledge distillation. Learn to deploy AI on mobile and IoT platforms efficiently.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA13.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m13.pdf",
       quiz: [
         {
           id: "a13-q1",
@@ -1015,7 +1017,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Ethical frameworks for deployment",
       ],
       notes: "Navigate the complex world of AI ethics and regulation. This module covers global AI laws, the Indian IT Act, and privacy-preserving techniques like Federated Learning.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA14.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m14.pdf",
       quiz: [
         {
           id: "a14-q1",
@@ -1090,7 +1092,7 @@ export const aiAdvancedCourse: AcademyCourse = {
         "Final presentation and deployment roadmap",
       ],
       notes: "Execute an industry-grade AI project, focusing on production-ready development, scalability, and performance optimization for a real-world use case.",
-      notesDownloadUrl: "/academy/notes/aiforadvance/AIA15.pdf",
+      notesDownloadUrl: "/academy/notes/ai-for-advanced-learners/ai-for-advanced-learners-m15.pdf",
       quiz: [
         {
           id: "a15-q1",
@@ -1157,116 +1159,116 @@ export const aiAdvancedCourse: AcademyCourse = {
   ],
   finalExam: [
     {
-      id: "a-final-q1",
-      question: "Which component of the Transformer architecture allows it to process sequences in parallel?",
+      id: "adv-final-q1",
+      question: "In a 'Transformer' architecture, why is 'Positional Encoding' necessary?",
       options: [
-        { id: "a", text: "Recurrent connections" },
-        { id: "b", text: "Self-Attention mechanism" },
-        { id: "c", text: "LSTMs" },
-        { id: "d", text: "Sequential processing blocks" },
+        { id: "a", text: "To give the model more parameters to learn" },
+        { id: "b", text: "To provide the model with information about the relative or absolute position of tokens in a sequence, since attention is permutation-invariant" },
+        { id: "c", text: "To encrypt the input data for security" },
+        { id: "d", text: "To reduce the memory usage of the attention mechanism" },
       ],
       correctOptionId: "b",
-      explanation: "Unlike RNNs, Transformers use attention to look at all tokens at once, enabling massive parallelism.",
+      explanation: "Without positional encoding, a Transformer would treat 'The cat sat' and 'Sat the cat' exactly the same way.",
     },
     {
-      id: "a-final-q2",
-      question: "What is the 'Objective Function' in RLHF (Reinforcement Learning with Human Feedback)?",
+      id: "adv-final-q2",
+      question: "What is the primary technical advantage of 'Low-Rank Adaptation' (LoRA) for fine-tuning LLMs?",
       options: [
-        { id: "a", text: "To minimize the training time" },
-        { id: "b", text: "To maximize the reward signal provided by a reward model trained on human preferences" },
-        { id: "c", text: "To maximize the number of parameters" },
-        { id: "d", text: "To minimize the dataset size" },
+        { id: "a", text: "It makes the model more accurate than full fine-tuning" },
+        { id: "b", text: "It significantly reduces the number of trainable parameters by injecting small, rank-decomposition matrices into the model layers" },
+        { id: "c", text: "It allows the model to run without a GPU" },
+        { id: "d", text: "It only works for image models like Stable Diffusion" },
       ],
       correctOptionId: "b",
-      explanation: "RLHF aligns model behavior with human intent by optimizing for a reward model that reflects human rankings.",
+      explanation: "LoRA allows for efficient fine-tuning of massive models with limited compute by only updating a tiny fraction of the total parameters.",
     },
     {
-      id: "a-final-q3",
-      question: "What is 'Parameter-Efficient Fine-Tuning' (PEFT) used for?",
+      id: "adv-final-q3",
+      question: "How does 'Retrieval-Augmented Generation' (RAG) mitigate the problem of hallucinations in LLMs?",
       options: [
-        { id: "a", text: "To train models from scratch faster" },
-        { id: "b", text: "To adapt large models with minimal weight updates, saving memory and compute" },
-        { id: "c", text: "To encrypt model parameters" },
-        { id: "d", text: "To increase the model's vocabulary" },
+        { id: "a", text: "By training the model on more data" },
+        { id: "b", text: "By providing the model with relevant, retrieved documents as context before it generates an answer, grounding the output in facts" },
+        { id: "c", text: "By slowing down the generation speed" },
+        { id: "d", text: "By using a larger context window" },
       ],
       correctOptionId: "b",
-      explanation: "PEFT methods like LoRA make it possible to tune billion-parameter models on standard hardware.",
+      explanation: "RAG turns an LLM into an 'open-book' system, where it must reference provided documents rather than relying solely on its internal weights.",
     },
     {
-      id: "a-final-q4",
-      question: "In RAG systems, what is 'Semantic Search'?",
+      id: "adv-final-q4",
+      question: "What is 'Adversarial Training' in the context of AI security?",
       options: [
-        { id: "a", text: "Searching for exact word matches" },
-        { id: "b", text: "Searching for information based on the meaning and context of the query" },
-        { id: "c", text: "Searching only for dictionary definitions" },
-        { id: "d", text: "Searching through code comments" },
+        { id: "a", text: "Training two models to compete against each other (GANs)" },
+        { id: "b", text: "Intentionally including adversarial examples (perturbed inputs) in the training set to make the model more robust against evasion attacks" },
+        { id: "c", text: "Training a model to hack into other systems" },
+        { id: "d", text: "A type of hardware-level encryption for AI chips" },
       ],
       correctOptionId: "b",
-      explanation: "Semantic search uses vector embeddings to find relevant context even if the exact keywords don't match.",
+      explanation: "By 'exposing' the model to potential attacks during training, it learns to correctly classify even slightly modified or 'tricked' inputs.",
     },
     {
-      id: "a-final-q5",
-      question: "What is 'Model Quantization' primarily intended to do?",
+      id: "adv-final-q5",
+      question: "In MLOps, what is the 'Feedback Loop' used for in model monitoring?",
       options: [
-        { id: "a", text: "Improve model accuracy" },
-        { id: "b", text: "Reduce model size and increase inference speed on resource-constrained devices" },
-        { id: "c", text: "Increase the number of layers" },
-        { id: "d", text: "Generate more training data" },
+        { id: "a", text: "To send emails to the developers when the model crashes" },
+        { id: "b", text: "To collect real-world performance data and ground-truth labels to trigger model retraining or fine-tuning" },
+        { id: "c", text: "To loop the model's output back into its input for infinite generation" },
+        { id: "d", text: "To manage the cloud billing for the GPUs" },
       ],
       correctOptionId: "b",
-      explanation: "Quantization converts weights to lower precision (e.g., float32 to int8) to optimize for edge deployment.",
+      explanation: "A feedback loop ensures that the model remains accurate over time by learning from its real-world successes and failures.",
     },
     {
-      id: "a-final-q6",
-      question: "What is the role of a 'Vector Database' in an AI Agent's memory?",
+      id: "adv-final-q6",
+      question: "What is the primary technical difference between 'Global' and 'Local' model interpretability?",
       options: [
-        { id: "a", text: "To store the agent's source code" },
-        { id: "b", text: "To provide a searchable 'long-term memory' of past interactions and knowledge" },
-        { id: "c", text: "To act as a high-speed cache for the CPU" },
-        { id: "d", text: "To generate random numbers" },
+        { id: "a", text: "Global explains the overall behavior of the model, while Local explains a single specific prediction" },
+        { id: "b", text: "Global is for text models, Local is for image models" },
+        { id: "c", text: "Global is for cloud models, Local is for edge models" },
+        { id: "d", text: "There is no difference" },
+      ],
+      correctOptionId: "a",
+      explanation: "Global interpretability helps us understand the overall logic of a model, while local interpretability explains why a specific input got a specific output.",
+    },
+    {
+      id: "adv-final-q7",
+      question: "How does the SHAP (SHapley Additive exPlanations) method work in XAI?",
+      options: [
+        { id: "a", text: "By randomly deleting neurons to see what happens" },
+        { id: "b", text: "By assigning each feature an importance value based on cooperative game theory" },
+        { id: "c", text: "By retraining the model on a smaller dataset" },
+        { id: "d", text: "By converting the model into a decision tree" },
       ],
       correctOptionId: "b",
-      explanation: "Vector DBs allow agents to retrieve relevant past context to maintain continuity in long-term tasks.",
+      explanation: "SHAP values represent the contribution of each feature to the difference between the actual prediction and the average prediction.",
     },
     {
-      id: "a-final-q7",
-      question: "What is 'Prompt Injection'?",
+      id: "adv-final-q8",
+      question: "What is 'Data Drift' in the context of production AI monitoring?",
       options: [
-        { id: "a", text: "A way to make prompts longer" },
-        { id: "b", text: "An attack where malicious input overrides a model's system instructions" },
-        { id: "c", text: "A type of database optimization" },
-        { id: "d", text: "A method for automated testing" },
+        { id: "a", text: "When the training data is deleted by mistake" },
+        { id: "b", text: "When the statistical properties of the input data change over time, leading to model decay" },
+        { id: "c", text: "When the model is moved to a different cloud region" },
+        { id: "d", text: "When the learning rate is too high" },
       ],
       correctOptionId: "b",
-      explanation: "Prompt injection is a critical security vulnerability where user input 'tricks' the LLM's logic.",
+      explanation: "Data drift occurs when the real-world data the model sees in production becomes different from the data it was trained on.",
     },
     {
-      id: "a-final-q8",
-      question: "Which metric is best for measuring how well a generative model covers the entire training data distribution?",
+      id: "adv-final-q9",
+      question: "Which EU regulation categorizes AI systems based on risk and applies corresponding rules?",
       options: [
-        { id: "a", text: "Accuracy" },
-        { id: "b", text: "Diversity or Recall" },
-        { id: "c", text: "Loss" },
-        { id: "d", text: "Latency" },
+        { id: "a", text: "GDPR" },
+        { id: "b", text: "The EU AI Act" },
+        { id: "c", text: "Digital Markets Act" },
+        { id: "d", text: "Cyber Resilience Act" },
       ],
       correctOptionId: "b",
-      explanation: "Diversity ensures the model doesn't just produce the same 'safe' outputs repeatedly (mode collapse).",
+      explanation: "The EU AI Act is a risk-based framework that imposes strict requirements on 'high-risk' AI applications.",
     },
     {
-      id: "a-final-q9",
-      question: "What does the 'EU AI Act' classify as 'Unacceptable Risk'?",
-      options: [
-        { id: "a", text: "Spam filters" },
-        { id: "b", text: "Social scoring systems by governments and real-time biometric identification in public spaces" },
-        { id: "c", text: "Video games" },
-        { id: "d", text: "E-commerce recommendations" },
-      ],
-      correctOptionId: "b",
-      explanation: "The Act bans certain high-risk AI applications that are deemed a threat to safety or fundamental rights.",
-    },
-    {
-      id: "a-final-q10",
-      question: "In MLOps, what is the 'Golden Path' for model deployment?",
+      id: "adv-final-q10",
+      question: "In MLOps, what is a 'Golden Path' for model deployment?",
       options: [
         { id: "a", text: "A path made of gold in the office" },
         { id: "b", text: "A standardized, automated, and supported workflow for taking a model from development to production" },
@@ -1278,7 +1280,6 @@ export const aiAdvancedCourse: AcademyCourse = {
     },
   ],
   syllabus: [
-
     {
       week: "01-02",
       theme: "Advanced Architectures & Math",
