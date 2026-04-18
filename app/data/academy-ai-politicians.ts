@@ -158,4 +158,30 @@ export const aiPoliticiansCourse: AcademyCourse = {
       lessons: ["Roadmap development", "Stakeholder presentation", "Impact assessment"],
     },
   ],
+  syllabus: [
+    {
+      week: "Module 1-5",
+      theme: "Foundations & Analytics",
+      focus: "AI basics and voter sentiment analysis",
+      deliverable: "Constituency data report",
+    },
+    {
+      week: "Module 6-10",
+      theme: "Digital Strategy",
+      focus: "Campaign optimization and citizen engagement",
+      deliverable: "WhatsApp engagement flow",
+    },
+    {
+      week: "Module 11-15",
+      theme: "Governance & Delivery",
+      focus: "Policy research and welfare scheme optimization",
+      deliverable: "Smart governance proposal",
+    },
+    {
+      week: "Module 16-20",
+      theme: "Security & Ethics",
+      focus: "Misinformation, laws, and final strategy",
+      deliverable: "AI Campaign/Governance Roadmap",
+    },
+  ],
 };

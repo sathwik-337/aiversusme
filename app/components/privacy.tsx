@@ -154,7 +154,7 @@ export default function PrivacyPolicy() {
             Privacy Policy
           </h1>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Your privacy matters to us. Here's a transparent breakdown of exactly how we handle and protect your data.
+            Your privacy matters to us. Here&apos;s a transparent breakdown of exactly how we handle and protect your data.
           </p>
           <div className="mt-8 text-sm text-gray-500 uppercase tracking-widest font-medium">
             Effective Date: March 2026
@@ -233,7 +233,7 @@ export default function PrivacyPolicy() {
           <div className="mt-20 p-8 rounded-2xl bg-white/[0.03] border border-white/5 backdrop-blur-sm text-center">
             <h3 className="text-xl font-medium text-white mb-3">Reach Out</h3>
             <p className="text-gray-400 mb-6">If you have any further questions about how we securely manage your data, let us know.</p>
-            <a href="mailto:support@aitakemyjob.com" className="inline-block px-6 py-3 rounded-full bg-white/10 text-white font-medium hover:bg-white/20 transition-colors border border-white/10">
+            <a href="mailto:support@aiversusme.com" className="inline-block px-6 py-3 rounded-full bg-white/10 text-white font-medium hover:bg-white/20 transition-colors border border-white/10">
               Contact Support
             </a>
           </div>

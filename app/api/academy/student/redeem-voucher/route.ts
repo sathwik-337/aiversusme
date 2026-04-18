@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Check if it's already used/expired
-    if (voucher.usage_limit !== -1 && voucher.usage_count >= voucher.usage_limit) {
+    if (voucher.usage_limit !== null && voucher.usage_limit !== -1 && voucher.usage_count >= voucher.usage_limit) {
       return NextResponse.json({ error: "Voucher has already been redeemed" }, { status: 400 });
     }
 

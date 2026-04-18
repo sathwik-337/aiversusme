@@ -139,7 +139,7 @@ export const aiEverydayCourse: AcademyCourse = {
       title: "Speechify",
       description: "Turning any text into high-quality audio with AI voices.",
       lessons: ["Reading PDFs and web pages", "Using celebrity voices (Snoop Dogg, etc.)", "Adjusting reading speed for productivity", "Scanning physical books with the app"],
-      quiz: [{ id: "ed15-q1", question: "Beyond simple text-to-speech, how does Speechify use 'OCR' (Optical Character Recognition) to aid productivity?", options: [{ id: "a", text: "By translating audio into text" }, { id: "b", text: "By allowing users to snap a photo of physical pages and instantly turn them into high-quality audiobooks" }, { id: { id: "c", text: "By changing the font size of a document" }, id: "d", text: "By recording phone calls" }], correctOptionId: "b", explanation: "OCR combined with AI voice allows you to 'listen' to physical books or documents while commuting or exercising." }]
+      quiz: [{ id: "ed15-q1", question: "Beyond simple text-to-speech, how does Speechify use 'OCR' (Optical Character Recognition) to aid productivity?", options: [{ id: "a", text: "By translating audio into text" }, { id: "b", text: "By allowing users to snap a photo of physical pages and instantly turn them into high-quality audiobooks" }, { id: "c", text: "By changing the font size of a document" }, { id: "d", text: "By recording phone calls" }], correctOptionId: "b", explanation: "OCR combined with AI voice allows you to 'listen' to physical books or documents while commuting or exercising." }]
     },
     {
       id: "16",

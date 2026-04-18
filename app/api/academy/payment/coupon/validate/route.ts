@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Coupon is inactive" }, { status: 400 });
     }
 
-    if (coupon.usage_limit !== -1 && coupon.usage_count >= coupon.usage_limit) {
+    if (coupon.usage_limit !== null && coupon.usage_limit !== -1 && coupon.usage_count >= coupon.usage_limit) {
       return NextResponse.json({ error: "Coupon has expired or reached usage limit" }, { status: 400 });
     }
 

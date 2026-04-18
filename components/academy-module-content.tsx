@@ -57,7 +57,7 @@ export default function AcademyModuleContent({
             <p className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">
               Learning Objectives
             </p>
-            <h4 className="text-xl font-bold text-white mt-1">What you'll master</h4>
+            <h4 className="text-xl font-bold text-white mt-1">What you&apos;ll master</h4>
           </div>
           <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
             <CheckCircle2 size={20} />

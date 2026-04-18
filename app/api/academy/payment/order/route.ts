@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         .where(eq(academyCoupons.code, couponCode))
         .limit(1);
 
-      if (coupon && coupon.is_active === 1 && (coupon.usage_limit === -1 || coupon.usage_count < coupon.usage_limit)) {
+      if (coupon && coupon.is_active === 1 && (coupon.usage_limit === -1 || coupon.usage_limit === null || coupon.usage_count < coupon.usage_limit)) {
         discountPercentage = coupon.discount_percentage;
       }
     }

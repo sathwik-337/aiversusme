@@ -277,4 +277,30 @@ export const aiHRCourse: AcademyCourse = {
       notesDownloadUrl: "/academy/notes/ai-for-hr/ai-for-hr-m20.pdf",
     },
   ],
+  syllabus: [
+    {
+      week: "Module 1-5",
+      theme: "Foundations & Recruitment",
+      focus: "AI basics and talent acquisition strategies",
+      deliverable: "AI-enhanced sourcing plan",
+    },
+    {
+      week: "Module 6-10",
+      theme: "Engagement & Fairness",
+      focus: "Marketing, chatbots, and bias mitigation",
+      deliverable: "Recruitment chatbot flow",
+    },
+    {
+      week: "Module 11-15",
+      theme: "Talent Development",
+      focus: "Onboarding, L&D, and performance management",
+      deliverable: "AI-driven L&D roadmap",
+    },
+    {
+      week: "Module 16-20",
+      theme: "Ops & Transformation",
+      focus: "Planning, operations, and final strategy",
+      deliverable: "HR AI Transformation Roadmap",
+    },
+  ],
 };
