@@ -125,6 +125,26 @@ const testimonials = [
     photo: "testimonials/Thabsheera.jpeg",
     stars: 5,
   },
+  {
+    name: "Zainul",
+    role: "AI Developer",
+    feedback:
+      "A remarkable platform that provides deep insights into the intersection of AI and career growth, helping developers like me stay ahead.",
+    initials: "",
+    gradient: "from-blue-500 to-indigo-600",
+    photo: "testimonials/zainul.jpeg",
+    stars: 5,
+  },
+  {
+    name: "Shaima",
+    role: "AI Developer",
+    feedback:
+      "The platform's structured approach to explaining AI transformations is incredibly valuable for professionals navigating the modern job market.",
+    initials: "",
+    gradient: "from-purple-500 to-fuchsia-600",
+    photo: "testimonials/shaima.jpeg",
+    stars: 5,
+  },
 ];
 
 // Renders a single testimonial card
