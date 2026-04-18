@@ -11,42 +11,42 @@ import { aiPoliticiansCourse } from "@/app/data/academy-ai-politicians";
 export const academyCourseCatalog: AcademyCourse[] = [
   {
     ...aiBeginnersCourse,
-    cardImageSrc: "/AIBegin.jfif",
+    cardImageSrc: "/academy/ai-for-beginners.jpg",
     cardImageAlt: "AI FOR BEGINNERS course artwork",
   },
   {
     ...aiEngineersCourse,
-    cardImageSrc: "/AIEngin.jfif",
+    cardImageSrc: "/academy/ai-for-engineers.jpg",
     cardImageAlt: "AI for Engineers course artwork",
   },
   {
     ...aiAdvancedCourse,
-    cardImageSrc: "/aifora.png",
+    cardImageSrc: "/academy/ai-for-advanced.png",
     cardImageAlt: "AI for Advanced Learners course artwork",
   },
   {
     ...aiDoctorsCourse,
-    cardImageSrc: "/AIDoc.jfif",
+    cardImageSrc: "/academy/ai-for-doctors.jpg",
     cardImageAlt: "AI FOR DOCTORS course artwork",
   },
   {
     ...aiCybersecurityCourse,
-    cardImageSrc: "/AIcyb.jfif",
+    cardImageSrc: "/academy/ai-for-cybersecurity.jpg",
     cardImageAlt: "AI FOR CYBERSECURITY course artwork",
   },
   {
     ...aiEverydayCourse,
-    cardImageSrc: "/AIEveryday.jfif",
+    cardImageSrc: "/academy/ai-for-everyday.jpg",
     cardImageAlt: "AI FOR EVERYDAY course artwork",
   },
   {
     ...aiHRCourse,
-    cardImageSrc: "/aiforhr.jpeg",
+    cardImageSrc: "/academy/ai-for-hr.jpeg",
     cardImageAlt: "AI FOR HR course artwork",
   },
   {
     ...aiPoliticiansCourse,
-    cardImageSrc: "/aiforpoli.png",
+    cardImageSrc: "/academy/ai-for-politicians.png",
     cardImageAlt: "AI FOR POLITICIANS IN INDIA course artwork",
   },
 ];
