@@ -45,10 +45,10 @@ export async function generateMetadata(props: {
   const ogImage = "/ogtagacademy.jpeg";
 
   return {
-    title: course.title,
+    title: `${course.title} | AI VS ME e-learning`,
     description: course.summary,
     openGraph: {
-      title: course.title,
+      title: "AI VS ME e-learning",
       description: course.summary,
       url: `/academy/${courseSlug}`,
       type: "article",
@@ -57,13 +57,13 @@ export async function generateMetadata(props: {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: course.title,
+          alt: "AI VS ME e-learning",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: course.title,
+      title: "AI VS ME e-learning",
       description: course.summary,
       images: [ogImage],
     },

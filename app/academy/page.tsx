@@ -5,10 +5,10 @@ import { academyCourses, academyModules } from "@/lib/db/schema";
 import AcademyContent from "./AcademyContent";
 
 export const metadata: Metadata = {
-  title: "AI VS ME E-Learning",
+  title: "AI VS ME e-learning",
   description: "Browse the AI VS ME e-learning course catalog.",
   openGraph: {
-    title: "AI VS ME E-Learning",
+    title: "AI VS ME e-learning",
     description: "Browse the AI VS ME e-learning course catalog.",
     url: "/academy",
     type: "website",
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
         url: "/ogtagacademy.jpeg",
         width: 1200,
         height: 630,
-        alt: "AI VS ME E-Learning Academy",
+        alt: "AI VS ME e-learning",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI VS ME E-Learning",
+    title: "AI VS ME e-learning",
     description: "Browse the AI VS ME e-learning course catalog.",
     images: ["/ogtagacademy.jpeg"],
   },
