@@ -1328,7 +1328,7 @@ export default function AdminPage() {
                         </button>
                       )}
                       <button 
-                        onClick={handleDownloadCouponsPDF} 
+                        onClick={() => handleDownloadCouponsPDF()} 
                         className="text-xs px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 font-bold transition-all flex items-center gap-1.5"
                       >
                         <Download size={14} /> Download PDF
