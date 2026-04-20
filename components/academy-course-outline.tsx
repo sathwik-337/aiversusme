@@ -5,7 +5,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, CirclePlay, Lock, Trophy, Minimize2, Maximize2, CreditCard, Loader2, ChevronRight } from "lucide-react";
+import { CheckCircle2, CirclePlay, Lock, Trophy, Minimize2, Maximize2, CreditCard, Loader2, ChevronRight, Download } from "lucide-react";
 import type { AcademyCourse } from "@/app/data/academy";
 import AcademyModuleContent from "@/components/academy-module-content";
 import { cn } from "@/lib/utils";
@@ -230,6 +230,33 @@ function AcademyCourseOutlineContent({
     isSpecialUser || progress.completedModuleIds.length === course.modules.length;
   const finalExamCompleted = Boolean(progress.finalExamScore);
 
+  const COURSE_NOTES: Record<string, { type: 'single' | 'folder', path: string, filename?: string }> = {
+    "ai-for-advanced-learners": { type: 'folder', path: "/academy/notes/ai-for-advanced-learners/" },
+    "ai-for-beginners": { type: 'folder', path: "/academy/notes/ai-for-beginners/" },
+    "ai-for-doctors": { type: 'folder', path: "/academy/notes/ai-for-doctors/" },
+    "ai-for-engineers": { type: 'folder', path: "/academy/notes/ai-for-engineers/" },
+    "ai-for-hr": { type: 'folder', path: "/academy/notes/ai-for-hr/" },
+    "ai-for-cybersecurity": { 
+      type: 'single', 
+      path: "/academy/notes/ai-for-cybersecurity/ai-for-cybersecurity-full.pdf",
+      filename: "ai-for-cybersecurity-full.pdf"
+    },
+    "ai-for-everyday": { 
+      type: 'single', 
+      path: "/academy/notes/ai-for-everyday/ai-for-everyday-full.pdf",
+      filename: "ai-for-everyday-full.pdf"
+    },
+    "ai-for-politicians": { 
+      type: 'single', 
+      path: "/academy/notes/ai-for-politicians/ai-for-politicians-full.pdf",
+      filename: "ai-for-politicians-full.pdf"
+    },
+    "ai-for-marketing": { type: 'folder', path: "/academy/notes/ai-for-marketing/" },
+    "ai-for-entrepreneurs": { type: 'folder', path: "/academy/notes/ai-for-entrepreneurs/" },
+    "ai-for-educators": { type: 'folder', path: "/academy/notes/ai-for-educators/" },
+    "ai-for-lawyers": { type: 'folder', path: "/academy/notes/ai-for-lawyers/" },
+  };
+
   if (!isLoaded) {
     return null;
   }
@@ -262,6 +289,28 @@ function AcademyCourseOutlineContent({
               ? "Course Modules"
               : "Unlock Your Potential"}
           </h2>
+          
+          {isEnrolled && COURSE_NOTES[course.slug] && (
+            <div className="mt-4">
+              {COURSE_NOTES[course.slug].type === 'single' ? (
+                <a
+                  href={COURSE_NOTES[course.slug].path}
+                  download={COURSE_NOTES[course.slug].filename}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 font-bold text-emerald-400 transition hover:bg-emerald-500/20 text-xs uppercase tracking-widest"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Full Course Notes
+                </a>
+              ) : (
+                <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-center">
+                  <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest flex items-center justify-center gap-2">
+                    <Download className="h-3.5 w-3.5" /> Module Notes Available Below
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           <p className="mt-3 text-sm leading-7 text-zinc-400">
             {isEnrolled
               ? `Each next module stays locked until the current module quiz is passed with at least ${requiredPercentage}%.`
@@ -481,7 +530,12 @@ function AcademyCourseOutlineContent({
 
         <div className="space-y-8">
           {isEnrolled ? (
-            <AcademyModuleContent key={activeModule.id} module={activeModule} courseSlug={course.slug} />
+            <AcademyModuleContent
+              key={activeModule.id}
+              module={activeModule}
+              courseSlug={course.slug}
+              isEnrolled={isEnrolled}
+            />
           ) : (
             <div className="rounded-[32px] border border-white/10 bg-zinc-950 p-8">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-zinc-500">

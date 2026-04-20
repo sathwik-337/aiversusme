@@ -183,6 +183,7 @@ export const academyCoupons = pgTable("academy_coupons", {
   is_active: integer("is_active").notNull().default(1), // 1 for active, 0 for inactive
   usage_limit: integer("usage_limit").default(-1), // -1 for unlimited
   usage_count: integer("usage_count").default(0).notNull(),
+  group_name: text("group_name"), // Added group name for institutional/group coupons
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

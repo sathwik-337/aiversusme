@@ -55,22 +55,22 @@ export const academyCourseCatalog: AcademyCourse[] = [
   },
   {
     ...aiMarketingCourse,
-    cardImageSrc: "/academy/ai-for-marketing.jpg",
+    cardImageSrc: "/academy/aiformarket.png",
     cardImageAlt: "AI FOR MARKETING course artwork",
   },
   {
     ...aiEntrepreneursCourse,
-    cardImageSrc: "/academy/ai-for-entrepreneurs.jpg",
+    cardImageSrc: "/academy/aiforentra.png",
     cardImageAlt: "AI FOR ENTREPRENEURS course artwork",
   },
   {
     ...aiEducatorsCourse,
-    cardImageSrc: "/academy/ai-for-educators.jpg",
+    cardImageSrc: "/academy/aiforeducator.png",
     cardImageAlt: "AI FOR EDUCATORS course artwork",
   },
   {
     ...aiLawyersCourse,
-    cardImageSrc: "/academy/ai-for-lawyers.jpg",
+    cardImageSrc: "/academy/aiforlaw.jpeg",
     cardImageAlt: "AI FOR LAWYERS course artwork",
   },
 ];

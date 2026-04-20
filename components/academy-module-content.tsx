@@ -36,7 +36,8 @@ function getEmbedUrl(video: AcademyVideo) {
 export default function AcademyModuleContent({
   module,
   courseSlug,
-}: AcademyModuleContentProps) {
+  isEnrolled,
+}: AcademyModuleContentProps & { isEnrolled: boolean }) {
   return (
     <div className="rounded-[32px] border border-white/10 bg-zinc-950 p-8">
       <div className="flex flex-wrap items-center gap-3">
@@ -93,7 +94,7 @@ export default function AcademyModuleContent({
                 <p className="mt-1 text-sm text-zinc-300">Review the key concepts from this module.</p>
               </div>
             </div>
-            {module.notesDownloadUrl && (
+            {module.notesDownloadUrl && isEnrolled && (
               <a
                 href={module.notesDownloadUrl.endsWith(".pdf") ? module.notesDownloadUrl : `/api/academy/notes/${courseSlug}/${module.id}`}
                 download={module.notesDownloadUrl.split("/").pop()}

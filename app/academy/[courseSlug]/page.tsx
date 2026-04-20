@@ -127,27 +127,6 @@ export default async function AcademyCoursePage(props: {
                 <span className="rounded-full bg-white/5 px-4 py-2">
                   {course.isCoding ? "Technical/Coding" : "No coding required"}
                 </span>
-                
-                {COURSE_NOTES[courseSlug]?.type === 'single' && (
-                  <a
-                    href={COURSE_NOTES[courseSlug].path}
-                    download={COURSE_NOTES[courseSlug].filename}
-                    className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 font-semibold text-emerald-300 transition hover:bg-emerald-500/20"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download Full Course Notes
-                  </a>
-                )}
-                
-                {COURSE_NOTES[courseSlug]?.type === 'folder' && (
-                  <a
-                    href="#course-outline"
-                    className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 border border-amber-500/20 px-4 py-2 font-semibold text-amber-300 transition hover:bg-amber-500/20"
-                  >
-                    <Download className="h-4 w-4" />
-                    Module Notes available below
-                  </a>
-                )}
               </div>
             </div>
 

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { 
   Eye, EyeOff, Lock, User, ShieldCheck, Search, RefreshCw, XCircle, CheckCircle, 
   Users, Award, Ticket, PlusCircle, LayoutDashboard, LogOut, ChevronRight, Mail, Calendar, GraduationCap, Percent,
-  BookOpen, FileText, FolderPlus, Trash2, Edit3, Save, Download, CheckSquare, Square,
+  BookOpen, FileText, FolderPlus, Trash2, Edit3, Save, Download, CheckSquare, Square, MinusSquare, ChevronDown,
   MoveUp, MoveDown, MoveLeft, MoveRight, ZoomIn, ZoomOut, Settings, CreditCard,
   TrendingUp, BarChart2, PieChart as PieChartIcon, Activity, DollarSign
 } from "lucide-react";
@@ -66,10 +66,11 @@ export type AdminCoupon = {
   is_active: number;
   usage_limit: number;
   usage_count: number;
+  group_name: string | null;
   created_at: string;
 };
 
-export type Section = "certificates" | "users" | "coupons" | "editor" | "analytics";
+export type Section = "certificates" | "users" | "coupons" | "vouchers" | "editor" | "analytics";
 
 export type CourseModuleDraft = {
   module_id: string;
@@ -179,6 +180,7 @@ export default function AdminPage() {
   const [query, setQuery] = useState("");
   const [couponStatusFilter, setCouponStatusFilter] = useState<"all" | "active" | "expired">("all");
   const [activeSection, setActiveSection] = useState<Section>("certificates");
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [forgotLoading, setForgotLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
@@ -241,9 +243,10 @@ export default function AdminPage() {
   const [couponDraft, setCouponDraft] = useState({
     type: "coupon" as "coupon" | "voucher",
     discountPercentage: 10,
-    usageLimit: 1, // Default to 1 as per user request
+    usageLimit: 1, 
     count: 1,
-    courseSlug: "", // Default to all courses
+    courseSlug: "", 
+    groupName: "", // Added group name for institutional/group coupons
   });
   const [selectedCouponIds, setSelectedCouponIds] = useState<string[]>([]);
 
@@ -271,8 +274,15 @@ export default function AdminPage() {
   async function handleGenerateCoupon(e: React.FormEvent) {
     e.preventDefault();
     if (!authHeader) return;
-    const isBulk = couponDraft.count > 1;
-    const tid = toast.loading(isBulk ? `Generating ${couponDraft.count} codes...` : "Generating code...");
+    
+    // Ensure the correct type is set based on the active section
+    const draftToSend = { 
+      ...couponDraft, 
+      type: activeSection === "coupons" ? "coupon" : "voucher" as "coupon" | "voucher" 
+    };
+    
+    const isBulk = draftToSend.count > 1;
+    const tid = toast.loading(isBulk ? `Generating ${draftToSend.count} codes...` : "Generating code...");
     try {
       const res = await fetch("/api/admin/coupons", {
         method: "POST",
@@ -280,10 +290,11 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           "x-admin-auth": authHeader,
         },
-        body: JSON.stringify(couponDraft),
+        body: JSON.stringify(draftToSend),
       });
       if (!res.ok) throw new Error("Failed to generate");
-      toast.success(isBulk ? `${couponDraft.count} codes generated!` : "Code generated!", { id: tid });
+      toast.success(isBulk ? `${draftToSend.count} codes generated!` : "Code generated!", { id: tid });
+      setCouponDraft(prev => ({ ...prev, groupName: "" })); // Clear group name after generation
       loadCoupons();
     } catch (err) {
       toast.error("Failed to generate", { id: tid });
@@ -326,10 +337,14 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDownloadCouponsPDF() {
-    const couponsToDownload = selectedCouponIds.length > 0 
+  async function handleDownloadCouponsPDF(couponsToDownloadOverride?: AdminCoupon[]) {
+    const sectionFiltered = filteredCoupons.filter(c => 
+      activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV')
+    );
+    
+    const couponsToDownload = couponsToDownloadOverride || (selectedCouponIds.length > 0 
       ? couponsList.filter(c => selectedCouponIds.includes(c.id))
-      : filteredCoupons;
+      : sectionFiltered);
 
     if (couponsToDownload.length === 0) {
       toast.error("No coupons to download");
@@ -452,6 +467,27 @@ export default function AdminPage() {
     );
   }, [couponsList, query, couponStatusFilter]);
 
+  const groupedCoupons = useMemo(() => {
+    const sectionFiltered = filteredCoupons.filter(c => 
+      activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV')
+    );
+    
+    const groups: Record<string, AdminCoupon[]> = {};
+    sectionFiltered.forEach(c => {
+      const groupName = c.group_name || "Ungrouped";
+      if (!groups[groupName]) {
+        groups[groupName] = [];
+      }
+      groups[groupName].push(c);
+    });
+    
+    return Object.entries(groups).sort(([a], [b]) => {
+      if (a === "Ungrouped") return 1;
+      if (b === "Ungrouped") return -1;
+      return a.localeCompare(b);
+    });
+  }, [filteredCoupons, activeSection]);
+
   async function handleUpdateCredits(userId: string, currentCredits: number) {
     const newCredits = prompt(`Update credits for ${userId}:`, currentCredits.toString());
     if (newCredits === null) return;
@@ -543,7 +579,7 @@ export default function AdminPage() {
       loadCourses();
       if (activeSection === "certificates") loadCertificates();
       if (activeSection === "users") loadUsers();
-      if (activeSection === "coupons") loadCoupons();
+      if (activeSection === "coupons" || activeSection === "vouchers") loadCoupons();
       if (activeSection === "analytics") loadAnalytics();
     }
   }, [authHeader, activeSection]);
@@ -773,6 +809,12 @@ export default function AdminPage() {
               label="Coupons" 
               active={activeSection === "coupons"} 
               onClick={() => setActiveSection("coupons")}
+            />
+            <SidebarItem 
+              icon={<CreditCard size={20} />} 
+              label="Vouchers" 
+              active={activeSection === "vouchers"} 
+              onClick={() => setActiveSection("vouchers")}
             />
           </nav>
         </div>
@@ -1132,12 +1174,16 @@ export default function AdminPage() {
             </div>
           )}
 
-          {activeSection === "coupons" && (
+          {(activeSection === "coupons" || activeSection === "vouchers") && (
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold">Coupon Management</h1>
-                  <p className="text-zinc-400 mt-1">Generate and manage course discount codes</p>
+                  <h1 className="text-3xl font-bold">{activeSection === "coupons" ? "Coupon Management" : "Voucher Management"}</h1>
+                  <p className="text-zinc-400 mt-1">
+                    {activeSection === "coupons" 
+                      ? "Generate 100% discount codes for courses" 
+                      : "Generate custom credit vouchers for users"}
+                  </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="flex bg-zinc-950 border border-white/10 rounded-2xl p-1">
@@ -1179,20 +1225,12 @@ export default function AdminPage() {
                   <h2 className="text-xl font-bold flex items-center gap-2">
                     <PlusCircle size={20} /> Generate New
                   </h2>
-                  <form onSubmit={handleGenerateCoupon} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Type</label>
-                      <select 
-                        value={couponDraft.type}
-                        onChange={e => setCouponDraft({...couponDraft, type: e.target.value as any})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20 appearance-none"
-                      >
-                        <option value="coupon">100% Coupon (AIVSMEC)</option>
-                        <option value="voucher">Custom % Voucher (AIVSMEV)</option>
-                      </select>
-                    </div>
-
-                    {couponDraft.type === "coupon" && (
+                  <form onSubmit={(e) => {
+                    const draftWithType = { ...couponDraft, type: activeSection === "coupons" ? "coupon" : "voucher" as "coupon" | "voucher" };
+                    handleGenerateCoupon(e);
+                  }} className="space-y-4">
+                    
+                    {activeSection === "coupons" && (
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Applicable Course</label>
                         <select 
@@ -1208,7 +1246,7 @@ export default function AdminPage() {
                       </div>
                     )}
 
-                    {couponDraft.type === "voucher" && (
+                    {activeSection === "vouchers" && (
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Credits</label>
                         <input 
@@ -1223,16 +1261,15 @@ export default function AdminPage() {
                     )}
 
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Usage Limit</label>
+                      <label className="text-xs font-bold uppercase text-zinc-500 ml-1">Group / Institution Name (Optional)</label>
                       <input 
-                        type="number" 
-                        min="-1"
-                        value={couponDraft.usageLimit}
-                        onChange={e => setCouponDraft({...couponDraft, usageLimit: parseInt(e.target.value) || -1})}
-                        placeholder="-1 for unlimited"
+                        type="text" 
+                        placeholder="e.g. Oxford University"
+                        value={couponDraft.groupName}
+                        onChange={e => setCouponDraft({...couponDraft, groupName: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-white/20"
                       />
-                      <p className="text-[10px] text-zinc-500 ml-1">-1 for unlimited uses</p>
+                      <p className="text-[10px] text-zinc-500 ml-1">Tag these codes with a specific group name</p>
                     </div>
 
                     <div className="space-y-2">
@@ -1248,21 +1285,33 @@ export default function AdminPage() {
                       <p className="text-[10px] text-zinc-500 ml-1">Generate multiple codes at once</p>
                     </div>
 
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                      <div className="flex items-center gap-2 text-zinc-400">
+                        <CheckCircle size={14} className="text-emerald-500" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">Single Use Guaranteed</span>
+                      </div>
+                      <p className="text-[10px] text-zinc-500 mt-1 leading-relaxed">Codes will automatically expire after 1 successful use.</p>
+                    </div>
+
                     <button 
                       type="submit"
+                      onClick={() => {
+                        // Ensure the correct type is set before submission
+                        setCouponDraft(prev => ({ ...prev, type: activeSection === "coupons" ? "coupon" : "voucher" }));
+                      }}
                       className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
                     >
-                      <Ticket size={20} />
-                      Generate Code
+                      {activeSection === "coupons" ? <Ticket size={20} /> : <CreditCard size={20} />}
+                      Generate {activeSection === "coupons" ? "Coupons" : "Vouchers"}
                     </button>
                   </form>
                 </div>
 
-                {/* Coupons List */}
+                {/* List View */}
                 <div className="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-[32px] p-8">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-xl font-bold">Existing Codes</h2>
+                      <h2 className="text-xl font-bold">Existing {activeSection === "coupons" ? "Coupons" : "Vouchers"}</h2>
                       {selectedCouponIds.length > 0 && (
                         <div className="px-2 py-1 bg-white text-black text-[10px] font-bold rounded-md">
                           {selectedCouponIds.length} SELECTED
@@ -1284,12 +1333,15 @@ export default function AdminPage() {
                       >
                         <Download size={14} /> Download PDF
                       </button>
-                      {filteredCoupons.length > 0 && (
+                      {filteredCoupons.filter(c => activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV')).length > 0 && (
                         <button 
                           onClick={() => {
-                            const codes = filteredCoupons.map(c => c.code).join('\n');
+                            const codes = filteredCoupons
+                              .filter(c => activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV'))
+                              .map(c => c.code)
+                              .join('\n');
                             navigator.clipboard.writeText(codes);
-                            toast.success("Filtered codes copied to clipboard");
+                            toast.success(`Filtered ${activeSection} codes copied to clipboard`);
                           }} 
                           className="text-xs px-3 py-1.5 hover:bg-white/5 rounded-lg border border-white/10 font-bold"
                         >
@@ -1302,86 +1354,143 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  {filteredCoupons.length > 0 && (
+                  {filteredCoupons.filter(c => activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV')).length > 0 && (
                     <div className="mb-4 flex items-center gap-2 px-2">
                       <button 
                         onClick={() => {
-                          if (selectedCouponIds.length === filteredCoupons.length) {
+                          const currentFiltered = filteredCoupons.filter(c => activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV'));
+                          if (selectedCouponIds.length === currentFiltered.length) {
                             setSelectedCouponIds([]);
                           } else {
-                            setSelectedCouponIds(filteredCoupons.map(c => c.id));
+                            setSelectedCouponIds(currentFiltered.map(c => c.id));
                           }
                         }}
                         className="text-[10px] font-bold uppercase text-zinc-500 hover:text-white transition-colors"
                       >
-                        {selectedCouponIds.length === filteredCoupons.length ? 'Deselect All' : 'Select All Filtered'}
+                        {selectedCouponIds.length === filteredCoupons.filter(c => activeSection === "coupons" ? c.code.startsWith('AIVSMEC') : c.code.startsWith('AIVSMEV')).length ? 'Deselect All' : 'Select All Filtered'}
                       </button>
                     </div>
                   )}
 
                   <div className="space-y-4">
-                    {filteredCoupons.length === 0 ? (
-                      <div className="py-12 text-center text-zinc-600 italic">No coupons found.</div>
+                    {groupedCoupons.length === 0 ? (
+                      <div className="py-12 text-center text-zinc-600 italic">No {activeSection} found.</div>
                     ) : (
-                      filteredCoupons.map((c) => {
-                        const isExpired = c.is_active === 0 || (c.usage_limit !== -1 && c.usage_count >= c.usage_limit);
-                        const isSelected = selectedCouponIds.includes(c.id);
+                      groupedCoupons.map(([groupName, groupCodes]) => {
+                        const isExpanded = expandedGroups.includes(groupName);
+                        const allSelected = groupCodes.every(c => selectedCouponIds.includes(c.id));
+                        const someSelected = groupCodes.some(c => selectedCouponIds.includes(c.id));
 
                         return (
-                          <div 
-                            key={c.id} 
-                            onClick={() => {
-                              setSelectedCouponIds(prev => 
-                                prev.includes(c.id) 
-                                  ? prev.filter(id => id !== c.id) 
-                                  : [...prev, c.id]
-                              );
-                            }}
-                            className={`flex items-center justify-between p-4 border rounded-2xl transition-all cursor-pointer group ${
-                              isSelected 
-                                ? 'bg-white/5 border-white/20' 
-                                : 'bg-zinc-900/50 border-white/5 hover:border-white/10'
-                            }`}
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className={`transition-colors ${isSelected ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'}`}>
-                                {isSelected ? <CheckSquare size={20} /> : <Square size={20} />}
-                              </div>
-                              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                                isExpired 
-                                  ? 'bg-zinc-800 text-zinc-500' 
-                                  : (c.code.startsWith('AIVSMEC') ? 'bg-purple-500/10 text-purple-400' : 'bg-blue-500/10 text-blue-400')
-                              }`}>
-                                <Percent size={20} />
-                              </div>
-                              <div>
-                                <div className={`font-mono font-bold text-lg ${isExpired ? 'line-through text-zinc-600' : ''}`}>
-                                  {c.code}
+                          <div key={groupName} className="border border-white/5 rounded-2xl overflow-hidden bg-zinc-900/30">
+                            {/* Group Header */}
+                            <div 
+                              className="flex items-center justify-between p-4 bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer group"
+                              onClick={() => {
+                                setExpandedGroups(prev => 
+                                  prev.includes(groupName) 
+                                    ? prev.filter(g => g !== groupName) 
+                                    : [...prev, groupName]
+                                );
+                              }}
+                            >
+                              <div className="flex items-center gap-4">
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (allSelected) {
+                                      setSelectedCouponIds(prev => prev.filter(id => !groupCodes.find(c => c.id === id)));
+                                    } else {
+                                      setSelectedCouponIds(prev => [...new Set([...prev, ...groupCodes.map(c => c.id)])]);
+                                    }
+                                  }}
+                                  className={`transition-colors ${someSelected ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'}`}
+                                >
+                                  {allSelected ? <CheckSquare size={20} /> : (someSelected ? <MinusSquare size={20} /> : <Square size={20} />)}
+                                </button>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-bold text-lg">{groupName}</h3>
+                                    <span className="px-2 py-0.5 bg-zinc-800 text-zinc-400 text-[10px] font-bold rounded-full border border-white/10">
+                                      {groupCodes.length} {activeSection}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-0.5">
+                                    Created for this group/institution
+                                  </p>
                                 </div>
-                                <div className="text-xs text-zinc-500 flex items-center gap-2">
-                                  {c.code.startsWith('AIVSMEV') ? `${c.discount_percentage} Credits` : `${c.discount_percentage}% off`} • Used {c.usage_count} / {c.usage_limit === -1 ? '∞' : c.usage_limit}
-                                  {c.course_slug && (
-                                    <span className="px-1.5 py-0.5 bg-blue-500/10 text-blue-400 text-[10px] font-bold rounded border border-blue-500/20 uppercase tracking-tighter">
-                                      {courseList.find(course => course.slug === c.course_slug)?.title || c.course_slug}
-                                    </span>
-                                  )}
-                                  {isExpired && (
-                                    <span className="px-1.5 py-0.5 bg-red-500/10 text-red-400 text-[10px] font-bold rounded border border-red-500/20 uppercase tracking-tighter">
-                                      {c.is_active === 0 ? "Inactive/Expired" : "Expired"}
-                                    </span>
-                                  )}
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDownloadCouponsPDF(groupCodes);
+                                  }}
+                                  className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-[10px] font-bold uppercase transition-all"
+                                >
+                                  <Download size={12} /> PDF
+                                </button>
+                                <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                                  <ChevronDown size={20} className="text-zinc-500" />
                                 </div>
                               </div>
                             </div>
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteCoupon(c.id);
-                              }}
-                              className="p-2 hover:bg-red-500/10 rounded-lg text-zinc-500 hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
-                            >
-                              <Trash2 size={18} />
-                            </button>
+
+                            {/* Group Codes (Expanded) */}
+                            {isExpanded && (
+                              <div className="p-4 pt-0 space-y-2 border-t border-white/5 bg-black/20">
+                                <div className="grid grid-cols-1 gap-2 mt-4">
+                                  {groupCodes.map((c) => {
+                                    const isExpired = c.is_active === 0 || (c.usage_limit !== -1 && c.usage_count >= c.usage_limit);
+                                    const isSelected = selectedCouponIds.includes(c.id);
+
+                                    return (
+                                      <div 
+                                        key={c.id} 
+                                        onClick={() => {
+                                          setSelectedCouponIds(prev => 
+                                            prev.includes(c.id) 
+                                              ? prev.filter(id => id !== c.id) 
+                                              : [...prev, c.id]
+                                          );
+                                        }}
+                                        className={`flex items-center justify-between p-3 border rounded-xl transition-all cursor-pointer group/item ${
+                                          isSelected 
+                                            ? 'bg-white/5 border-white/20' 
+                                            : 'bg-zinc-900/50 border-white/5 hover:border-white/10'
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <div className={`transition-colors ${isSelected ? 'text-white' : 'text-zinc-600 group/item-hover:text-zinc-400'}`}>
+                                            {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                                          </div>
+                                          <div className="font-mono font-bold text-sm">
+                                            {c.code}
+                                          </div>
+                                          <div className="text-[10px] text-zinc-500 flex items-center gap-2">
+                                            • Used {c.usage_count} / {c.usage_limit === -1 ? '∞' : c.usage_limit}
+                                            {c.course_slug && (
+                                              <span className="px-1.5 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 uppercase tracking-tighter">
+                                                {courseList.find(course => course.slug === c.course_slug)?.title || c.course_slug}
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                        <button 
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteCoupon(c.id);
+                                          }}
+                                          className="p-1.5 hover:bg-red-500/10 rounded-lg text-zinc-600 hover:text-red-400 transition-all opacity-0 group/item-hover:opacity-100"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })

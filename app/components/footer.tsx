@@ -164,10 +164,13 @@ export default function Footer() {
           </div>
         </div>
       </div>
+{/* 🆕 BRANCHSELECTOR SECTION */}
+<div className="w-full py-8 md:py-12 bg-white/5 backdrop-blur-md border-b border-white/10 relative">
 
-      {/* 🆕 BRANCHSELECTOR SECTION */}
-      <div className="w-full py-8 md:py-12 bg-gradient-to-b from-black to-zinc-900 border-b border-white/10">
-  <div className="max-w-5xl mx-auto px-6 text-center">
+  {/* subtle glow */}
+  <div className="absolute inset-0 bg-gradient-to-r from-yellow-200/10 via-transparent to-amber-200/10 blur-3xl pointer-events-none"></div>
+
+  <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
 
     {/* Heading */}
     <h2 className="text-2xl md:text-4xl font-extrabold text-white leading-tight mb-3 md:mb-4">
@@ -175,34 +178,34 @@ export default function Footer() {
     </h2>
 
     {/* Subheading */}
-    <p className="text-sm md:text-lg text-gray-400 max-w-2xl mx-auto mb-4 md:mb-6">
+    <p className="text-sm md:text-lg text-gray-300 max-w-2xl mx-auto mb-4 md:mb-6">
       Discover your ideal path with AI-powered career guidance and psychometric tests.
       Stop guessing — start choosing the right future.
     </p>
 
     {/* Logo */}
-   <div className="w-full flex justify-center items-center py-4 md:py-6">
-  <div className="flex items-center gap-3">
-    <Image
-      src="/branchlogo.png"
-      alt="BranchSelector Logo"
-      width={45}
-      height={45}
-      className="object-contain"
-    />
+    <div className="w-full flex justify-center items-center py-4 md:py-6">
+      <div className="flex items-center gap-3">
+        <Image
+          src="/branchlogo.png"
+          alt="BranchSelector Logo"
+          width={45}
+          height={45}
+          className="object-contain"
+        />
 
-    <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-wide">
-      BranchSelector
-    </h1>
-  </div>
-</div>
+        <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-wide">
+          BranchSelector
+        </h1>
+      </div>
+    </div>
 
     {/* CTA Button */}
     <a
       href="https://branchselector.com"
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-block bg-white text-black font-semibold px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-lg text-sm md:text-base"
+      className="inline-block bg-white text-black font-semibold px-6 py-2 md:px-8 md:py-3 rounded-full hover:bg-gray-200 transition duration-300 shadow-md text-sm md:text-base"
     >
       Get Started →
     </a>
@@ -290,9 +293,9 @@ export default function Footer() {
             animation: scroll-loop 20s linear infinite;
           }
         `}</style>
-        <p className="disclaimer-loop text-sm font-medium text-yellow-400">
-          ⚠️ All insights provided are AI-generated and for informational purposes only; Please verify independently before making career decisions.
-        </p>
+       <p className="disclaimer-loop text-sm font-medium text-yellow-400 font-sans tracking-wide">
+  ⚠️ INFORMATION IS GENERATED USING AI SYSTEMS AND MAY NOT ALWAYS BE ACCURATE. USERS SHOULD VERIFY DETAILS BEFORE RELYING ON THEM.
+</p>
       </div>
 
     </footer>

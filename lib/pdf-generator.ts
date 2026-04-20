@@ -7,7 +7,15 @@ export async function downloadCouponsPDF(
   if (typeof window === "undefined") return;
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
-  const title = "Generated Coupon/Voucher Codes";
+  
+  // Check if all coupons belong to the same group
+  const uniqueGroups = [...new Set(couponsToDownload.map(c => c.group_name || "Ungrouped"))];
+  const groupName = uniqueGroups.length === 1 ? uniqueGroups[0] : null;
+  
+  const title = groupName && groupName !== "Ungrouped" 
+    ? `Codes for ${groupName}` 
+    : "Generated Coupon/Voucher Codes";
+
   doc.setFontSize(18);
   doc.text(title, 20, 20);
   doc.setFontSize(10);
@@ -32,11 +40,16 @@ export async function downloadCouponsPDF(
       : 'All Courses';
 
     doc.setFont("helvetica", "bold");
-    doc.text(`${index + 1}. Code: ${c.code}${isExpired ? ' (EXPIRED)' : ''}`, margin, y);
+    let line = `${index + 1}. Code: ${c.code}${isExpired ? ' (EXPIRED)' : ''}`;
+    if (c.group_name) line += ` | Group: ${c.group_name}`;
+    doc.text(line, margin, y);
     doc.setFont("helvetica", "normal");
     doc.text(`   Type: ${type} | Course: ${courseTitle} | Value: ${discountOrCredits} | Limit: ${c.usage_limit === -1 ? 'Unlimited' : c.usage_limit}`, margin, y + 5);
     y += 15;
   });
 
-  doc.save(`coupons-${new Date().getTime()}.pdf`);
+  const filename = groupName && groupName !== "Ungrouped"
+    ? `${groupName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-codes`
+    : `coupons-${new Date().getTime()}`;
+  doc.save(`${filename}.pdf`);
 }

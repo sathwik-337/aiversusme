@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     usageLimit?: number;
     count?: number;
     courseSlug?: string;
+    groupName?: string;
   };
 
   console.log("Admin creating codes:", body);
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
   const discountPercentage = body.type === "coupon" ? 100 : (body.discountPercentage || 0);
   const usageLimit = body.usageLimit !== undefined ? body.usageLimit : 1; // Default to 1 for single-use
   const courseSlug = body.courseSlug || null;
+  const groupName = body.groupName || null;
 
   const couponsToInsert = [];
   const usedCodes = new Set<string>();
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
       course_slug: courseSlug,
       discount_percentage: discountPercentage,
       usage_limit: usageLimit,
+      group_name: groupName,
       is_active: 1,
     });
   }
