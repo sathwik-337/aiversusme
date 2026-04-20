@@ -221,8 +221,9 @@ export default function AcademyModuleQuiz({
             </h3>
 
             <div className="grid grid-cols-1 gap-4">
-              {currentQuestion.options.map((option) => {
+              {currentQuestion.options.map((option, idx) => {
                 const selected = answers[currentQuestion.id] === option.id;
+                const label = String.fromCharCode(65 + idx); // A, B, C, D...
                 return (
                   <button
                     key={option.id}
@@ -238,7 +239,7 @@ export default function AcademyModuleQuiz({
                       "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-black transition-colors",
                       selected ? "border-sky-500 bg-sky-500 text-black" : "border-white/10 text-zinc-500 group-hover:border-white/30"
                     )}>
-                      {option.id.toUpperCase()}
+                      {label}
                     </div>
                     <span className={cn(
                       "text-sm font-medium transition-colors leading-relaxed",

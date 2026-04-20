@@ -26,6 +26,10 @@ const COURSE_NOTES: Record<string, { type: 'single' | 'folder', path: string, fi
     path: "/academy/notes/ai-for-politicians/ai-for-politicians-full.pdf",
     filename: "ai-for-politicians-full.pdf"
   },
+  "ai-for-marketing": { type: 'folder', path: "/academy/notes/ai-for-marketing/" },
+  "ai-for-entrepreneurs": { type: 'folder', path: "/academy/notes/ai-for-entrepreneurs/" },
+  "ai-for-educators": { type: 'folder', path: "/academy/notes/ai-for-educators/" },
+  "ai-for-lawyers": { type: 'folder', path: "/academy/notes/ai-for-lawyers/" },
 };
 
 export async function generateStaticParams() {

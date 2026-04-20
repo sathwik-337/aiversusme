@@ -7,6 +7,10 @@ import { aiCybersecurityCourse } from "@/app/data/academy-ai-cybersecurity";
 import { aiEverydayCourse } from "@/app/data/academy-ai-everyday";
 import { aiHRCourse } from "@/app/data/academy-ai-hr";
 import { aiPoliticiansCourse } from "@/app/data/academy-ai-politicians";
+import { aiMarketingCourse } from "@/app/data/academy-ai-marketing";
+import { aiEntrepreneursCourse } from "@/app/data/academy-ai-entrepreneurs";
+import { aiEducatorsCourse } from "@/app/data/academy-ai-educators";
+import { aiLawyersCourse } from "@/app/data/academy-ai-lawyers";
 
 export const academyCourseCatalog: AcademyCourse[] = [
   {
@@ -48,6 +52,26 @@ export const academyCourseCatalog: AcademyCourse[] = [
     ...aiPoliticiansCourse,
     cardImageSrc: "/academy/ai-for-politicians.png",
     cardImageAlt: "AI FOR POLITICIANS IN INDIA course artwork",
+  },
+  {
+    ...aiMarketingCourse,
+    cardImageSrc: "/academy/ai-for-marketing.jpg",
+    cardImageAlt: "AI FOR MARKETING course artwork",
+  },
+  {
+    ...aiEntrepreneursCourse,
+    cardImageSrc: "/academy/ai-for-entrepreneurs.jpg",
+    cardImageAlt: "AI FOR ENTREPRENEURS course artwork",
+  },
+  {
+    ...aiEducatorsCourse,
+    cardImageSrc: "/academy/ai-for-educators.jpg",
+    cardImageAlt: "AI FOR EDUCATORS course artwork",
+  },
+  {
+    ...aiLawyersCourse,
+    cardImageSrc: "/academy/ai-for-lawyers.jpg",
+    cardImageAlt: "AI FOR LAWYERS course artwork",
   },
 ];
 

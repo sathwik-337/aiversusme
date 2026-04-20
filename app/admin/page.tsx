@@ -128,6 +128,42 @@ const COURSE_TEMPLATES: Record<string, { image: string, coords: any }> = {
       grade: { x: "22.7%", y: "62.5%", size: 7.6 },
       number: { x: "19.1%", y: "87.3%", size: 8.4 },
     }
+  },
+  "ai-for-marketing": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  },
+  "ai-for-entrepreneurs": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  },
+  "ai-for-educators": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
+  },
+  "ai-for-lawyers": {
+    image: "/certificate.png",
+    coords: {
+      name: { x: "48.9%", y: "40.4%", size: 24 },
+      date: { x: "65.6%", y: "58.8%", size: 7.4 },
+      grade: { x: "22.7%", y: "62.5%", size: 7.6 },
+      number: { x: "19.1%", y: "87.3%", size: 8.4 },
+    }
   }
 };
 
@@ -549,7 +585,11 @@ export default function AdminPage() {
           { title: "AI for Beginners", slug: "ai-for-beginners" },
           { title: "AI for Engineers", slug: "ai-for-engineers" },
           { title: "AI for Advanced Learners", slug: "ai-for-advanced-learners" },
-          { title: "AI for HR", slug: "ai-for-hr" }
+          { title: "AI for HR", slug: "ai-for-hr" },
+          { title: "AI for Marketing", slug: "ai-for-marketing" },
+          { title: "AI for Entrepreneurs", slug: "ai-for-entrepreneurs" },
+          { title: "AI for Educators", slug: "ai-for-educators" },
+          { title: "AI for Lawyers", slug: "ai-for-lawyers" }
         ];
 
         for (const course of courses) {
@@ -1419,6 +1459,10 @@ export default function AdminPage() {
                               <option value="AI for Beginners">AI for Beginners</option>
                               <option value="AI for Advanced Learners">AI for Advanced Learners</option>
                               <option value="AI for HR">AI for HR</option>
+                              <option value="AI for Marketing">AI for Marketing</option>
+                              <option value="AI for Entrepreneurs">AI for Entrepreneurs</option>
+                              <option value="AI for Educators">AI for Educators</option>
+                              <option value="AI for Lawyers">AI for Lawyers</option>
                             </>
                           )}
                         </select>

@@ -15,19 +15,56 @@ interface RankingsContentProps {
   maxScore: number;
 }
 
-export default function RankingsContent({ items, maxScore }: RankingsContentProps) {
+export default function RankingsContent() {
+  const highRiskJobs = [
+    { title: "Data Entry Operators", score: 95 },
+    { title: "Telecallers / Customer Support Executives", score: 95 },
+    { title: "Bookkeeping Clerks", score: 90 },
+    { title: "Basic Content Writers (SEO articles, generic blogs)", score: 90 },
+    { title: "Transcriptionists", score: 95 },
+    { title: "Retail Cashiers", score: 90 },
+    { title: "Travel Agents (basic booking roles)", score: 90 },
+    { title: "Proofreaders (basic grammar checking)", score: 85 },
+    { title: "Bank Clerks (routine processing roles)", score: 85 },
+    { title: "Paralegals (document review heavy roles)", score: 85 },
+  ];
+
+  const mediumRiskJobs = [
+    { title: "Software Developers", score: 60 },
+    { title: "Teachers (school level)", score: 60 },
+    { title: "Journalists", score: 70 },
+    { title: "Graphic Designers", score: 65 },
+    { title: "Accountants", score: 65 },
+    { title: "Doctors (diagnostics side)", score: 60 },
+    { title: "Lawyers (research + drafting roles)", score: 70 },
+    { title: "HR Professionals", score: 65 },
+    { title: "Marketing Executives", score: 70 },
+    { title: "Financial Analysts", score: 65 },
+  ];
+
+  const lowRiskJobs = [
+    { title: "Surgeons", score: 25 },
+    { title: "Psychologists / Therapists", score: 30 },
+    { title: "Teachers (higher education, mentoring roles)", score: 40 },
+    { title: "Entrepreneurs", score: 30 },
+    { title: "Police Officers / Investigators", score: 40 },
+    { title: "Skilled Trades (electricians, plumbers)", score: 30 },
+    { title: "Creative Directors", score: 40 },
+    { title: "Politicians / Leaders", score: 25 },
+    { title: "Event Managers", score: 40 },
+    { title: "Social Workers", score: 35 },
+  ];
+
   const getBarColor = (score: number) => {
-    if (score >= 75) return "bg-red-400";
-    if (score >= 50) return "bg-orange-400";
-    if (score >= 25) return "bg-yellow-400";
-    return "bg-green-400";
+    if (score >= 70) return "bg-red-500";
+    if (score >= 40) return "bg-yellow-500";
+    return "bg-green-500";
   };
 
   const getRiskLabel = (score: number) => {
-    if (score >= 75) return { label: "Critical", color: "text-red-400 bg-red-500/10 border-red-500/30" };
-    if (score >= 50) return { label: "High", color: "text-orange-400 bg-orange-500/10 border-orange-500/30" };
-    if (score >= 25) return { label: "Medium", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" };
-    return { label: "Low", color: "text-green-400 bg-green-500/10 border-green-500/30" };
+    if (score >= 70) return { label: "High Risk", color: "text-red-400 bg-red-500/10 border-red-500/30" };
+    if (score >= 40) return { label: "Medium Risk", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" };
+    return { label: "Low Risk", color: "text-green-400 bg-green-500/10 border-green-500/30" };
   };
 
   const container = {
@@ -35,7 +72,7 @@ export default function RankingsContent({ items, maxScore }: RankingsContentProp
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05
+        staggerChildren: 0.03
       }
     }
   };
@@ -45,6 +82,67 @@ export default function RankingsContent({ items, maxScore }: RankingsContentProp
     show: { opacity: 1, x: 0 }
   };
 
+  const renderSection = (title: string, description: string, pattern: string, jobs: { title: string, score: number }[]) => (
+    <div className="mb-16">
+      <div className="mb-6">
+        <h2 className="text-2xl font-black text-white flex items-center gap-3">
+          <span className={`w-2 h-8 rounded-full ${getBarColor(jobs[0].score)}`} />
+          {title}
+        </h2>
+        <p className="text-gray-400 text-sm mt-2 font-medium italic">
+          {description}
+        </p>
+      </div>
+
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="flex flex-col gap-3"
+      >
+        {jobs.map((job, idx) => {
+          const risk = getRiskLabel(job.score);
+          return (
+            <motion.div key={job.title} variants={itemAnim}>
+              <div className="group flex items-center gap-4 rounded-2xl px-3 py-3 transition-all duration-200 bg-white/5 border border-white/5 hover:border-white/20">
+                <div className="w-48 md:w-80 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold w-4 text-gray-600">#{idx + 1}</span>
+                    <span className="text-sm font-bold text-white leading-tight">{job.title}</span>
+                  </div>
+                </div>
+
+                <div className="flex-1 relative h-2 bg-white/5 rounded-full overflow-hidden hidden md:block">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${job.score}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                    className={`absolute inset-y-0 left-0 rounded-full ${getBarColor(job.score)}`}
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 w-24 md:w-32 justify-end">
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${risk.color}`}>
+                    {job.score}%
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      <div className="mt-4 p-4 bg-white/5 border border-white/10 rounded-2xl">
+        <p className="text-xs font-bold text-gray-500 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+          PATTERN: {pattern}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -52,133 +150,41 @@ export default function RankingsContent({ items, maxScore }: RankingsContentProp
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-12"
+        className="mb-16 text-center"
       >
-        <p className="text-sm font-bold tracking-widest uppercase mb-3 text-gray-400">
-          AI vs Human Analysis
+        <p className="text-xs font-black tracking-[0.2em] uppercase mb-4 text-blue-500">
+          Global Risk Index 2026
         </p>
-        <h1 className="text-4xl md:text-6xl font-black leading-none tracking-tight mb-2 text-white">
-          JOB AUTOMATION
+        <h1 className="text-5xl md:text-8xl font-black leading-none tracking-tighter text-white mb-6">
+          JOB<br/>RANKINGS
         </h1>
-        <h2 className="text-4xl md:text-6xl font-black leading-none tracking-tight text-white">
-          RISK RANKINGS
-        </h2>
-        <p className="mt-4 text-base text-gray-400">
-          Top roles ranked by estimated automation risk score. Click any role for detailed analysis.
+        <div className="h-1 w-20 bg-white mx-auto mb-6" />
+        <p className="max-w-xl mx-auto text-gray-400 text-sm md:text-base leading-relaxed">
+          The definitive guide to AI's impact across industries. Ranked by routine density, 
+          creativity requirements, and human interaction necessity.
         </p>
       </motion.div>
 
-      {/* Column Headers */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="hidden md:flex items-center gap-4 mb-4 px-2"
-      >
-        <div className="w-[180px] md:w-80 shrink-0 flex items-center gap-3">
-          <div className="w-6 shrink-0" />
-          <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
-            JOBS
-          </span>
-        </div>
-        <div className="flex-1" />
-        <div className="shrink-0 w-24 md:w-32 text-right">
-          <span className="text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full inline-block bg-white text-black">
-            RISK SCORE
-          </span>
-        </div>
-      </motion.div>
+      {renderSection(
+        "HIGH RISK JOBS", 
+        "These jobs are routine, repetitive, rule-based, or predictable. Takeover probability: 70% – 95%.",
+        "If the job = rules + repetition + low creativity → high risk",
+        highRiskJobs
+      )}
 
-      {/* Grid lines + Rows */}
-      <div className="relative">
-        <div className="absolute inset-0 left-80 right-0 pointer-events-none hidden md:block" aria-hidden>
-          {[0, 25, 50, 75, 100].map((pct) => (
-            <div
-              key={pct}
-              className="absolute top-0 bottom-0 border-r border-dashed border-white/10"
-              style={{ left: `${pct}%` }}
-            />
-          ))}
-        </div>
+      {renderSection(
+        "MEDIUM RISK JOBS", 
+        "Roles where AI becomes a co-pilot, enhancing productivity rather than full replacement. Takeover probability: 40% – 70%.",
+        "AI becomes a co-pilot, not a replacement",
+        mediumRiskJobs
+      )}
 
-        {/* Rows */}
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col gap-2"
-        >
-          {items.map((job, idx) => {
-            const widthPct = (job.risk_score / maxScore) * 100;
-            const risk = getRiskLabel(job.risk_score);
-
-            return (
-              <motion.div key={job.id} variants={itemAnim}>
-                <Link
-                  href={`/job/${job.slug}`}
-                  className="group flex items-center gap-4 rounded-xl px-2 py-3 md:py-2 transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10"
-                >
-                  <div className="w-[180px] md:w-80 shrink-0 flex items-center gap-3">
-                    <span className="text-xs font-bold w-6 text-right shrink-0 text-gray-500">
-                      #{idx + 1}
-                    </span>
-                    <div className="flex-1 flex items-center justify-start min-h-[40px] px-4 py-2 rounded-2xl md:rounded-full bg-white/10 text-white">
-                      <span
-                        className="text-xs md:text-sm font-bold text-left leading-tight md:leading-snug"
-                        style={{ wordBreak: "keep-all", overflowWrap: "break-word" }}
-                      >
-                        {job.title}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 relative h-7 hidden md:flex items-center">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${widthPct}%` }}
-                      transition={{ duration: 1, delay: 0.5 + idx * 0.05, ease: "easeOut" }}
-                      className={`h-full rounded-r-full transition-all duration-500 group-hover:brightness-110 ${getBarColor(job.risk_score)}`}
-                      style={{ minWidth: "8px" }}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-1 md:gap-2 shrink-0 w-24 md:w-32 justify-end">
-                    <span className={`hidden md:inline text-[10px] font-bold px-2 py-0.5 rounded-full border ${risk.color}`}>
-                      {risk.label}
-                    </span>
-                    <span className="text-lg font-black tabular-nums text-white">
-                      {job.risk_score}%
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </div>
-
-      {/* Legend */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="mt-10 hidden md:flex flex-wrap gap-4 items-center"
-      >
-        <span className="text-xs font-bold uppercase tracking-widest text-gray-500">
-          Risk Level:
-        </span>
-        {[
-          { label: "Low (0–24%)", color: "bg-green-400" },
-          { label: "Medium (25–49%)", color: "bg-yellow-400" },
-          { label: "High (50–74%)", color: "bg-orange-400" },
-          { label: "Critical (75–100%)", color: "bg-red-400" },
-        ].map((l) => (
-          <div key={l.label} className="flex items-center gap-1.5">
-            <div className={`w-3 h-3 rounded-full ${l.color}`} />
-            <span className="text-xs text-gray-400">{l.label}</span>
-          </div>
-        ))}
-      </motion.div>
+      {renderSection(
+        "LOW RISK JOBS", 
+        "Roles requiring deep human interaction, creativity, physical presence, ethics, or leadership. Takeover probability: 10% – 40%.",
+        "High human interaction + creativity + leadership = Low Risk",
+        lowRiskJobs
+      )}
     </div>
   );
 }
