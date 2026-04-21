@@ -135,6 +135,33 @@ export default async function RootLayout({
                     },
                     "query-input": "required name=search_term_string"
                   }
+                },
+                {
+                  "@type": "ItemList",
+                  "name": "Main Navigation",
+                  "itemListElement": [
+                    {
+                      "@type": "SiteNavigationElement",
+                      "position": 1,
+                      "name": "Automation Rankings",
+                      "description": "Explore which jobs are most at risk of AI automation and which are safe.",
+                      "url": "https://aiversusme.com/rankings"
+                    },
+                    {
+                      "@type": "SiteNavigationElement",
+                      "position": 2,
+                      "name": "AI Academy",
+                      "description": "Learn future-proof skills and how to leverage AI in your career.",
+                      "url": "https://aiversusme.com/academy"
+                    },
+                    {
+                      "@type": "SiteNavigationElement",
+                      "position": 3,
+                      "name": "AI Career Blog",
+                      "description": "Latest insights, news, and guides on AI's impact on the workforce.",
+                      "url": "https://aiversusme.com/blogs"
+                    }
+                  ]
                 }
               ]
             }),

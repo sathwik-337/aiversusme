@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { courseSlug, couponCode, useCredits } = await req.json();
+    const { courseSlug, couponCode, useCredits, isInternational } = await req.json();
     const course = academyCourseCatalog.find((c) => c.slug === courseSlug);
 
     if (!course) {
@@ -73,9 +73,30 @@ export async function POST(req: NextRequest) {
     }
 
     const originalPrice = course.price || 0;
-    const discountedPrice = Math.max(0, originalPrice * (1 - discountPercentage / 100));
+    
+    // International pricing mapping (matches use-price.ts)
+    const PRICE_MAPPING: Record<number, number> = {
+      999: 19.99,
+      499: 9.99,
+      99: 1.99,
+      1999: 39.99,
+    };
 
-    if (discountedPrice <= 0) {
+    let finalAmount: number;
+    let finalCurrency: string;
+
+    if (isInternational) {
+      const usdPrice = PRICE_MAPPING[originalPrice] || (originalPrice / 80);
+      const discountedUSD = Math.max(0, usdPrice * (1 - discountPercentage / 100));
+      finalAmount = Math.round(discountedUSD * 100); // USD in cents
+      finalCurrency = "USD";
+    } else {
+      const discountedINR = Math.max(0, originalPrice * (1 - discountPercentage / 100));
+      finalAmount = Math.round(discountedINR * 100); // INR in paise
+      finalCurrency = "INR";
+    }
+
+    if (finalAmount <= 0) {
       // Handle free enrollment (either course is free or 100% discount)
       const orderId = `free_${Date.now()}_${Math.random().toString(36).substring(7)}`;
       
@@ -84,7 +105,7 @@ export async function POST(req: NextRequest) {
         course_slug: courseSlug,
         razorpay_order_id: orderId,
         amount: 0,
-        currency: "INR",
+        currency: finalCurrency,
         status: "paid",
         coupon_code: couponCode || null,
       });
@@ -101,15 +122,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         id: orderId,
         amount: 0,
-        currency: "INR",
+        currency: finalCurrency,
         free: true,
       });
     }
 
-    const amount = Math.round(discountedPrice * 100); // Razorpay expects amount in paise
     const options = {
-      amount: amount,
-      currency: "INR",
+      amount: finalAmount,
+      currency: finalCurrency,
       receipt: `receipt_${Date.now()}`,
     };
 
@@ -119,8 +139,8 @@ export async function POST(req: NextRequest) {
       user_id: userId,
       course_slug: courseSlug,
       razorpay_order_id: order.id,
-      amount: amount,
-      currency: "INR",
+      amount: finalAmount,
+      currency: finalCurrency,
       status: "pending",
       coupon_code: couponCode || null,
     });

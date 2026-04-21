@@ -10,6 +10,8 @@ import type { AcademyCourse } from "@/app/data/academy";
 import AcademyModuleContent from "@/components/academy-module-content";
 import { cn } from "@/lib/utils";
 import { toast } from "react-hot-toast";
+import { useLocation } from "@/hooks/use-location";
+import { useFormattedPrice } from "@/hooks/use-price";
 
 declare global {
   interface Window {
@@ -45,6 +47,7 @@ function AcademyCourseOutlineContent({
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercentage: number } | null>(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [userCredits, setUserCredits] = useState<number>(0);
+  const { isIndia } = useLocation();
 
   useEffect(() => {
     async function fetchUserCredits() {
@@ -108,7 +111,8 @@ function AcademyCourseOutlineContent({
         body: JSON.stringify({ 
           courseSlug: course.slug,
           couponCode: appliedCoupon?.code,
-          useCredits: useCredits
+          useCredits: useCredits,
+          isInternational: isIndia === false
         }),
       });
 
@@ -257,7 +261,13 @@ function AcademyCourseOutlineContent({
     "ai-for-lawyers": { type: 'folder', path: "/academy/notes/ai-for-lawyers/" },
   };
 
-  if (!isLoaded) {
+  const { displayPrice: basePrice, isLoaded: priceLoaded } = useFormattedPrice(course.price);
+  const discountedPriceValue = appliedCoupon 
+    ? (course.price ?? 0) * (1 - appliedCoupon.discountPercentage / 100)
+    : (course.price ?? 0);
+  const { displayPrice: finalPrice } = useFormattedPrice(discountedPriceValue);
+
+  if (!isLoaded || !priceLoaded) {
     return null;
   }
 
@@ -396,12 +406,10 @@ function AcademyCourseOutlineContent({
                 ) : (course.price ?? 0) > 0 ? (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    {appliedCoupon
-                      ? `Enroll for ₹${Math.max(0, (course.price ?? 0) * (1 - appliedCoupon.discountPercentage / 100))}`
-                      : `Enroll for ₹${course.price ?? 0}`}
+                    Enroll for {finalPrice}
                   </>
                 ) : (
-                  "Enroll for free"
+                  "Enroll for FREE"
                 )}
               </button>
             </div>

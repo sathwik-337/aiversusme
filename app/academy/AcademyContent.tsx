@@ -6,6 +6,7 @@ import Link from "next/link";
 import { CheckCircle2, LayoutDashboard, User } from "lucide-react";
 import OpenCourseButton from "@/components/open-course-button";
 import { useAuth } from "@clerk/nextjs";
+import CoursePrice from "@/components/course-price";
 
 interface AcademyContentProps {
   allCourses: any[];
@@ -102,9 +103,10 @@ export default function AcademyContent({ allCourses }: AcademyContentProps) {
                   <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
                     {course.isCoding ? "Technical/Coding" : "No coding required"}
                   </span>
-                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-semibold text-emerald-400">
-                    {(course.price ?? 0) > 0 ? `₹${course.price}` : "FREE"}
-                  </span>
+                  <CoursePrice 
+                    price={course.price} 
+                    className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-semibold text-emerald-400" 
+                  />
                 </div>
 
                 <div className="mt-5 space-y-2.5">

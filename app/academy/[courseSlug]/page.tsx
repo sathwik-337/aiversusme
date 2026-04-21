@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Clock3, FileCheck2, GraduationCap, Lock, Download } from "lucide-react";
 import { getAcademyCourseBySlug, academyCourseCatalog } from "@/app/data/academy-catalog";
 import AcademyCourseOutline from "@/components/academy-course-outline";
+import CourseHeroPrice from "@/components/course-hero-price";
 
 const COURSE_NOTES: Record<string, { type: 'single' | 'folder', path: string, filename?: string }> = {
   "ai-for-advanced-learners": { type: 'folder', path: "/academy/notes/ai-for-advanced-learners/" },
@@ -162,14 +163,7 @@ export default async function AcademyCoursePage(props: {
               <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
                 {course.title}
               </h1>
-              <div className="mt-4 flex items-center gap-4">
-                <span className="text-3xl font-bold text-emerald-400">
-                  {(course.price ?? 0) > 0 ? `₹${course.price}` : "FREE"}
-                </span>
-                {(course.price ?? 0) > 0 && (
-                  <span className="text-sm text-zinc-500 line-through">₹1999</span>
-                )}
-              </div>
+              <CourseHeroPrice price={course.price} originalPrice={1999} />
               <p className="mt-6 text-xl leading-8 text-zinc-300">
                 {course.tagline}
               </p>
