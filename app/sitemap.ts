@@ -1,60 +1,74 @@
 import { MetadataRoute } from "next";
+import { blogPosts } from "./data/blog-posts";
+import { academyCourseCatalog } from "./data/academy-catalog";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+  const baseUrl = "https://aiversusme.com";
+
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: "https://aiversusme.com",
+      url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: "https://aiversusme.com/blogs",
+      url: `${baseUrl}/blogs`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: "https://aiversusme.com/academy",
+      url: `${baseUrl}/academy`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: "https://aiversusme.com/academy/ai-for-non-engineers",
+      url: `${baseUrl}/rankings`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: "https://aiversusme.com/rankings",
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: "https://aiversusme.com/contact",
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: "https://aiversusme.com/privacy",
+      url: `${baseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: "https://aiversusme.com/terms",
+      url: `${baseUrl}/terms`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: "https://aiversusme.com/disclaimer",
+      url: `${baseUrl}/disclaimer`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
+
+  const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blogs/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
+  const academyRoutes: MetadataRoute.Sitemap = academyCourseCatalog.map((course) => ({
+    url: `${baseUrl}/academy/${course.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...blogRoutes, ...academyRoutes];
 }

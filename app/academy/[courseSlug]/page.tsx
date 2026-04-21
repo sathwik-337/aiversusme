@@ -38,6 +38,8 @@ export async function generateStaticParams() {
   }));
 }
 
+import Script from "next/script";
+
 export async function generateMetadata(props: {
   params: Promise<{ courseSlug: string }>;
 }): Promise<Metadata> {
@@ -49,25 +51,29 @@ export async function generateMetadata(props: {
   const ogImage = "/ogtagacademy.jpeg";
 
   return {
-    title: `${course.title} | AI VS ME e-learning`,
+    title: `${course.title} | AI VS ME Academy`,
     description: course.summary,
+    alternates: {
+      canonical: `/academy/${courseSlug}`,
+    },
     openGraph: {
-      title: "AI VS ME e-learning",
+      title: `${course.title} | AI VS ME Academy`,
       description: course.summary,
       url: `/academy/${courseSlug}`,
       type: "article",
+      siteName: "AI VS ME",
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: "AI VS ME e-learning",
+          alt: course.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "AI VS ME e-learning",
+      title: `${course.title} | AI VS ME Academy`,
       description: course.summary,
       images: [ogImage],
     },
@@ -86,6 +92,57 @@ export default async function AcademyCoursePage(props: {
 
   return (
     <div className="bg-[#050505] text-white min-h-screen">
+      <Script
+        id="course-jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Course",
+                "name": course.title,
+                "description": course.summary,
+                "provider": {
+                  "@type": "Organization",
+                  "name": "AI VS ME",
+                  "sameAs": "https://aiversusme.com"
+                },
+                "image": "https://aiversusme.com/ogtagacademy.jpeg",
+                "offers": {
+                  "@type": "Offer",
+                  "category": "Free",
+                  "price": 0,
+                  "priceCurrency": "USD"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://aiversusme.com"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Academy",
+                    "item": "https://aiversusme.com/academy"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": course.title,
+                    "item": `https://aiversusme.com/academy/${courseSlug}`
+                  }
+                ]
+              }
+            ]
+          })
+        }}
+      />
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.18),_transparent_30%),radial-gradient(circle_at_85%_15%,_rgba(16,185,129,0.14),_transparent_28%),linear-gradient(180deg,_rgba(255,255,255,0.03),_transparent_42%)]" />
         <div className="relative mx-auto max-w-7xl px-6 pb-0 pt-36">

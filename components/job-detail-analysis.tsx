@@ -293,7 +293,7 @@ export default function JobDetailAnalysis({ job }: JobDetailAnalysisProps) {
 
       {/* Main Gauge Section */}
       <div className="w-full max-w-2xl flex flex-col items-center px-4 mb-16">
-        <Gauge value={risk} size={400} />
+        <Gauge value={risk} size={400} loading={loading} />
       </div>
 
       <h2 className="text-xl md:text-2xl font-bold tracking-tight text-center mb-8 px-4"> Explore This Profession In Greater Detail</h2>

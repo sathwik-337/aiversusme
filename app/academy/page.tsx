@@ -5,11 +5,14 @@ import { academyCourses, academyModules } from "@/lib/db/schema";
 import AcademyContent from "./AcademyContent";
 
 export const metadata: Metadata = {
-  title: "AI VS ME e-learning",
-  description: "Browse the AI VS ME e-learning course catalog.",
+  title: "AI Academy - Master Future-Proof Skills | AI VS ME",
+  description: "Upskill for the AI era with our expert-led courses. From AI for beginners to specialized tracks for engineers, doctors, and lawyers.",
+  alternates: {
+    canonical: "/academy",
+  },
   openGraph: {
-    title: "AI VS ME e-learning",
-    description: "Browse the AI VS ME e-learning course catalog.",
+    title: "AI Academy - Master Future-Proof Skills | AI VS ME",
+    description: "Upskill for the AI era with our expert-led courses. From AI for beginners to specialized tracks for engineers, doctors, and lawyers.",
     url: "/academy",
     type: "website",
     images: [
@@ -17,14 +20,14 @@ export const metadata: Metadata = {
         url: "/ogtagacademy.jpeg",
         width: 1200,
         height: 630,
-        alt: "AI VS ME e-learning",
+        alt: "AI VS ME Academy",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI VS ME e-learning",
-    description: "Browse the AI VS ME e-learning course catalog.",
+    title: "AI Academy - Master Future-Proof Skills | AI VS ME",
+    description: "Upskill for the AI era with our expert-led courses.",
     images: ["/ogtagacademy.jpeg"],
   },
 };

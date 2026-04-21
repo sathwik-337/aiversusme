@@ -14,15 +14,28 @@ import { Toaster } from "react-hot-toast";
 export const metadata: Metadata = {
   title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
   description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills. Analyze your career with AI.",
+  keywords: ["AI automation risk", "job security", "future-proof skills", "career insights", "AI career analysis", "automation index", "AI job impact", "career future-proofing"],
+  authors: [{ name: "AI VS ME Team" }],
+  creator: "AI VS ME",
+  publisher: "AI VS ME",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   metadataBase: new URL("https://aiversusme.com"),
+  alternates: {
+    canonical: "/",
+  },
   robots: {
     index: true,
     follow: true,
-    nocache: false,
     googleBot: {
       index: true,
       follow: true,
-      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
@@ -31,9 +44,10 @@ export const metadata: Metadata = {
     url: "https://aiversusme.com",
     siteName: "AI VS ME",
     type: "website",
+    locale: "en_US",
     images: [
       {
-        url: "https://aiversusme.com/aiversusume.jpeg",
+        url: "/aiversusme.jpeg",
         width: 1200,
         height: 630,
         alt: "AI VS ME - Job Automation Risk Analysis",
@@ -44,7 +58,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI VS ME - Check Job Automation Risk & Get AI Career Insights",
     description: "Find out the automation risk for your job, get AI-powered career insights, and discover future-proof skills.",
-    images: ["https://aiversusme.com/aiversusumite.jpeg"],
+    images: ["/aiversusme.jpeg"],
+    creator: "@aiversusme",
   },
 };
 
@@ -74,17 +89,54 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebApplication",
-              name: "AI VS ME",
-              description: "Analyze your job automation risk with AI-powered insights and discover future-proof skills.",
-              url: "https://aiversusme.com",
-              applicationCategory: "BusinessApplication",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "USD",
-              },
-              image: "https://aiversusme.com/aiversusme.jpeg",
+              "@graph": [
+                {
+                  "@type": "WebApplication",
+                  "@id": "https://aiversusme.com/#website",
+                  "name": "AI VS ME",
+                  "description": "Analyze your job automation risk with AI-powered insights and discover future-proof skills.",
+                  "url": "https://aiversusme.com",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "All",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                  },
+                  "image": "https://aiversusme.com/aiversusme.jpeg",
+                  "author": {
+                    "@type": "Organization",
+                    "@id": "https://aiversusme.com/#organization"
+                  }
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://aiversusme.com/#organization",
+                  "name": "AI VS ME",
+                  "url": "https://aiversusme.com",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://aiversusme.com/bgremovedlogo.png"
+                  },
+                  "sameAs": [
+                    "https://twitter.com/aiversusme",
+                    "https://linkedin.com/company/aiversusme"
+                  ]
+                },
+                {
+                  "@type": "WebSite",
+                  "url": "https://aiversusme.com",
+                  "name": "AI VS ME",
+                  "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                      "@type": "EntryPoint",
+                      "urlTemplate": "https://aiversusme.com/job/{search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                  }
+                }
+              ]
             }),
           }}
         />

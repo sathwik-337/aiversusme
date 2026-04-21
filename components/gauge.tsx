@@ -1,20 +1,39 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { motion, animate } from "framer-motion";
 
 interface GaugeProps {
   value: number; // 0 to 100
   size?: number;
+  loading?: boolean;
 }
 
-export default function Gauge({ value, size = 300 }: GaugeProps) {
+export default function Gauge({ value, size = 300, loading = false }: GaugeProps) {
   const radius = 100;
   const strokeWidth = 40;
   const center = 120;
-  const normalizedValue = Math.min(Math.max(value, 0), 100);
+  const normalizedValue = loading ? 0 : Math.min(Math.max(value, 0), 100);
   
+  // State for the displayed percentage value
+  const [displayValue, setDisplayValue] = useState(0);
+
   // Calculate needle rotation: -90deg (0%) to 90deg (100%)
   const needleRotation = (normalizedValue / 100) * 180 - 90;
+
+  useEffect(() => {
+    if (loading) {
+      setDisplayValue(0);
+      return;
+    }
+    // Animate the numeric value from 0 to the target value
+    const controls = animate(0, normalizedValue, {
+      duration: 2.5,
+      ease: "circOut",
+      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
+    });
+    return () => controls.stop();
+  }, [normalizedValue, loading]);
 
   return (
     <div className="flex flex-col items-center w-full max-w-full overflow-hidden">
@@ -48,16 +67,24 @@ export default function Gauge({ value, size = 300 }: GaugeProps) {
         <text x="220" y="145" fontSize="10" fill="#94a3b8" textAnchor="middle" className="font-medium">Imminent Risk</text>
 
         {/* Needle */}
-        <g transform={`rotate(${needleRotation}, ${center}, ${center})`}>
-          <path
-            d={`M ${center - 2} ${center} L ${center + 2} ${center} L ${center} 30 Z`}
-            fill="#475569"
-          />
-          <circle cx={center} cy={center} r="6" fill="#475569" />
+        <g transform={`translate(${center}, ${center})`}>
+          <motion.g 
+            initial={{ rotate: -90 }}
+            animate={{ rotate: needleRotation }}
+            transition={{ duration: 2.5, ease: "circOut" }}
+          >
+            {/* Invisible box to center the rotation point at (0,0) */}
+            <rect x="-100" y="-100" width="200" height="200" fill="none" pointerEvents="none" />
+            <path
+              d="M -2 0 L 2 0 L 0 -90 Z"
+              fill="#475569"
+            />
+            <circle cx={0} cy={0} r="6" fill="#475569" />
+          </motion.g>
         </g>
       </svg>
       <div className="text-3xl md:text-4xl font-black mt-[-10px] md:mt-[-20px] text-white">
-        {normalizedValue}%
+        {displayValue}%
       </div>
     </div>
   );
