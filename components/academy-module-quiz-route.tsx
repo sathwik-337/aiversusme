@@ -3,6 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Lock } from "lucide-react";
 import type { AcademyCourse, AcademyQuizQuestion } from "@/app/data/academy";
 import AcademyModuleQuiz from "@/components/academy-module-quiz";
@@ -27,6 +28,7 @@ export default function AcademyModuleQuizRoute({
   course,
   moduleId,
 }: AcademyModuleQuizRouteProps) {
+  const router = useRouter();
   const requiredPercentage = getAcademyPassPercentage();
   const { isLoaded, userId } = useAuth();
   const moduleIndex = course.modules.findIndex((module) => module.id === moduleId);
@@ -168,6 +170,9 @@ export default function AcademyModuleQuizRoute({
           assessmentId={`module-route-${currentModule.id}`}
           questions={activeQuiz}
           description={`Get at least ${requiredPercentage}% to unlock the next module.`}
+          onContinue={() => {
+            router.push(`/academy/${course.slug}?module=${currentModule.id}`);
+          }}
           onComplete={({ score, totalQuestions, answers }) => {
             const nextScore = {
               score,

@@ -120,7 +120,7 @@ function BlogSectionContent() {
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, ease: "easeOut" }}
-      className="w-full min-h-screen bg-black text-white py-20 px-4 md:px-8 overflow-hidden"
+      className="w-full bg-black text-white py-12 px-4 md:px-8 overflow-hidden"
       id="blog-section"
     >
       <div className="max-w-7xl mx-auto">

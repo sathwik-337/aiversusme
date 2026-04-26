@@ -237,6 +237,10 @@ function ActiveModulePanel({
             assessmentId={`module-${activeModule.id}`}
             questions={activeQuiz}
             description="Answer all 5 questions to unlock the next module."
+            onContinue={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setQuizExpanded(false);
+            }}
             onComplete={() => onComplete(activeModule.id, activeModuleIndex)}
           />
         ) : null}
@@ -449,6 +453,10 @@ export default function AcademyCoursePlayer({
                     title="Final exam"
                     description={`Answer all ${generatedQuestions.length} questions to complete the course.`}
                     submitLabel="Submit final exam"
+                    onContinue={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      setFinalExamExpanded(false);
+                    }}
                     onComplete={() => setFinalExamCompleted(true)}
                   />
                 ) : null}

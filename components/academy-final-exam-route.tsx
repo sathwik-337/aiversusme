@@ -308,6 +308,9 @@ export default function AcademyFinalExamRoute({
           title="Final exam"
           description={`Submit the final exam to finish the course. (Total ${generatedQuestions.length} questions)`}
           submitLabel="Submit final exam"
+          onContinue={() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           onComplete={({ score, totalQuestions, answers }) => {
             const nextScore = {
               score,

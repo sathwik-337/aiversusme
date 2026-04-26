@@ -163,7 +163,7 @@ export default async function AcademyCoursePage(props: {
               <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
                 {course.title}
               </h1>
-              <CourseHeroPrice price={course.price} originalPrice={1999} />
+              <CourseHeroPrice price={course.price} originalPrice={1999} courseSlug={course.slug} />
               <p className="mt-6 text-xl leading-8 text-zinc-300">
                 {course.tagline}
               </p>

@@ -1254,7 +1254,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Ethics", "Tech Trends", "AI Trends"],
     readingTime: "7 min read",
     date: "Dec 10, 2027",
-    imageUrl: "https://images.unsplash.com/photo-1547891261-38fbc925ea66?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://www.psichi.org/resource/resmgr/06_publications-news/blog/volume9/29-3_Spring-Eye_Blog_Headlin.jpg",
     sections: [
       { title: "The Intentionality Gap", content: "AI can replicate patterns of beauty, but it lacks the human experience that drives true artistic intent. The magic happens in the collaboration." },
       { title: "New Forms of Expression", content: "AI is creating entirely new artistic genres that weren't possible before — interactive, evolving art that responds to its audience in real-time." }
@@ -1407,7 +1407,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Ethics", "AI Risk", "Future of Work"],
     readingTime: "7 min read",
     date: "Jan 25, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1527433270417-66916a032b3c?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://www.tuw.edu/wp-content/uploads/2023/07/TUW_Artificial-Intelligence-in-Psychology-scaled.jpeg",
     sections: [
       { title: "Anthropomorphism and Trust", content: "We are biologically hardwired to see intent in anything that communicates. This makes us prone to over-trusting AI and attributing it human-like qualities it doesn't possess." },
       { title: "The Risk of Emotional Dependency", content: "As AI becomes more sophisticated at mimicking empathy, there's a risk of people forming deep emotional bonds with machines, potentially at the expense of human relationships." }
@@ -1509,7 +1509,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Education", "Upskilling", "Future of Work"],
     readingTime: "8 min read",
     date: "Feb 25, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://cdn.elearningindustry.com/wp-content/uploads/2019/01/5-ways-ai-is-changing-the-education-industry-1-1024x574.jpg",
     sections: [
       { title: "The End of the Traditional Essay", content: "With AI capable of writing high-quality academic papers, universities are shifting toward oral exams, in-class projects, and high-level critical thinking assessments." },
       { title: "Personalized AI Tutors", content: "Next-gen AI tutors are providing students with 24/7, personalized support, adapting to their learning style and pace in real-time." }
@@ -1645,7 +1645,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Automation", "AI in Business", "Tech Trends"],
     readingTime: "7 min read",
     date: "Apr 05, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1519003722824-191d440bd36b?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://miro.medium.com/v2/resize:fit:1400/1*RONCugY9Kw67fsfyoEhfew.jpeg",
     sections: [
       { title: "Autonomous Long-Haul Trucking", content: "Self-driving trucks are already operating on major highways, improving safety and reducing fuel consumption by up to 10% through optimized driving." },
       { title: "Smart Ports and Autonomous Shipping", content: "Ports around the world are becoming fully automated, with AI managing the movement of containers from autonomous ships to self-driving trucks without a human in sight." }
@@ -1713,7 +1713,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Health", "AI Tools", "AI Trends"],
     readingTime: "7 min read",
     date: "Apr 25, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1527433270417-66916a032b3c?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://res.cloudinary.com/jerrick/image/upload/c_scale,f_jpg,q_auto/66f6a081c08318001d48a184.png",
     sections: [
       { title: "AI-Powered Cognitive Behavioral Therapy", content: "Chatbots are providing millions of people with evidence-based mental health support, helping them manage anxiety, depression, and stress in real-time." },
       { title: "The Importance of Human Connection", content: "AI is a powerful tool for support, but it's not a replacement for human connection. The best systems are those that bridge the gap between digital support and human care." }
@@ -1747,7 +1747,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Education", "Upskilling", "Future of Work"],
     readingTime: "7 min read",
     date: "May 05, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://skillroads.com/images/blog//blog/future_of_work.jpeg",
     sections: [
       { title: "Adaptive Learning Platforms", content: "AI-powered platforms adjust to every student's pace and learning style in real-time, providing targeted support and challenges to keep them engaged and learning effectively." },
       { title: "Bridging the Achievement Gap", content: "By providing personalized support to students who need it most, AI is helping to bridge the achievement gap and create a more equitable education system for everyone." }
@@ -1832,7 +1832,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Automation", "AI in Business", "Tech Trends"],
     readingTime: "7 min read",
     date: "Jun 01, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1519003722824-191d440bd36b?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://specials-images.forbesimg.com/imageserve/6596650926aadd41b4ae4acc/960x0.jpg",
     sections: [
       { title: "Autonomous Long-Haul Trucking", content: "Self-driving trucks are already operating on major highways, improving safety and reducing fuel consumption by up to 10% through optimized driving." },
       { title: "Smart Ports and Autonomous Shipping", content: "Ports around the world are becoming fully automated, with AI managing the movement of containers from autonomous ships to self-driving trucks without a human in sight." }
@@ -1849,7 +1849,7 @@ export const blogPosts: BlogPost[] = [
     tags: ["Tech Trends", "AI Tools", "AI Trends"],
     readingTime: "7 min read",
     date: "Jun 05, 2028",
-    imageUrl: "https://images.unsplash.com/photo-1547891261-38fbc925ea66?auto=format&fit=crop&q=80&w=800",
+    imageUrl: "https://beateducations.com/blog/wp-content/uploads/2025/02/1_V-B5nJYe9c0eAAJrzVZ98Q.jpeg",
     sections: [
       { title: "AI as a Creative Partner", content: "Artists are using AI to explore new ideas, generate variations, and automate the repetitive parts of their process, allowing them to focus on high-level intent and vision." },
       { title: "The Rise of New Creative Genres", content: "AI is creating entirely new forms of art that were previously impossible, from interactive, evolving music to generative, personalized stories that respond to their audience." }

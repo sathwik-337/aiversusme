@@ -52,7 +52,7 @@ function FeaturesTop() {
   ];
 
   return (
-    <section id="feature" className="relative bg-[#050505] py-16 md:py-24 px-6 lg:px-12 xl:px-24 overflow-hidden scroll-mt-[80px] md:scroll-mt-[110px]">
+    <section id="feature" className="relative bg-[#050505] py-10 md:py-12 px-6 lg:px-12 xl:px-24 overflow-hidden scroll-mt-[80px] md:scroll-mt-[110px]">
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
@@ -194,7 +194,7 @@ function FeaturesBottom() {
   ];
 
   return (
-    <section className="bg-black py-16 md:py-24 px-6 lg:px-12 xl:px-24 border-t border-white/5">
+    <section className="bg-black py-10 md:py-12 px-6 lg:px-12 xl:px-24 border-t border-white/5">
       <div className="max-w-7xl mx-auto flex flex-col">
         {/* Header */}
         <div className="text-center mb-16">

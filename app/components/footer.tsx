@@ -180,7 +180,7 @@ export default function Footer() {
     {/* Subheading */}
     <p className="text-sm md:text-lg text-gray-300 max-w-2xl mx-auto mb-4 md:mb-6">
       Discover your ideal path with AI-powered career guidance and psychometric tests.
-      Stop guessing — start choosing the right future.
+      Stop guessing & start choosing the right future.
     </p>
 
     {/* Logo */}

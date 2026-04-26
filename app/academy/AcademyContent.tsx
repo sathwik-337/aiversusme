@@ -5,15 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, LayoutDashboard, User } from "lucide-react";
 import OpenCourseButton from "@/components/open-course-button";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import CoursePrice from "@/components/course-price";
+import { getAcademyProgress } from "@/lib/academy-progress";
 
 interface AcademyContentProps {
   allCourses: any[];
 }
 
 export default function AcademyContent({ allCourses }: AcademyContentProps) {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, userId } = useAuth();
+  const { user } = useUser();
+  const isSpecialUser = user?.primaryEmailAddress?.emailAddress === "sathwikkamath31@gmail.com";
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -105,6 +109,7 @@ export default function AcademyContent({ allCourses }: AcademyContentProps) {
                   </span>
                   <CoursePrice 
                     price={course.price} 
+                    isEnrolled={isLoaded && userId ? getAcademyProgress(userId, course.slug).enrolled || isSpecialUser : false}
                     className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 font-semibold text-emerald-400" 
                   />
                 </div>

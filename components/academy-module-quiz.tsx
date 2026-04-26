@@ -12,6 +12,7 @@ type AcademyModuleQuizProps = {
   title?: string;
   description?: string;
   submitLabel?: string;
+  onContinue?: () => void;
   onComplete?: (result: {
     score: number;
     totalQuestions: number;
@@ -36,6 +37,7 @@ export default function AcademyModuleQuiz({
   title = "Module quiz",
   description = "Check understanding before moving to the next section.",
   submitLabel = "Complete Quiz",
+  onContinue,
   onComplete,
 }: AcademyModuleQuizProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -146,7 +148,17 @@ export default function AcademyModuleQuiz({
           </button>
           {passed && (
             <button
-              onClick={() => window.history.back()}
+              onClick={() => {
+                if (onContinue) {
+                  onContinue();
+                } else {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  // Fallback for when no specific onContinue is provided
+                  if (typeof window !== 'undefined' && window.history.length > 1) {
+                    window.history.back();
+                  }
+                }
+              }}
               className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-8 py-4 text-sm font-black uppercase tracking-widest text-black transition hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
             >
               Continue Learning

@@ -6,16 +6,22 @@ interface CoursePriceProps {
   price: number | undefined;
   className?: string;
   originalPrice?: number;
+  isEnrolled?: boolean;
 }
 
-export default function CoursePrice({ price, className, originalPrice: manualOriginalPrice }: CoursePriceProps) {
+export default function CoursePrice({ 
+  price, 
+  className, 
+  originalPrice: manualOriginalPrice,
+  isEnrolled 
+}: CoursePriceProps) {
   const { displayPrice, isLoaded } = useFormattedPrice(price);
   const calculatedOriginalPrice = getOriginalPrice(price);
   const originalPrice = manualOriginalPrice || calculatedOriginalPrice;
   const { displayPrice: displayOriginalPrice } = useFormattedPrice(originalPrice);
 
-  if (!isLoaded) {
-    return <span className={className}>...</span>;
+  if (!isLoaded || isEnrolled) {
+    return null;
   }
 
   return (

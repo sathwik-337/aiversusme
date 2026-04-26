@@ -261,7 +261,7 @@ export default function TestimonialsSection() {
 
   return (
     <section
-      className="relative w-full py-24 px-4 md:px-8 bg-black overflow-hidden"
+      className="relative w-full py-12 px-4 md:px-8 bg-black overflow-hidden"
       id="testimonials"
     >
       {/* Background Glow */}
